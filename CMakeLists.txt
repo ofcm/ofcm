@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(camcalib C CXX)
-project(base C CXX)
+#project(camcalib C CXX)
+project(ofcm C CXX)
 find_package(OpenCV 3.2.0 QUIET)
 if(NOT OpenCV_FOUND)
   find_package(OpenCV 3.0.0 QUIET)
@@ -24,13 +24,12 @@ message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 # libraries compiler     
 #)
 
-target_compile_features(base PUBLIC cxx_std_11)
 
 add_executable(out src/main.cpp)
 
-set_target_properties(ofcm PROPERTIES 
+set_target_properties(out PROPERTIES 
                       LINKER_LANGUAGE CXX)
-target_link_libraries(out PRIVATE base ${OpenCV_LIBS})
+#target_link_libraries(out PRIVATE base ${OpenCV_LIBS})
 install(TARGETS out DESTINATION /usr/lib)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
