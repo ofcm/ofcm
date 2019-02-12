@@ -12,5 +12,6 @@
 
 
 void updateBuffer(std::vector<cv::Mat>& imageBuffer);
+void DenseSampling(std::vector<cv::Mat> imageBuffer, int N, int T, std::vector<std::vector<cv::Mat>>& Cuboids);
 
 #endif
