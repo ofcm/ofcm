@@ -22,7 +22,7 @@ message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
 
 add_library(base
-  src/utils.cpp    
+  src/utils.cpp   
 )
 
 
