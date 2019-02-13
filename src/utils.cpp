@@ -37,8 +37,6 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
                 cv::Mat nextImage,
                 int maxLevel){
     cv::TermCriteria termC(cv::TermCriteria::COUNT|cv::TermCriteria::EPS,20,0.03);
-    //std::vector<std::vector<int>> orientationMatrix;
-    //std::vector<std::vector<int>> magnitudeMatrix;
     
     std::vector<cv::Point2f> prevPoints;
     std::vector<cv::Point2f> nextPoints;
@@ -64,10 +62,7 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
        
         cv::calcOpticalFlowPyrLK(prevImage, nextImage, prevPoints, nextPoints,
                                 status, errors, winSize, maxLevel, termC, 0, 0.001);
-        //std::cout << " prev image " << prevImage << std::endl;
-        //std::cout << " next image " << nextImage << std::endl; 
         getMatrixOI(prevPoints, nextPoints, orientationMatrix,magnitudeMatrix);
-        //std::cout << "size matrix " << magnitudeMatrices.size() << std::endl;
     }
     orientationMatrices.push_back(orientationMatrix);
     magnitudeMatrices.push_back(magnitudeMatrix);
@@ -97,26 +92,27 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<std::vector<int>> &magnitudeMatrix){
     float distance, angle, dX,dY;
     int x, y ,distInt,angInt;
+    float div;
     for(int i =0;i<prevPoints.size();i++){
-        //std::cout << prevPoints[i].y <<std::endl;
-
         dY = nextPoints[i].y - prevPoints[i].y;
         dX = nextPoints[i].x - prevPoints[i].x;
-        //std::cout << " dy " <<  dY << std::endl;
-        //std::cout << " dX " <<  dX << std::endl;
+
         distance = sqrt((dX * dX) - (dY*dY));
-        
-        angle = atan (dY/dX) * 180 / PI;
+        if(dY == 0)
+            div = 0;
+        else
+            div = (dY/dX);
+
+        angle = atan(div) * 180 / PI;
+
         if(angle < 0) 
             angle += 360.0 ;
-        //std::cout << " angle " <<  angle << std::endl;
-        
+
         angInt = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
         distInt = static_cast<int>(floor(log2(distance)));
         if(distInt < 0)
             distInt = 0;
-        //std::cout << " distance " <<  distInt << std::endl;
-        //std::cout << " angle " <<  angInt << std::endl;
+
         y = (int) prevPoints[i].y;
         x = (int) prevPoints[i].x;
         //std::cout << "prev orient " << magnitudeMatrix<< std::endl;

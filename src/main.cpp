@@ -54,14 +54,11 @@ int main(int argc, char** argv){
             updateBuffer(imageBuffer);
             
             for(int c = 0; c < cuboids.size();c++){
-                //std::cout << " cuboids " << c << std::endl;
-                //std::cout << "here 1" << std::endl;
                 for(int i = 0; i < cuboids[c].size() - 1; i++){
                     int j = i + 1;
                     if(j < cuboids[c].size()){
-                        
                         opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[c][i],cuboids[c][j],3);
-                        
+
                     }
                 }
                             
@@ -82,27 +79,25 @@ int main(int argc, char** argv){
             *  CODE HERE : pitufo
             *  =========
             * */
-            
+            //std::cout << magnitudeMatrices.size() << std::endl;
             /********
-             * PRINT MATRICES 190
+             * PRINT LAST MATRICES
              */
-            /*std::cout << "Orientation " << std::endl;
-            for(int i = 0; i<orientationMatrices[191].size(); i++) {
-                for(int j = 0; j<orientationMatrices[191][i].size(); j++) {
-                    //if(orientationMatrices[191][i][j] > 0)
-                    std::cout << '(' << orientationMatrices[191][i][j] << ")";
+            std::cout << "Orientation " << std::endl;
+            for(int i = 0; i<orientationMatrices[orientationMatrices.size()-1].size(); i++) {
+                for(int j = 0; j<orientationMatrices[orientationMatrices.size()-1][i].size(); j++) {
+                    std::cout << '(' << orientationMatrices[orientationMatrices.size()-1][i][j] << ")";
                 }
                 std::cout << "\n";
             }
 
             std::cout << "Magnitude " << std::endl;
-            for(int i = 0; i<magnitudeMatrices[191].size(); i++) {
-                for(int j = 0; j<magnitudeMatrices[191][i].size(); j++) {
-                    if(magnitudeMatrices[191][i][j] > 0)
-                        std::cout << '(' << magnitudeMatrices[191][i][j] << ")";
+            for(int i = 0; i<magnitudeMatrices[magnitudeMatrices.size() - 1].size(); i++) {
+                for(int j = 0; j<magnitudeMatrices[magnitudeMatrices.size() - 1][i].size(); j++) {
+                    std::cout << '(' << magnitudeMatrices[magnitudeMatrices.size() - 1][i][j] << ")";
                 }
                 std::cout << "\n";
-            }*/
+            }
 
             cuboids.clear();
             cv::imshow("frame 10 : ", frame);
@@ -116,7 +111,7 @@ int main(int argc, char** argv){
         }
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
         k = cv::waitKey(30);
-        
+        count +=1;
         if ( k == 27)
             break;
     }
