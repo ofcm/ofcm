@@ -2,9 +2,9 @@
 #define UTILS_H
 
 #define PI 3.14159265
-static  int threshold = 0;
+static  int threshold = 30;
 static  float maxAngle = 361.0;
-static  int orientationBin = 8;
+static  float orientationBin = 8.0;
 static  int maxDistance = 15;
 
 
@@ -24,8 +24,8 @@ void DenseSampling(std::vector<cv::Mat> imageBuffer,
                                         std::vector<std::vector<cv::Mat>>& cuboids,
                                         cv::Size &cuboidsSize);
                                         
-void opticalFlow(std::vector<cv::Mat> &orientationMatrices,
-                std::vector<cv::Mat> &magnitudeMatrices,
+void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices,
+                std::vector<std::vector<std::vector<int>>>  &magnitudeMatrices,
                 cv::Mat prevImage,
                 cv::Mat nextImage,
                 int maxLevel = 0);
@@ -36,7 +36,8 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
 
 void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<cv::Point2f> nextPoints,
-                cv::Mat &orientationMatrix, cv::Mat &magnitudeMatrix);
+                std::vector<std::vector<int>> &orientationMatrix,
+                std::vector<std::vector<int>> &magnitudeMatrix);
 
 
 

@@ -6,8 +6,8 @@ std::vector<cv::Mat>                imageBuffer;
 std::vector<std::vector<cv::Mat>>   cuboids;
 cv::Size                            cuboidsSize;
 std::string PATH_DATA = "../data/";
-std::vector<cv::Mat>                orientationMatrices10;
-std::vector<cv::Mat>                magnitudeMatrices10;
+std::vector<std::vector<std::vector<int>>>               orientationMatricesT;
+std::vector<std::vector<std::vector<int>>>                magnitudeMatricesT;
 std::vector<cv::Mat>                orientationMatrices;
 std::vector<cv::Mat>                magnitudeMatrices;
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv){
         imageBuffer.push_back(fr);
         // Obtain initial set of features
         
-        if (imageBuffer.size() > 20)
+        if (imageBuffer.size() > T)
         {
             /*
             for(int qq = 0; qq < imageBuffer.size(); qq++){
@@ -70,28 +70,54 @@ int main(int argc, char** argv){
             *  =========
             * */
             
-            for(auto c : cuboids){
-                for(int i = 0; i < c.size(); i++){
+            for(int c = 0; c < cuboids.size();c++){
+                //std::cout << " cuboids " << c << std::endl;
+                //std::cout << "here 1" << std::endl;
+                for(int i = 0; i < cuboids[c].size() - 1; i++){
                     int j = i + 1;
-                    if(j < c.size()){
-                        opticalFlow(orientationMatrices10,magnitudeMatrices10,c[i],c[j],0);
+                    if(j < cuboids[c].size()){
+                        
+                        opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[c][i],cuboids[c][j],3);
+                        
                     }
                 }
-                for(auto om : orientationMatrices10)
+                std::cout << "Orientation " << std::endl;
+                for(int i = 0; i<orientationMatricesT[0].size(); i++) {
+                    for(int j = 0; j<orientationMatricesT[0][i].size(); j++) {
+                        std::cout << '(' << orientationMatricesT[0][i][j] << ")";
+                    }
+                    std::cout << "\n";
+                }
+
+                std::cout << "Magnitude " << std::endl;
+                for(int i = 0; i<magnitudeMatricesT[0].size(); i++) {
+                    for(int j = 0; j<magnitudeMatricesT[0][i].size(); j++) {
+                        std::cout << '(' << magnitudeMatricesT[0][i][j] << ")";
+                    }
+                    std::cout << "\n";
+                }
+
+                /*for(auto om : orientationMatrices10)
                     orientationMatrices.push_back(om);
-                        
+                                std::cout << "here 3" << orientationMatrices.size() << std::endl;
+
                 for(auto mm : magnitudeMatrices10)
                     magnitudeMatrices.push_back(mm);
-
-                orientationMatrices10.clear();
-                magnitudeMatrices10.clear();
+                std::cout << "here 4"  << magnitudeMatrices.size()  << std::endl;
+             */
+                //std::cout << "here 4"  << orientationMatricesT.size()  << std::endl;
+                //std::cout << "here 4"  << magnitudeMatricesT.size()  << std::endl;
+                orientationMatricesT.clear();
+                magnitudeMatricesT.clear();
+                
+                
             }
+            
 
+            std::cout << "Size" << orientationMatrices.size() << std::endl;
 
-            std::cout << orientationMatrices.size() << std::endl;
-            std::cout << "Orientation matrix 10: " << orientationMatrices[9]  << std::endl;
-            std::cout << "Magnitude matrix 10: " << magnitudeMatrices[9]  << std::endl;
             cuboids.clear();
+            cv::imshow("frame 10 : ", frame);
             /*
             cv::imshow("frame 10 : ", frame);
             cv::moveWindow("frame 10 : ", 200,200);

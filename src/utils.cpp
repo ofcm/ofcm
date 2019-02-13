@@ -31,34 +31,55 @@ void DenseSampling(std::vector<cv::Mat> imageBuffer,
     }
     cuboidsSize = cv::Size(w,h);
 }
-void opticalFlow(std::vector<cv::Mat> &orientationMatrices,
-                std::vector<cv::Mat> &magnitudeMatrices,
+void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices,
+               std::vector<std::vector<std::vector<int>>> &magnitudeMatrices,
                 cv::Mat prevImage,
                 cv::Mat nextImage,
                 int maxLevel){
     cv::TermCriteria termC(cv::TermCriteria::COUNT|cv::TermCriteria::EPS,20,0.03);
-    cv::Mat orientationMatrix;
-    cv::Mat magnitudeMatrix;
+    std::vector<std::vector<int>> orientationMatrix;
+    std::vector<std::vector<int>> magnitudeMatrix;
+    
     std::vector<cv::Point2f> prevPoints;
     std::vector<cv::Point2f> nextPoints;
-    std::vector<float> status;
+    std::vector<uchar> status;
     std::vector<float> errors;
     cv::Size winSize(31,31);
     int rows = prevImage.rows;
     int cols = prevImage.cols;
+    for(int c = 0;c < cols;c++){
+        std::vector<int> rowO;
+        std::vector<int> rowM;
+        for(int r = 0;r < rows;r++){
+            rowO.push_back(-1);
+            rowM.push_back(-1);
+        }
+        orientationMatrix.push_back(rowO);
+        magnitudeMatrix.push_back(rowM);
+    }
+     std::cout << "o 1 " << std::endl; 
     getBetterPoints(prevPoints,prevImage,nextImage);
-    std::cout << "size points " << prevPoints.size() << std::endl;
-    orientationMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
-    magnitudeMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
+    //orientationMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
+    //magnitudeMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
+    cv::cvtColor(prevImage, prevImage, cv::COLOR_RGB2GRAY);
+    cv::cvtColor(nextImage, nextImage, cv::COLOR_RGB2GRAY);
+     std::cout << "o 2 " << std::endl; 
+    //std::cout << "type " << prevImage.type() << std::endl;
     if (prevPoints.size() > 0) {
+       
         cv::calcOpticalFlowPyrLK(prevImage, nextImage, prevPoints, nextPoints,
-                                status, errors, winSize, 3, termC, 0, 0.001);
+                                status, errors, winSize, maxLevel, termC, 0, 0.001);
+        //std::cout << " prev image " << prevImage << std::endl;
+        //std::cout << " next image " << nextImage << std::endl;
+                       std::cout << "o 3 " << std::endl; 
         getMatrixOI(prevPoints, nextPoints, orientationMatrix,magnitudeMatrix);
-        orientationMatrices.push_back(orientationMatrix);
-        magnitudeMatrices.push_back(magnitudeMatrix);
+
+        //std::cout << "size matrix " << magnitudeMatrices.size() << std::endl;
+
 
     }
-
+    orientationMatrices.push_back(orientationMatrix);
+    magnitudeMatrices.push_back(magnitudeMatrix);
 }
 void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
                     cv::Mat prevImage,
@@ -66,16 +87,14 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
     prevPoints.clear();
     cvtColor(prevImage, prevImage, CV_BGR2GRAY);
     cvtColor(nextImage, nextImage, CV_BGR2GRAY);
-    std::cout << "prev " << prevImage << std::endl;
-    std::cout << "next " << nextImage << std::endl;
+
     cv::Mat diffImage = cv::abs(nextImage - prevImage);
-    std::cout << "mat " << diffImage << std::endl;
+
     for (int i = 0; i < diffImage.rows; ++i) {
         for (int j = 0; j< diffImage.cols; ++j) {
             if (diffImage.at<uchar>(i, j) > threshold){
                 prevPoints.push_back(cv::Point2f(static_cast<float>(j),
                 static_cast<float>(i))); 
-                //std::cout << "here " << std::endl;
             }
             
         }
@@ -83,29 +102,37 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
 }
 void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<cv::Point2f> nextPoints,
-                cv::Mat &orientationMatrix, cv::Mat &magnitudeMatrix){
+                std::vector<std::vector<int>> &orientationMatrix, 
+                std::vector<std::vector<int>> &magnitudeMatrix){
     float distance, angle, dX,dY;
     int x, y ,distInt,angInt;
     for(int i =0;i<prevPoints.size();i++){
-        dX = nextPoints[i].y - prevPoints[i].y;
-        dY = nextPoints[i].x - prevPoints[i].x;
-        
-        distance = sqrt(pow(dX,2.0) - pow(dY,2.0));
-        
+        //std::cout << prevPoints[i].y <<std::endl;
+        //std::cout << " h1 " <<std::endl;
+        dY = nextPoints[i].y - prevPoints[i].y;
+        dX = nextPoints[i].x - prevPoints[i].x;
+        //std::cout << " dy " <<  dY << std::endl;
+        //std::cout << " dX " <<  dX << std::endl;
+        //distance = sqrt((dX * dX) - (dY*dY));
+        //std::cout << " distance " <<  distance << std::endl;
         angle = atan (dY/dX) * 180 / PI;
-        angle = (angle < 0) ? angle += 360.0 : angle = angle;
+        if(angle < 0) 
+            angle += 360.0 ;
+        //std::cout << " angle " <<  angle << std::endl;
         
-        angInt = (int)(floor(angle / (maxAngle / orientationBin)));
+        angInt = (float)(floor(angle / (maxAngle / orientationBin)));
         distInt = (int)(floor(log2(distance)));
         
         if(distInt < 0)
             distInt = 0;
 
         y = (int) prevPoints[i].y;
-        y = (int) prevPoints[i].x;
-
-        orientationMatrix.at<int>(y,x) = angInt;
-        magnitudeMatrix.at<int>(y,x) = distInt; 
+        x = (int) prevPoints[i].x;
+        //std::cout << "prev orient " << magnitudeMatrix<< std::endl;
+        orientationMatrix[y][x]= angInt;
+        magnitudeMatrix[y][x] = distInt;
+        //std::cout << " h3 " << y << x <<std::endl;
+        //std::cout << "next orient " << distInt << std::endl; 
     }
      
 }
