@@ -208,12 +208,6 @@ base_BINARY_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScienc
 base_SOURCE_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm
 
 //Value Computed by CMake
-camcalib_BINARY_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build
-
-//Value Computed by CMake
-camcalib_SOURCE_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm
-
-//Value Computed by CMake
 ofcm_BINARY_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build
 
 //Value Computed by CMake
