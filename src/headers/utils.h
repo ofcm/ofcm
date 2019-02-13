@@ -2,7 +2,7 @@
 #define UTILS_H
 
 #define PI 3.14159265
-static  int threshold = 30;
+static  int threshold = 0;
 static  float maxAngle = 361.0;
 static  float orientationBin = 8.0;
 static  int maxDistance = 15;

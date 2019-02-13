@@ -37,8 +37,8 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
                 cv::Mat nextImage,
                 int maxLevel){
     cv::TermCriteria termC(cv::TermCriteria::COUNT|cv::TermCriteria::EPS,20,0.03);
-    std::vector<std::vector<int>> orientationMatrix;
-    std::vector<std::vector<int>> magnitudeMatrix;
+    //std::vector<std::vector<int>> orientationMatrix;
+    //std::vector<std::vector<int>> magnitudeMatrix;
     
     std::vector<cv::Point2f> prevPoints;
     std::vector<cv::Point2f> nextPoints;
@@ -47,36 +47,27 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
     cv::Size winSize(31,31);
     int rows = prevImage.rows;
     int cols = prevImage.cols;
-    for(int c = 0;c < cols;c++){
-        std::vector<int> rowO;
-        std::vector<int> rowM;
-        for(int r = 0;r < rows;r++){
-            rowO.push_back(-1);
-            rowM.push_back(-1);
-        }
-        orientationMatrix.push_back(rowO);
-        magnitudeMatrix.push_back(rowM);
-    }
-     std::cout << "o 1 " << std::endl; 
+    std::vector<std::vector<int> >  orientationMatrix(
+                                    cols,
+                                    std::vector<int>(rows, -1));
+    std::vector<std::vector<int> >  magnitudeMatrix(
+                                    cols,
+                                    std::vector<int>(rows, -1));
+
     getBetterPoints(prevPoints,prevImage,nextImage);
     //orientationMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
     //magnitudeMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
     cv::cvtColor(prevImage, prevImage, cv::COLOR_RGB2GRAY);
     cv::cvtColor(nextImage, nextImage, cv::COLOR_RGB2GRAY);
-     std::cout << "o 2 " << std::endl; 
-    //std::cout << "type " << prevImage.type() << std::endl;
+
     if (prevPoints.size() > 0) {
        
         cv::calcOpticalFlowPyrLK(prevImage, nextImage, prevPoints, nextPoints,
                                 status, errors, winSize, maxLevel, termC, 0, 0.001);
         //std::cout << " prev image " << prevImage << std::endl;
-        //std::cout << " next image " << nextImage << std::endl;
-                       std::cout << "o 3 " << std::endl; 
+        //std::cout << " next image " << nextImage << std::endl; 
         getMatrixOI(prevPoints, nextPoints, orientationMatrix,magnitudeMatrix);
-
         //std::cout << "size matrix " << magnitudeMatrices.size() << std::endl;
-
-
     }
     orientationMatrices.push_back(orientationMatrix);
     magnitudeMatrices.push_back(magnitudeMatrix);
@@ -108,30 +99,29 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
     int x, y ,distInt,angInt;
     for(int i =0;i<prevPoints.size();i++){
         //std::cout << prevPoints[i].y <<std::endl;
-        //std::cout << " h1 " <<std::endl;
+
         dY = nextPoints[i].y - prevPoints[i].y;
         dX = nextPoints[i].x - prevPoints[i].x;
         //std::cout << " dy " <<  dY << std::endl;
         //std::cout << " dX " <<  dX << std::endl;
-        //distance = sqrt((dX * dX) - (dY*dY));
-        //std::cout << " distance " <<  distance << std::endl;
+        distance = sqrt((dX * dX) - (dY*dY));
+        
         angle = atan (dY/dX) * 180 / PI;
         if(angle < 0) 
             angle += 360.0 ;
         //std::cout << " angle " <<  angle << std::endl;
         
-        angInt = (float)(floor(angle / (maxAngle / orientationBin)));
-        distInt = (int)(floor(log2(distance)));
-        
+        angInt = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
+        distInt = static_cast<int>(floor(log2(distance)));
         if(distInt < 0)
             distInt = 0;
-
+        //std::cout << " distance " <<  distInt << std::endl;
+        //std::cout << " angle " <<  angInt << std::endl;
         y = (int) prevPoints[i].y;
         x = (int) prevPoints[i].x;
         //std::cout << "prev orient " << magnitudeMatrix<< std::endl;
         orientationMatrix[y][x]= angInt;
         magnitudeMatrix[y][x] = distInt;
-        //std::cout << " h3 " << y << x <<std::endl;
         //std::cout << "next orient " << distInt << std::endl; 
     }
      

@@ -1,15 +1,15 @@
 #include "headers/utils.h"
 
-cv::Mat                             frame;
-cv::Size                            imageSize;
-std::vector<cv::Mat>                imageBuffer;
-std::vector<std::vector<cv::Mat>>   cuboids;
-cv::Size                            cuboidsSize;
-std::string PATH_DATA = "../data/";
-std::vector<std::vector<std::vector<int>>>               orientationMatricesT;
-std::vector<std::vector<std::vector<int>>>                magnitudeMatricesT;
-std::vector<cv::Mat>                orientationMatrices;
-std::vector<cv::Mat>                magnitudeMatrices;
+cv::Mat                                                 frame;
+cv::Size                                                imageSize;
+std::vector<cv::Mat>                                    imageBuffer;
+std::vector<std::vector<cv::Mat>>                       cuboids;
+cv::Size                                                cuboidsSize;
+std::string PATH_DATA =                                 "../data/";
+std::vector<std::vector<std::vector<int>>>              orientationMatricesT;
+std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
+std::vector<std::vector<std::vector<int>>>              orientationMatrices;
+std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
 
 int N = 18; // width and height size
 int T = 10; // number of frames
@@ -49,26 +49,9 @@ int main(int argc, char** argv){
         
         if (imageBuffer.size() > T)
         {
-            /*
-            for(int qq = 0; qq < imageBuffer.size(); qq++){
-                std::string st ="imb";
-                st.append(std::to_string(qq));
-                st.append(".png");
-                cv::imwrite(st, imageBuffer[qq]);
-            }
-            */
-            
-
             DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
 
             updateBuffer(imageBuffer);
-            //std::cout << "1" << std::endl;
-            
-            /*      
-            *
-            *  CODE HERE : pitufo
-            *  =========
-            * */
             
             for(int c = 0; c < cuboids.size();c++){
                 //std::cout << " cuboids " << c << std::endl;
@@ -81,45 +64,50 @@ int main(int argc, char** argv){
                         
                     }
                 }
-                std::cout << "Orientation " << std::endl;
-                for(int i = 0; i<orientationMatricesT[0].size(); i++) {
-                    for(int j = 0; j<orientationMatricesT[0][i].size(); j++) {
-                        std::cout << '(' << orientationMatricesT[0][i][j] << ")";
-                    }
-                    std::cout << "\n";
-                }
-
-                std::cout << "Magnitude " << std::endl;
-                for(int i = 0; i<magnitudeMatricesT[0].size(); i++) {
-                    for(int j = 0; j<magnitudeMatricesT[0][i].size(); j++) {
-                        std::cout << '(' << magnitudeMatricesT[0][i][j] << ")";
-                    }
-                    std::cout << "\n";
-                }
-
-                /*for(auto om : orientationMatrices10)
+                            
+                for(auto om : orientationMatricesT)
                     orientationMatrices.push_back(om);
-                                std::cout << "here 3" << orientationMatrices.size() << std::endl;
 
-                for(auto mm : magnitudeMatrices10)
+                for(auto mm : magnitudeMatricesT)
                     magnitudeMatrices.push_back(mm);
-                std::cout << "here 4"  << magnitudeMatrices.size()  << std::endl;
-             */
-                //std::cout << "here 4"  << orientationMatricesT.size()  << std::endl;
-                //std::cout << "here 4"  << magnitudeMatricesT.size()  << std::endl;
+
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();
                 
-                
             }
             
+            
+            /*      
+            *
+            *  CODE HERE : pitufo
+            *  =========
+            * */
+            
+            /********
+             * PRINT MATRICES 190
+             */
+            /*std::cout << "Orientation " << std::endl;
+            for(int i = 0; i<orientationMatrices[191].size(); i++) {
+                for(int j = 0; j<orientationMatrices[191][i].size(); j++) {
+                    //if(orientationMatrices[191][i][j] > 0)
+                    std::cout << '(' << orientationMatrices[191][i][j] << ")";
+                }
+                std::cout << "\n";
+            }
 
-            std::cout << "Size" << orientationMatrices.size() << std::endl;
+            std::cout << "Magnitude " << std::endl;
+            for(int i = 0; i<magnitudeMatrices[191].size(); i++) {
+                for(int j = 0; j<magnitudeMatrices[191][i].size(); j++) {
+                    if(magnitudeMatrices[191][i][j] > 0)
+                        std::cout << '(' << magnitudeMatrices[191][i][j] << ")";
+                }
+                std::cout << "\n";
+            }*/
 
             cuboids.clear();
             cv::imshow("frame 10 : ", frame);
+
             /*
-            cv::imshow("frame 10 : ", frame);
             cv::moveWindow("frame 10 : ", 200,200);
             cv::imshow("Some Cubid (Resize): 9 ", cuboids[80][0]);
             cv::moveWindow("Some Cubid (Resize): ", 100,100);
