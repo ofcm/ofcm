@@ -75,7 +75,7 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
             if (diffImage.at<uchar>(i, j) > threshold){
                 prevPoints.push_back(cv::Point2f(static_cast<float>(j),
                 static_cast<float>(i))); 
-                std::cout << "here " << std::endl;
+                //std::cout << "here " << std::endl;
             }
             
         }

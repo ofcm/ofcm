@@ -42,24 +42,34 @@ int main(int argc, char** argv){
             break;    
 
         imageSize = frame.size();
+        cv::Mat fr = frame.clone();
 
-        imageBuffer.push_back(frame);
+        imageBuffer.push_back(fr);
         // Obtain initial set of features
         
-        if (imageBuffer.size() > 10)
+        if (imageBuffer.size() > 20)
         {
+            /*
+            for(int qq = 0; qq < imageBuffer.size(); qq++){
+                std::string st ="imb";
+                st.append(std::to_string(qq));
+                st.append(".png");
+                cv::imwrite(st, imageBuffer[qq]);
+            }
+            */
+            
 
             DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
 
             updateBuffer(imageBuffer);
-            std::cout << "1" << std::endl;
+            //std::cout << "1" << std::endl;
             
             /*      
             *
             *  CODE HERE : pitufo
             *  =========
             * */
-
+            
             for(auto c : cuboids){
                 for(int i = 0; i < c.size(); i++){
                     int j = i + 1;
@@ -82,10 +92,13 @@ int main(int argc, char** argv){
             std::cout << "Orientation matrix 10: " << orientationMatrices[9]  << std::endl;
             std::cout << "Magnitude matrix 10: " << magnitudeMatrices[9]  << std::endl;
             cuboids.clear();
+            /*
             cv::imshow("frame 10 : ", frame);
             cv::moveWindow("frame 10 : ", 200,200);
-            //cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][9]);
-            //cv::moveWindow("Some Cubid (Resize): ", 100,100);
+            cv::imshow("Some Cubid (Resize): 9 ", cuboids[80][0]);
+            cv::moveWindow("Some Cubid (Resize): ", 100,100);
+            cv::imshow("Some Cubid (Resize): 30", cuboids[80][19]);
+            break;*/
         }
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
         k = cv::waitKey(30);
