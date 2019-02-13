@@ -137,7 +137,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=camcalib
+CMAKE_PROJECT_NAME:STATIC=base
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
@@ -212,6 +212,12 @@ camcalib_BINARY_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerSc
 
 //Value Computed by CMake
 camcalib_SOURCE_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm
+
+//Value Computed by CMake
+ofcm_BINARY_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build
+
+//Value Computed by CMake
+ofcm_SOURCE_DIR:STATIC=/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm
 
 
 ########################

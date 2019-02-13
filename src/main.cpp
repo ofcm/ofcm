@@ -3,8 +3,8 @@
 cv::Mat                             frame;
 cv::Size                            imageSize;
 std::vector<cv::Mat>                imageBuffer;
-std::vector<std::vector<cv::Mat>>   Cuboids;
-
+std::vector<std::vector<cv::Mat>>   cuboids;
+cv::Size                            cuboidsSize;
 std::string PATH_DATA = "../data/";
 
 int N = 18; // width and height size
@@ -40,12 +40,16 @@ int main(int argc, char** argv){
         imageSize = frame.size();
 
         imageBuffer.push_back(frame);
+        // Obtain initial set of features
 
         if (imageBuffer.size() > 10)
         {
 
-            DenseSampling(imageBuffer, N, T, Cuboids);
+            DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
+            
             updateBuffer(imageBuffer);
+
+            
 
             /*
             *
@@ -54,8 +58,8 @@ int main(int argc, char** argv){
             * 
             */
             cv::imshow("frame 10 : ", frame);
-            cv::moveWindow("frame 10 : ", 100,100);
-            cv::imshow("Some Cubid (Resize): ", Cuboids[0][9]);
+            cv::moveWindow("frame 10 : ", 200,200);
+            cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][9]);
             cv::moveWindow("Some Cubid (Resize): ", 100,100);
         }
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
