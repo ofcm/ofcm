@@ -311,21 +311,21 @@ float informationCorrelation(cv::Mat Mco)
 }
 
 }
-std::vector<float> haralick(cv::Mat Mco, int size)
+std::vector<float> haralick(cv::Mat Mco_F, int size)
 {
-    cv::Mat Mco_F;
-    cv::resize(Mco,Mco, cv::Size(18,18));
-    assert (Mco.cols == Mco.rows);
+    //cv::Mat Mco_F;
+    //cv::resize(Mco,Mco, cv::Size(18,18));
+    //assert (Mco.cols == Mco.rows);
 
-    Mco.convertTo(Mco_F, CV_32FC1);
+    //Mco.convertTo(Mco_F, CV_32FC1);
 
     std::vector<float> haralickVector(size);
     
-    for (int i = 0; i < Mco.rows; i++)
+    for (int i = 0; i < Mco_F.rows; i++)
     {
-        for (int j = 0; j < Mco.cols; j++)
+        for (int j = 0; j < Mco_F.cols; j++)
         {
-            Mco_F.at<float>(i,j) /= (2.0 * (float)Mco.rows * (float)Mco.cols);
+            Mco_F.at<float>(i,j) /= (2.0 * (float)Mco_F.rows * (float)Mco_F.cols);
         }
     }
     
@@ -343,6 +343,28 @@ std::vector<float> haralick(cv::Mat Mco, int size)
     haralickVector[11] = informationCorrelation(Mco_F);
 
     return haralickVector;
+}
+
+void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T)
+{
+    int W = cuboidsSize.width;
+    int H = cuboidsSize.height;
+
+    //std::vector<std::vector<std::vector<float>>> res(W, H, T);
+
+
+    for (int i = 0; i < Mco_Array.size(); i++)
+    {
+        cv::Mat Mco          = Mco_Array[i];
+        std::vector<float> f = haralick(Mco, 12);
+
+        
+        for (int fi = 0; fi < f.size(); fi++)
+        {
+            //std::cout << "-> " << (i/9) / W << ", " <<(i/9) % W << ", " << fi << ", "<< i%9 <<std::endl;
+            res[(i/9) / W][(i/9) % W][fi][i%9] = f[fi];
+        }
+    }
 }
 void DenseSampling(std::vector<cv::Mat> imageBuffer, 
                                         int N, int T, 
@@ -366,9 +388,9 @@ void DenseSampling(std::vector<cv::Mat> imageBuffer,
     //nextImage.convertTo(nextImage_F, CV_32FC1);
 
     //std::cout << nextImage_F - prevImage_F << std::endl;
-    cv::Mat diffImage = cv::abs(nextImage_F - prevImage_F);
+    //cv::Mat diffImage = cv::abs(nextImage_F - prevImage_F);
 
-    cv::Mat diff;
+    //cv::Mat diff;
 
 
     for (int i = 0; i < imageBuffer[0].rows - N + 1; i+= int(N/2))
@@ -386,7 +408,8 @@ void DenseSampling(std::vector<cv::Mat> imageBuffer,
             }
             cuboids.push_back(cuboid);
             //std::cout << "size : " << Cuboid.size() << std::endl;
-            w++;    
+            w++;
+            //std::cout << "i,j = " << i << ", " << j << std::endl;    
         }
         h++;
     }
@@ -426,7 +449,7 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
     std::vector<uchar> status;
     std::vector<float> errors;
 
-    cv::Size winSize(3,3);  
+    cv::Size winSize(31,31);  
     int rows = prevImage.rows;
     int cols = prevImage.cols;
 
@@ -501,10 +524,12 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
     for(int i =0;i<prevPoints.size();i++){
         //std::cout << "next = " << (int)nextPoints[i].y << ", prev = " << prevPoints[i].y << std::endl;
         //std::cout << "next = " << (int)nextPoints[i].x << ", prev = " << prevPoints[i].x << std::endl;
-        dY = (int)nextPoints[i].y - prevPoints[i].y;
-        dX = (int)nextPoints[i].x - prevPoints[i].x;
+        dY = nextPoints[i].y - prevPoints[i].y;
+        dX = nextPoints[i].x - prevPoints[i].x;
 
         distance = sqrt((dX * dX) + (dY*dY));
+        //std::cout << "distance = " << distance << std::endl; 
+        
         if(dY == 0)
         {
             angle = 0.0;
@@ -518,6 +543,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
             angle = angle * 180 / PI;
         }
 
+        //std::cout << "angle = " << angle << std::endl;
         //std::cout << "angle = " << angle << ", mod = "<< distance << std::endl;
             //div_ = (dY/dX);
         /*
@@ -530,13 +556,16 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         */
 
         angInt  = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
-        distInt = static_cast<int>(floor(log2(distance)));
-       
+        //distInt = static_cast<int>(floor(log2(distance)));
+        distInt = static_cast<int>(floor(magnitudBin * distance / 5.0));
+        //std::cout << "distInt = " << distInt << std::endl; 
+
         if(distInt < 0)
             distInt = 0;
         else if (distInt >= magnitudBin)
             distInt = magnitudBin - 1;
 
+        
         y = (int) prevPoints[i].y;
         x = (int) prevPoints[i].x;
         //std::cout << "prev orient " << magnitudeMatrix<< std::endl;
