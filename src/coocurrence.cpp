@@ -1,4 +1,4 @@
-# include "headers/coocurrence.hpp"
+// # include "headers/coocurrence.hpp"
 /*
 Coocurrence::Coocurrence(float a, int d):offset_o(Offset_(a, d)){};
 
@@ -20,13 +20,15 @@ bool isWithInMatrix(int h, int w, int maxheight, int maxwidth){
 }*/
 
 /*
-    * @Overview:
+    * @Overview: "CoocurrenceFromSingleMatrixMag"
     * matrix > h^(M) matrix of magnitudes, values must be passed between 0 to 8
     * d_ to compare the intensityof current index to a displacement index
     * dx > Given an offset dx 
     * dy > Given an offset dy
     */ 
-cv::Mat coocurrence::CoocurrenceFromSingleMatrixMag(const std::vector<std::vector<int>> & matrix, int dx, int dy, int cuboidSize = 18){
+/*
+namespace coocurrence{
+cv::Mat CoocurrenceFromSingleMatrixMag(std::vector<std::vector<int>> matrix, int dx, int dy, int cuboidSize){
     int nvalues = 8;
     // Historigram
     cv::Mat output = cv::Mat::zeros(nvalues, nvalues, CV_32FC1);
@@ -44,7 +46,7 @@ cv::Mat coocurrence::CoocurrenceFromSingleMatrixMag(const std::vector<std::vecto
     }
     return output;
 }
-cv::Mat coocurrence::CoocurrenceFromSingleMatrixAngle(const std::vector<std::vector<int>> & matrix, int dx, int dy, int cuboidSize = 18, int nbins = 4, int maxangle = 135){
+cv::Mat CoocurrenceFromSingleMatrixAngle(const std::vector<std::vector<int>> & matrix, int dx, int dy, int cuboidSize, int nbins, int maxangle){
     // Historigram
     int widthbin = maxangle/(nbins-1);
     cv::Mat output = cv::Mat::zeros(nbins, nbins, CV_32FC1);
@@ -61,3 +63,5 @@ cv::Mat coocurrence::CoocurrenceFromSingleMatrixAngle(const std::vector<std::vec
     }
     return output;
 }
+}*/
+
