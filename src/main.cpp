@@ -31,7 +31,12 @@ int main(int argc, char** argv){
         std::cout << "Failed to open camera." << std::endl;
         return -1;
     }
-    
+    unsigned char a = 10;
+    unsigned char b = 20;
+
+
+    //std::cout << a - b << std::endl;
+    //return 0;
     char k;
     int count = 0;
     for (;;)
@@ -47,45 +52,54 @@ int main(int argc, char** argv){
         imageBuffer.push_back(fr);
         // Obtain initial set of features
         
-        if (imageBuffer.size() > T)
+        if (imageBuffer.size() >= T)
         {
             DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
-
             updateBuffer(imageBuffer);
             
-            for(int c = 0; c < cuboids.size();c++){
-                for(int i = 0; i < cuboids[c].size() - 1; i++){
-                    int j = i + 1;
-                    if(j < cuboids[c].size()){
-                        opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[c][i],cuboids[c][j],3);
-
-                    }
+            for(int icub = 0; icub < cuboids.size();icub++){
+                for(int i = 0; i < cuboids[icub].size() - 1; i++){
+                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],1);
                 }
-                            
-                for(auto om : orientationMatricesT)
-                    orientationMatrices.push_back(om);
+                for (int io = 0; io < orientationMatricesT.size(); io++)
+                    orientationMatrices.push_back(orientationMatricesT[io]);
 
-                for(auto mm : magnitudeMatricesT)
-                    magnitudeMatrices.push_back(mm);
+                for (int im = 0; im < magnitudeMatricesT.size(); im++)
+                    magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
                 orientationMatricesT.clear();
-                magnitudeMatricesT.clear();
-                
+                magnitudeMatricesT.clear();          
             }
+            //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
+            //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
-            
-            /*      
-            *
-            *  CODE HERE : pitufo
-            *  =========
-            * */
-            //std::cout << magnitudeMatrices.size() << std::endl;
-            /********
-             * PRINT LAST MATRICES
-             */
-            std::cout << "Orientation " << std::endl;
-            for(int i = 0; i<orientationMatrices[orientationMatrices.size()-1].size(); i++) {
-                for(int j = 0; j<orientationMatrices[orientationMatrices.size()-1][i].size(); j++) {
+            //std::cout << "Orientation " << std::endl;
+            /*
+            for(int i = 0; i<orientationMatrices[0].size(); i++) {
+                for(int j = 0; j<orientationMatrices[0][i].size(); j++) {
+                    std::cout << '(' << orientationMatrices[orientationMatrices.size()-1][i][j] << ")";
+                }
+                std::cout << "\n";
+            }
+            */
+
+            cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(16*18,12*18), CV_8U);;
+            //std::cout << "Magnitude " << std::endl;
+
+            for(int icub = 0; icub < magnitudeMatrices.size(); icub+=9 )
+            {
+                for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
+                    for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
+                        //std::cout << '(' << (int)pow(2.0,(double)magnitudeMatrices[0][i][j]) << ")";
+                        CUBOID_IMG.at<unsigned char>(i + 18*((icub/9)/16), j + 18*((icub/9)%16)) = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
+                    }
+                    //std::cout << "\n";
+                }          
+            }
+            cv::imshow("cuboid", CUBOID_IMG); 
+            /*
+            for(int i = 0; i<orientationMatrices[0].size(); i++) {
+                for(int j = 0; j<orientationMatrices[0][i].size(); j++) {
                     std::cout << '(' << orientationMatrices[orientationMatrices.size()-1][i][j] << ")";
                 }
                 std::cout << "\n";
@@ -98,16 +112,20 @@ int main(int argc, char** argv){
                 }
                 std::cout << "\n";
             }
-
-            cuboids.clear();
+            */
+            
+            
             cv::imshow("frame 10 : ", frame);
 
             /*
-            cv::moveWindow("frame 10 : ", 200,200);
-            cv::imshow("Some Cubid (Resize): 9 ", cuboids[80][0]);
+            cv::moveWindow("frame 10 : ", 100,100);
+            cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][0]);
             cv::moveWindow("Some Cubid (Resize): ", 100,100);
-            cv::imshow("Some Cubid (Resize): 30", cuboids[80][19]);
-            break;*/
+            cv::imshow("Some Cubid (Resize): 30", cuboids[0][19]);
+            */
+            cuboids.clear();
+            orientationMatrices.clear();
+            magnitudeMatrices.clear();
         }
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
         k = cv::waitKey(30);

@@ -1,4 +1,4 @@
-# Install script for directory: /Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm
+# Install script for directory: /home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -27,12 +27,23 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
+# Install shared libraries without execute permission?
+if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+  set(CMAKE_INSTALL_SO_NO_EXE "1")
+endif()
+
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}/usr/lib/out" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/usr/lib/out")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}/usr/lib/out"
+         RPATH "")
+  endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
    "/usr/lib/out")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
@@ -41,11 +52,11 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/usr/lib" TYPE EXECUTABLE FILES "/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/out")
+file(INSTALL DESTINATION "/usr/lib" TYPE EXECUTABLE FILES "/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/out")
   if(EXISTS "$ENV{DESTDIR}/usr/lib/out" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}/usr/lib/out")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" "$ENV{DESTDIR}/usr/lib/out")
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/usr/lib/out")
     endif()
   endif()
 endif()
@@ -58,5 +69,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

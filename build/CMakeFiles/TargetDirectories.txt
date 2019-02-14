@@ -1,8 +1,8 @@
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/install/local.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/install/strip.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/install.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/rebuild_cache.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/edit_cache.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/out.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/list_install_components.dir
-/Users/luisernestocolchado/Documents/MasterComputerScience-II/image/ofcm/build/CMakeFiles/base.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/install/strip.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/install/local.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/out.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/base.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/edit_cache.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/rebuild_cache.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/list_install_components.dir
+/home/jose/Documentos/cs/crs/c2/imagenes/part3/ofcm/build/CMakeFiles/install.dir
