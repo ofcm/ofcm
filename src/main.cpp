@@ -119,13 +119,13 @@ int main(int argc, char** argv){
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
             }
-            std::cout << "Sz cooc "<<coocurrenceMatricesMagnitud[0].size()<<", "<<coocurrenceMatricesMagnitud[0][0].size()<<std::endl;
+            //std::cout << "Sz cooc "<<coocurrenceMatricesMagnitud[0].size()<<", "<<coocurrenceMatricesMagnitud[0][0].size()<<std::endl;
             //std::cout << "size = [ " << coocurrenceMatricesMagnitud.size()    << ", " << 
             //                            coocurrenceMatricesMagnitud[0].size() << ", " << std::endl;
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
 
-            std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
+            //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
             std::vector<std::vector<std::vector<std::vector<float>>>> resM = 
             std::vector<std::vector<std::vector<std::vector<float>>>> ( H, 
                                                                         std::vector<std::vector<std::vector<float>>>(W, 
@@ -165,7 +165,7 @@ int main(int argc, char** argv){
                 for(int i = 0; i<orientationMatrices[icub].size(); i++) {
                     for(int j = 0; j<orientationMatrices[icub][i].size(); j++) {
                         orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = 
-                        (double)orientationMatrices[icub][i][j] * 35;
+                        (double)orientationMatrices[icub][i][j] * 45;
                     }
                 }          
             }
@@ -211,7 +211,6 @@ int main(int argc, char** argv){
                 coocurrenceMatricesOrientation[qq].clear();
             }
         }
-
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
         k = cv::waitKey(30);
         count +=1;
