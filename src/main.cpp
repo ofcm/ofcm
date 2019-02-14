@@ -1,4 +1,6 @@
 #include "headers/utils.h"
+#include "headers/coocurrence.hpp"
+#include "headers/miscellanius.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
@@ -10,9 +12,13 @@ std::vector<std::vector<std::vector<int>>>              orientationMatricesT;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
 std::vector<std::vector<std::vector<int>>>              orientationMatrices;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
+std::vector<cv::Mat>                                    coocurrenceMatricesMagnitud;
+std::vector<cv::Mat>                                    coocurrenceMatricesOrientation;
 
 int N = 36; // width and height size
 int T = 10; // number of frames
+int dx = 1;
+int dy = 1;
 
 int main(int argc, char** argv){
     
@@ -76,12 +82,23 @@ int main(int argc, char** argv){
                 for(int i = 0; i < cuboids[icub].size() - 1; i++){
                     opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],3);
                 }
-                for (int io = 0; io < orientationMatricesT.size(); io++)
+                for (int io = 0; io < orientationMatricesT.size(); io++){
                     orientationMatrices.push_back(orientationMatricesT[io]);
-
-                for (int im = 0; im < magnitudeMatricesT.size(); im++)
+                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, dy, 8, 315);
+                    //print2DstdVector<int>(orientationMatricesT[io]);
+                    //printMatInConsole<float>(ang);
+                    std::cout << "\n\n-------------------------------------\n\n";
+                    coocurrenceMatricesMagnitud.push_back(ang);
+                }
+                for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
+                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, dy, N);
+                    //printMatInConsole<float>(mg);
+                    //print2DstdVector(mag)
+                    //std::cout << "\n\n-------------------------------------\n\n";
+                    coocurrenceMatricesOrientation.push_back(mg);
+                }
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
             }
