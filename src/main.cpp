@@ -12,8 +12,9 @@ std::vector<std::vector<std::vector<int>>>              orientationMatricesT;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
 std::vector<std::vector<std::vector<int>>>              orientationMatrices;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
-std::vector<cv::Mat>                                    coocurrenceMatricesMagnitud;
-std::vector<cv::Mat>                                    coocurrenceMatricesOrientation;
+// 0: 0º, 1 > 45º, 2 > 90º, 3 > 135º
+std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagnitud;
+std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation;
 cv::Mat                                                 temp;
 
 int N =                                                 36; // width and height size
@@ -88,20 +89,28 @@ int main(int argc, char** argv){
                 }
                 for (int io = 0; io < orientationMatricesT.size(); io++){
                     orientationMatrices.push_back(orientationMatricesT[io]);
-                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, dy, 8, 315);
+                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, 0, 8, 315);
                     //print2DstdVector<int>(orientationMatricesT[io]);
                     //printMatInConsole<float>(ang);
                     //std::cout << "\n\n-------------------------------------\n\n";
-                    coocurrenceMatricesMagnitud.push_back(ang);
+                    coocurrenceMatricesOrientation[0].push_back(ang);
+                    coocurrenceMatricesOrientation[1].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315));
+                    // 90 º
+                    coocurrenceMatricesOrientation[2].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315));
+                    // 135º
+                    coocurrenceMatricesOrientation[3].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315));
                 }
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
-                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, dy, N);
+                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, 0, N);
                     //printMatInConsole<float>(mg);
                     //print2DstdVector(mag)
                     //std::cout << "\n\n-------------------------------------\n\n";
-                    coocurrenceMatricesOrientation.push_back(mg);
+                    coocurrenceMatricesMagnitud[0].push_back(mg):
+                    coocurrenceMatricesMagnitud[1].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, -dy, N));
+                    coocurrenceMatricesMagnitud[2].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], 0, -dy, N));
+                    coocurrenceMatricesMagnitud[3].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], -dy, -dx, N));
                 }
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
