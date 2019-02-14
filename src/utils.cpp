@@ -480,7 +480,16 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
         }
     }
 }
-
+void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0)
+{
+    for(int i = x0; i < x0 + src.rows; i++)
+    {
+        for(int j = y0; j < y0 + src.cols; j++)
+        {
+            dst.at<cv::Vec3b>(i, j) = src.at<cv::Vec3b>(i-x0, j-y0);
+        }
+    }
+}
 void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<cv::Point2f> nextPoints,
                 std::vector<std::vector<int>> &orientationMatrix, 

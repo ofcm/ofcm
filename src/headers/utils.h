@@ -39,7 +39,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<std::vector<int>> &orientationMatrix,
                 std::vector<std::vector<int>> &magnitudeMatrix);
 
-
+void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0);
 
 std::vector<float> haralick(cv::Mat Mco, int size);
 #endif
