@@ -129,8 +129,7 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
         for (int j = 0; j< diffImage.cols; ++j) {
             //std::cout << "diff = " << (int)diffImage.at<uchar>(i, j) << std::endl;
             if (diffImage.at<uchar>(i, j) > threshold){
-                prevPoints.push_back(cv::Point2f(static_cast<float>(j),
-                static_cast<float>(i))); 
+                prevPoints.push_back(cv::Point2f(static_cast<float>(j), static_cast<float>(i))); 
             }        
         }
     }
@@ -143,6 +142,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
     float distance, angle, dX,dY;
     int x, y ,distInt,angInt;
     float div_;
+
     for(int i =0;i<prevPoints.size();i++){
         //std::cout << "next = " << (int)nextPoints[i].y << ", prev = " << prevPoints[i].y << std::endl;
         //std::cout << "next = " << (int)nextPoints[i].x << ", prev = " << prevPoints[i].x << std::endl;
@@ -173,6 +173,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         if(angle < 0) 
             angle += 360.0 ;
         */
+       
         angInt  = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
         distInt = static_cast<int>(floor(log2(distance)));
        

@@ -86,16 +86,18 @@ int main(int argc, char** argv){
             cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(16*18,12*18), CV_8U);;
             //std::cout << "Magnitude " << std::endl;
 
-            for(int icub = 0; icub < magnitudeMatrices.size(); icub+=9 )
+            for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
             {
                 for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
                     for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
                         //std::cout << '(' << (int)pow(2.0,(double)magnitudeMatrices[0][i][j]) << ")";
-                        CUBOID_IMG.at<unsigned char>(i + 18*((icub/9)/16), j + 18*((icub/9)%16)) = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
+                        CUBOID_IMG.at<unsigned char>(i + 18*((icub/9)/16), j + 18*((icub/9)%16)) = 
+                        (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
                     }
                     //std::cout << "\n";
                 }          
             }
+            cv::resize(CUBOID_IMG,CUBOID_IMG, cv::Size(160,120));
             cv::imshow("cuboid", CUBOID_IMG); 
             /*
             for(int i = 0; i<orientationMatrices[0].size(); i++) {
