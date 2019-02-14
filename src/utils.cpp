@@ -173,7 +173,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         if(angle < 0) 
             angle += 360.0 ;
         */
-       
+
         angInt  = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
         distInt = static_cast<int>(floor(log2(distance)));
        

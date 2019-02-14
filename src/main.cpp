@@ -59,7 +59,7 @@ int main(int argc, char** argv){
             
             for(int icub = 0; icub < cuboids.size();icub++){
                 for(int i = 0; i < cuboids[icub].size() - 1; i++){
-                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],1);
+                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],2);
                 }
                 for (int io = 0; io < orientationMatricesT.size(); io++)
                     orientationMatrices.push_back(orientationMatricesT[io]);
