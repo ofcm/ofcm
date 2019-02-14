@@ -474,6 +474,7 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
                                 status, errors, winSize, maxLevel, termC, 0, 0.001);
         getMatrixOI(prevPoints, nextPoints, orientationMatrix,magnitudeMatrix);
     }
+
     orientationMatrices.push_back(orientationMatrix);
     magnitudeMatrices.push_back(magnitudeMatrix);
 }
@@ -539,9 +540,8 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         else
         {
             angle = atan2(dY,dX);
-            
             angle = angle * (angle >= 0) + (angle + PI * 2.0) * (angle < 0);
-            angle = angle * 180 / PI;
+            angle = angle * 180.0 / PI;
         }
 
         //std::cout << "angle = " << angle << std::endl;

@@ -17,7 +17,7 @@ std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagni
 std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
 cv::Mat                                                 temp;
 
-int N =                                                 36; // width and height size
+int N =                                                 18; // width and height size
 int T =                                                 10; // number of frames
 int dx =                                                1;
 int dy =                                                1;
@@ -139,9 +139,7 @@ int main(int argc, char** argv){
             getFeatures(coocurrenceMatricesMagnitud[0], cuboidsSize, resM, T - 1);
             getFeatures(coocurrenceMatricesOrientation[0], cuboidsSize, resO, T - 1);
             
-            //
-            
-            //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
+            std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
             //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
@@ -149,24 +147,32 @@ int main(int argc, char** argv){
 
             for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
             {
-                for(int i = 0; i<magnitudeMatrices[icub].size()/2; i++) {
-                    for(int j = 0; j<magnitudeMatrices[icub][i].size()/2; j++) {
-                        std::cout << "i,j = " << i << ", " << j << std::endl;
-                        std::cout << "==>   " << i  << "+ "<<  int(N/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(N/2)*((icub/9)%cuboidsSize.width) << std::endl;
-                        float val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
-                        CUBOID_IMG.at<unsigned char>(i + int(N/2)*((icub/9)/cuboidsSize.width), j + int(N/2)*((icub/9)%cuboidsSize.width)) = val;
+                for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
+                    for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
+                        //std::cout << "i,j = " << i << ", " << j << std::endl;
+                        //std::cout << "==>   " << i  << "+ "<<  int(N/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(N/2)*((icub/9)%cuboidsSize.width) << std::endl;
+                        int val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j] + 1) - 1;
+                        std::cout << "val = " << val << std::endl;
+                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/(cuboidsSize.width)), j + N*((icub/9)%(cuboidsSize.width))) = val;     
                     }
                 }          
             }
 
             cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*N, cuboidsSize.height*N), CV_8U);;
-
+            int valOrientation;
             for(int icub = 8; icub < orientationMatrices.size(); icub+=9 )
             {
                 for(int i = 0; i<orientationMatrices[icub].size(); i++) {
                     for(int j = 0; j<orientationMatrices[icub][i].size(); j++) {
-                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = 
-                        (double)orientationMatrices[icub][i][j] * 45;
+                        if((int)pow(2.0,(double)magnitudeMatrices[icub][i][j]) > 1){
+                            valOrientation = (int)(orientationMatrices[icub][i][j] * 45);
+                            //std::cout << " val " << valOrientation << std::endl;
+                        }
+                        else{
+                            valOrientation = 180;
+                        }
+                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = valOrientation;
+                        
                     }
                 }          
             }
@@ -194,8 +200,6 @@ int main(int argc, char** argv){
                 std::cout << "\n";
             }
             */
-            
-            
             cv::imshow("frame 10 : ", frame);
 
             /*
