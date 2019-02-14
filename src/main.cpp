@@ -15,6 +15,8 @@ std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
 std::vector<cv::Mat>                                    coocurrenceMatricesMagnitud;
 std::vector<cv::Mat>                                    coocurrenceMatricesOrientation;
 
+
+
 int N = 36; // width and height size
 int T = 10; // number of frames
 int dx = 1;
@@ -52,12 +54,13 @@ int main(int argc, char** argv){
         if(frame.empty())
             break;    
 
+        cv::resize(frame,frame, cv::Size(126,90));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
         imageBuffer.push_back(fr);
         // Obtain initial set of features
-        
+        /*
         std::vector<float> res = haralick(fr, 12);
 
         std::cout << "haralick 0  = " << res[0]  << std::endl;
@@ -72,7 +75,7 @@ int main(int argc, char** argv){
         std::cout << "haralick 9  = " << res[9]  << std::endl;
         std::cout << "haralick 10 = " << res[10] << std::endl;
         std::cout << "haralick 11 = " << res[11] << std::endl;
-
+        */
         if (imageBuffer.size() >= T)
         {
             DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
@@ -102,6 +105,24 @@ int main(int argc, char** argv){
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
             }
+            //std::cout << "size = [ " << coocurrenceMatricesMagnitud.size()    << ", " << 
+            //                            coocurrenceMatricesMagnitud[0].size() << ", " << std::endl;
+            int W = cuboidsSize.width;
+            int H = cuboidsSize.height;
+
+            std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
+            std::vector<std::vector<std::vector<std::vector<float>>>> resM = 
+            std::vector<std::vector<std::vector<std::vector<float>>>> ( H, 
+                                                                        std::vector<std::vector<std::vector<float>>>(W, 
+                                                                        std::vector<std::vector<float>>(12, std::vector<float>(T-1, 0))));
+
+            std::vector<std::vector<std::vector<std::vector<float>>>> resO = 
+            std::vector<std::vector<std::vector<std::vector<float>>>> ( H, 
+                                                                        std::vector<std::vector<std::vector<float>>>(W, 
+                                                                        std::vector<std::vector<float>>(12, std::vector<float>(T-1, 0))));
+
+            getFeatures(coocurrenceMatricesMagnitud, cuboidsSize, resM, T - 1);
+            getFeatures(coocurrenceMatricesOrientation, cuboidsSize, resO, T - 1);
             //
             
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
@@ -152,7 +173,10 @@ int main(int argc, char** argv){
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
+            coocurrenceMatricesMagnitud.clear();
+            coocurrenceMatricesOrientation.clear();
         }
+
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
         k = cv::waitKey(30);
         count +=1;

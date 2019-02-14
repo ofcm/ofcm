@@ -39,7 +39,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<std::vector<int>> &orientationMatrix,
                 std::vector<std::vector<int>> &magnitudeMatrix);
 
-
+void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T);
 
 std::vector<float> haralick(cv::Mat Mco, int size);
 #endif
