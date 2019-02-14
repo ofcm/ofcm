@@ -14,16 +14,19 @@ std::vector<std::vector<std::vector<int>>>              orientationMatrices;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
 std::vector<cv::Mat>                                    coocurrenceMatricesMagnitud;
 std::vector<cv::Mat>                                    coocurrenceMatricesOrientation;
+cv::Mat                                                 temp;
 
+int N =                                                 18; // width and height size
+int T =                                                 10; // number of frames
+int dx =                                                1;
+int dy =                                                1;
+int tHeight =                                           160;
+int tWidth =                                            120;
 
-
-int N = 36; // width and height size
-int T = 10; // number of frames
-int dx = 1;
-int dy = 1;
 
 int main(int argc, char** argv){
-    
+    temp = cv::Mat(tHeight*2, tWidth*2, CV_8UC3, cv::Scalar(45,45,45));
+
     if (argc < 1)
     {
         std::cout << "Input file video ..." << std::endl;
@@ -42,7 +45,6 @@ int main(int argc, char** argv){
     unsigned char a = 10;
     unsigned char b = 20;
 
-
     //std::cout << a - b << std::endl;
     //return 0;
     char k;
@@ -54,7 +56,7 @@ int main(int argc, char** argv){
         if(frame.empty())
             break;    
 
-        cv::resize(frame,frame, cv::Size(126,90));
+        //cv::resize(frame,frame, cv::Size(144, 108));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
@@ -135,23 +137,40 @@ int main(int argc, char** argv){
             {
                 for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
                     for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
-                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = 
-                        (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
+
+                        float val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
+                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = val;
                     }
-                    //std::cout << "\n";
                 }          
             }
-            cv::resize(CUBOID_IMG,CUBOID_IMG, cv::Size(160,120));
-            cv::imshow("cuboid", CUBOID_IMG); 
 
-            /*
-            for(int i = 0; i<orientationMatrices[0].size(); i++) {
-                for(int j = 0; j<orientationMatrices[0][i].size(); j++) {
-                    std::cout << '(' << orientationMatrices[orientationMatrices.size()-1][i][j] << ")";
-                }
-                std::cout << "\n";
+            cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*N, cuboidsSize.height*N), CV_8U);;
+
+            for(int icub = 8; icub < orientationMatrices.size(); icub+=9 )
+            {
+                for(int i = 0; i<orientationMatrices[icub].size(); i++) {
+                    for(int j = 0; j<orientationMatrices[icub][i].size(); j++) {
+                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = 
+                        (double)orientationMatrices[icub][i][j] * 35;
+                    }
+                }          
             }
 
+            //Mat2Mat(frame        , temp, 0              ,               0);
+            cv::resize(CUBOID_IMG,CUBOID_IMG, cv::Size(imageSize.width, imageSize.height));
+            cv::resize(orientationImg,orientationImg, cv::Size(imageSize.width, imageSize.height));
+            //Mat2Mat(CUBOID_IMG        , temp, 120              ,               0);
+            cv::applyColorMap(orientationImg, orientationImg, cv::COLORMAP_HSV);
+            cv::imshow("cuboid", CUBOID_IMG); 
+            cv::imshow("Map color", orientationImg); 
+            /*std::cout << " ORIENTATION " << std::endl;
+            for(int i = 0; i<orientationMatrices[0].size(); i++) {
+                for(int j = 0; j<orientationMatrices[0][i].size(); j++) {
+                    std::cout << '(' << orientationMatrices[orientationMatrices.size()-1][i][j] * 35<< ")";
+                }
+                std::cout << "\n";
+            }*/
+              /*
             std::cout << "Magnitude " << std::endl;
             for(int i = 0; i<magnitudeMatrices[magnitudeMatrices.size() - 1].size(); i++) {
                 for(int j = 0; j<magnitudeMatrices[magnitudeMatrices.size() - 1][i].size(); j++) {

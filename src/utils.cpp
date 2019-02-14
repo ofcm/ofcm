@@ -409,7 +409,7 @@ void DenseSampling(std::vector<cv::Mat> imageBuffer,
             cuboids.push_back(cuboid);
             //std::cout << "size : " << Cuboid.size() << std::endl;
             w++;
-            std::cout << "i,j = " << i << ", " << j << std::endl;    
+            //std::cout << "i,j = " << i << ", " << j << std::endl;    
         }
         h++;
     }
@@ -503,7 +503,16 @@ void getBetterPoints(std::vector<cv::Point2f> &prevPoints,
         }
     }
 }
-
+void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0)
+{
+    for(int i = x0; i < x0 + src.rows; i++)
+    {
+        for(int j = y0; j < y0 + src.cols; j++)
+        {
+            dst.at<cv::Vec3b>(i, j) = src.at<cv::Vec3b>(i-x0, j-y0);
+        }
+    }
+}
 void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<cv::Point2f> nextPoints,
                 std::vector<std::vector<int>> &orientationMatrix, 
@@ -515,10 +524,12 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
     for(int i =0;i<prevPoints.size();i++){
         //std::cout << "next = " << (int)nextPoints[i].y << ", prev = " << prevPoints[i].y << std::endl;
         //std::cout << "next = " << (int)nextPoints[i].x << ", prev = " << prevPoints[i].x << std::endl;
-        dY = (int)nextPoints[i].y - prevPoints[i].y;
-        dX = (int)nextPoints[i].x - prevPoints[i].x;
+        dY = nextPoints[i].y - prevPoints[i].y;
+        dX = nextPoints[i].x - prevPoints[i].x;
 
         distance = sqrt((dX * dX) + (dY*dY));
+        //std::cout << "distance = " << distance << std::endl; 
+        
         if(dY == 0)
         {
             angle = 0.0;
@@ -532,6 +543,7 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
             angle = angle * 180 / PI;
         }
 
+        //std::cout << "angle = " << angle << std::endl;
         //std::cout << "angle = " << angle << ", mod = "<< distance << std::endl;
             //div_ = (dY/dX);
         /*
@@ -544,13 +556,16 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         */
 
         angInt  = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
-        distInt = static_cast<int>(floor(log2(distance)));
-       
+        //distInt = static_cast<int>(floor(log2(distance)));
+        distInt = static_cast<int>(floor(magnitudBin * distance / 5.0));
+        //std::cout << "distInt = " << distInt << std::endl; 
+
         if(distInt < 0)
             distInt = 0;
         else if (distInt >= magnitudBin)
             distInt = magnitudBin - 1;
 
+        
         y = (int) prevPoints[i].y;
         x = (int) prevPoints[i].x;
         //std::cout << "prev orient " << magnitudeMatrix<< std::endl;
