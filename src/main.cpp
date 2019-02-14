@@ -17,7 +17,7 @@ std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagni
 std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
 cv::Mat                                                 temp;
 
-int N =                                                 18; // width and height size
+int N =                                                 36; // width and height size
 int T =                                                 10; // number of frames
 int dx =                                                1;
 int dy =                                                1;
@@ -149,11 +149,12 @@ int main(int argc, char** argv){
 
             for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
             {
-                for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
-                    for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
-
+                for(int i = 0; i<magnitudeMatrices[icub].size()/2; i++) {
+                    for(int j = 0; j<magnitudeMatrices[icub][i].size()/2; j++) {
+                        std::cout << "i,j = " << i << ", " << j << std::endl;
+                        std::cout << "==>   " << i  << "+ "<<  int(N/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(N/2)*((icub/9)%cuboidsSize.width) << std::endl;
                         float val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
-                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = val;
+                        CUBOID_IMG.at<unsigned char>(i + int(N/2)*((icub/9)/cuboidsSize.width), j + int(N/2)*((icub/9)%cuboidsSize.width)) = val;
                     }
                 }          
             }
