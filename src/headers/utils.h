@@ -41,4 +41,5 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
 
 
 
+std::vector<float> haralick(cv::Mat Mco, int size);
 #endif
