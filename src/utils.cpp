@@ -356,6 +356,7 @@ void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vect
     for (int i = 0; i < Mco_Array.size(); i++)
     {
         cv::Mat Mco          = Mco_Array[i];
+        //std::cout<<"....sss"<<std::endl;
         std::vector<float> f = haralick(Mco, 12);
 
         

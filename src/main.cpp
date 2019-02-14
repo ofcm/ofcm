@@ -13,8 +13,8 @@ std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
 std::vector<std::vector<std::vector<int>>>              orientationMatrices;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
 // 0: 0º, 1 > 45º, 2 > 90º, 3 > 135º
-std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagnitud;
-std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation;
+std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagnitud(4);
+std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
 cv::Mat                                                 temp;
 
 int N =                                                 18; // width and height size
@@ -46,7 +46,7 @@ int main(int argc, char** argv){
     unsigned char a = 10;
     unsigned char b = 20;
 
-    //std::cout << a - b << std::endl;
+    std::cout << a - b << std::endl;
     //return 0;
     char k;
     int count = 0;
@@ -95,12 +95,14 @@ int main(int argc, char** argv){
                     //printMatInConsole<float>(ang);
                     //std::cout << "\n\n-------------------------------------\n\n";
                     coocurrenceMatricesOrientation[0].push_back(ang);
+                    //std::cout << "\n\n-------------------------------------\n\n";
                     coocurrenceMatricesOrientation[1].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315));
                     // 90 º
                     coocurrenceMatricesOrientation[2].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315));
                     // 135º
                     coocurrenceMatricesOrientation[3].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315));
                 }
+                //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
@@ -108,14 +110,16 @@ int main(int argc, char** argv){
                     //printMatInConsole<float>(mg);
                     //print2DstdVector(mag)
                     //std::cout << "\n\n-------------------------------------\n\n";
-                    coocurrenceMatricesMagnitud[0].push_back(mg):
+                    coocurrenceMatricesMagnitud[0].push_back(mg);
                     coocurrenceMatricesMagnitud[1].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, -dy, N));
                     coocurrenceMatricesMagnitud[2].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], 0, -dy, N));
                     coocurrenceMatricesMagnitud[3].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], -dy, -dx, N));
                 }
+                //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
             }
+            std::cout << "Sz cooc "<<coocurrenceMatricesMagnitud[0].size()<<", "<<coocurrenceMatricesMagnitud[0][0].size()<<std::endl;
             //std::cout << "size = [ " << coocurrenceMatricesMagnitud.size()    << ", " << 
             //                            coocurrenceMatricesMagnitud[0].size() << ", " << std::endl;
             int W = cuboidsSize.width;
@@ -132,8 +136,9 @@ int main(int argc, char** argv){
                                                                         std::vector<std::vector<std::vector<float>>>(W, 
                                                                         std::vector<std::vector<float>>(12, std::vector<float>(T-1, 0))));
 
-            getFeatures(coocurrenceMatricesMagnitud, cuboidsSize, resM, T - 1);
-            getFeatures(coocurrenceMatricesOrientation, cuboidsSize, resO, T - 1);
+            getFeatures(coocurrenceMatricesMagnitud[0], cuboidsSize, resM, T - 1);
+            getFeatures(coocurrenceMatricesOrientation[0], cuboidsSize, resO, T - 1);
+            
             //
             
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
@@ -164,7 +169,7 @@ int main(int argc, char** argv){
                     }
                 }          
             }
-
+            
             //Mat2Mat(frame        , temp, 0              ,               0);
             cv::resize(CUBOID_IMG,CUBOID_IMG, cv::Size(imageSize.width, imageSize.height));
             cv::resize(orientationImg,orientationImg, cv::Size(imageSize.width, imageSize.height));
@@ -201,8 +206,10 @@ int main(int argc, char** argv){
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
-            coocurrenceMatricesMagnitud.clear();
-            coocurrenceMatricesOrientation.clear();
+            for(int qq = 0; qq < 4; qq++){
+                coocurrenceMatricesMagnitud[qq].clear();
+                coocurrenceMatricesOrientation[qq].clear();
+            }
         }
 
         //std::cout << "Buffer Size : " << imageBuffer.size() << std::endl;
