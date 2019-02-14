@@ -87,7 +87,7 @@ int main(int argc, char** argv){
                     cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, dy, 8, 315);
                     //print2DstdVector<int>(orientationMatricesT[io]);
                     //printMatInConsole<float>(ang);
-                    std::cout << "\n\n-------------------------------------\n\n";
+                    //std::cout << "\n\n-------------------------------------\n\n";
                     coocurrenceMatricesMagnitud.push_back(ang);
                 }
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
