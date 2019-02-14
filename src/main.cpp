@@ -1,5 +1,6 @@
 #include "headers/utils.h"
 #include "headers/coocurrence.hpp"
+#include "headers/miscellanius.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
@@ -68,13 +69,20 @@ int main(int argc, char** argv){
                 }
                 for (int io = 0; io < orientationMatricesT.size(); io++){
                     orientationMatrices.push_back(orientationMatricesT[io]);
-                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[io], dx, dy, N);
-                    coocurrenceMatricesMagnitud.push_back(mg);
+                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, dy, 8, 315);
+                    //print2DstdVector<int>(orientationMatricesT[io]);
+                    //printMatInConsole<float>(ang);
+                    std::cout << "\n\n-------------------------------------\n\n";
+                    coocurrenceMatricesMagnitud.push_back(ang);
                 }
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
-                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[im], dx, dy);
-                    coocurrenceMatricesOrientation.push_back(ang);
+
+                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, dy, N);
+                    //printMatInConsole<float>(mg);
+                    //print2DstdVector(mag)
+                    //std::cout << "\n\n-------------------------------------\n\n";
+                    coocurrenceMatricesOrientation.push_back(mg);
                 }
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          

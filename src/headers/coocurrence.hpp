@@ -67,8 +67,8 @@ namespace coocurrence{
         for(int i = 0; i < cuboidSize; i++){
             for(int j = 0; j < cuboidSize; j++){
                 if(isWithInMatrix(i + dy, j + dx, cuboidSize, cuboidSize)){
-                    int val1 = matrix[i][j]/widthbin;
-                    int val2 = matrix[i + dy][j + dx]/widthbin;
+                    int val1 = matrix[i][j];///widthbin;
+                    int val2 = matrix[i + dy][j + dx];///widthbin;
                     //* since it is normalized from 0 to eight
                     //* Increment the historigram at values (v1, v2)
                     output.at<float>(val1, val2)++;
