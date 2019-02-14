@@ -139,8 +139,6 @@ int main(int argc, char** argv){
             getFeatures(coocurrenceMatricesMagnitud[0], cuboidsSize, resM, T - 1);
             getFeatures(coocurrenceMatricesOrientation[0], cuboidsSize, resO, T - 1);
             
-            //
-            
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
@@ -153,19 +151,26 @@ int main(int argc, char** argv){
                     for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
 
                         float val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j]);
-                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = val;
+                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = val;     
                     }
                 }          
             }
 
             cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*N, cuboidsSize.height*N), CV_8U);;
-
+            float valOrientation;
             for(int icub = 8; icub < orientationMatrices.size(); icub+=9 )
             {
                 for(int i = 0; i<orientationMatrices[icub].size(); i++) {
                     for(int j = 0; j<orientationMatrices[icub][i].size(); j++) {
-                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = 
-                        (double)orientationMatrices[icub][i][j] * 45;
+                        if((int)pow(2.0,(double)magnitudeMatrices[icub][i][j]) > 1){
+                            valOrientation = (double)orientationMatrices[icub][i][j] * 45;
+                            std::cout << " val " << valOrientation << std::endl;
+                        }
+                        else{
+                            valOrientation = 0;
+                        }
+                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = valOrientation;
+                        
                     }
                 }          
             }
@@ -193,8 +198,6 @@ int main(int argc, char** argv){
                 std::cout << "\n";
             }
             */
-            
-            
             cv::imshow("frame 10 : ", frame);
 
             /*
