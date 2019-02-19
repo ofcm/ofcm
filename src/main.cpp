@@ -1,4 +1,5 @@
-#include "headers/utils.h"
+#include "headers/utils.hpp"
+#include "headers/haralick.hpp"
 #include "headers/coocurrence.hpp"
 #include "headers/miscellanius.hpp"
 
@@ -17,12 +18,12 @@ std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagni
 std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
 cv::Mat                                                 temp;
 
-int N =                                                 18; // width and height size
-int T =                                                 10; // number of frames
-int dx =                                                1;
-int dy =                                                1;
-int tHeight =                                           160;
-int tWidth =                                            120;
+int CuboidWidth     =                                   36; // width and height size
+int T               =                                   10; // number of frames
+int dx              =                                   1;
+int dy              =                                   1;
+int tHeight         =                                   160;
+int tWidth          =                                   120;
 
 
 int main(int argc, char** argv){
@@ -57,31 +58,15 @@ int main(int argc, char** argv){
         if(frame.empty())
             break;    
 
-        //cv::resize(frame,frame, cv::Size(144, 108));
+        cv::resize(frame,frame, cv::Size(144, 108));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
         imageBuffer.push_back(fr);
-        // Obtain initial set of features
-        /*
-        std::vector<float> res = haralick(fr, 12);
 
-        std::cout << "haralick 0  = " << res[0]  << std::endl;
-        std::cout << "haralick 1  = " << res[1]  << std::endl;
-        std::cout << "haralick 2  = " << res[2]  << std::endl;
-        std::cout << "haralick 3  = " << res[3]  << std::endl;
-        std::cout << "haralick 4  = " << res[4]  << std::endl;
-        std::cout << "haralick 5  = " << res[5]  << std::endl;
-        std::cout << "haralick 6  = " << res[6]  << std::endl;
-        std::cout << "haralick 7  = " << res[7]  << std::endl;
-        std::cout << "haralick 8  = " << res[8]  << std::endl;
-        std::cout << "haralick 9  = " << res[9]  << std::endl;
-        std::cout << "haralick 10 = " << res[10] << std::endl;
-        std::cout << "haralick 11 = " << res[11] << std::endl;
-        */
         if (imageBuffer.size() >= T)
         {
-            DenseSampling(imageBuffer, N, T, cuboids,cuboidsSize);
+            DenseSampling(imageBuffer, CuboidWidth, T, cuboids,cuboidsSize);
             updateBuffer(imageBuffer);
             
             for(int icub = 0; icub < cuboids.size();icub++){
@@ -89,31 +74,27 @@ int main(int argc, char** argv){
                     opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],3);
                 }
                 for (int io = 0; io < orientationMatricesT.size(); io++){
-                    orientationMatrices.push_back(orientationMatricesT[io]);
-                    cv::Mat ang= coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, 0, 8, 315);
-                    //print2DstdVector<int>(orientationMatricesT[io]);
-                    //printMatInConsole<float>(ang);
-                    //std::cout << "\n\n-------------------------------------\n\n";
+                    orientationMatrices.push_back(orientationMatricesT[io]);                    
+                    cv::Mat ang= CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, 0, 8, 315, CuboidWidth);
+                    
+                    // 0  º
                     coocurrenceMatricesOrientation[0].push_back(ang);
-                    //std::cout << "\n\n-------------------------------------\n\n";
-                    coocurrenceMatricesOrientation[1].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315));
+                    // 45 º
+                    coocurrenceMatricesOrientation[1].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315, CuboidWidth));
                     // 90 º
-                    coocurrenceMatricesOrientation[2].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315));
+                    coocurrenceMatricesOrientation[2].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315 ,CuboidWidth));
                     // 135º
-                    coocurrenceMatricesOrientation[3].push_back(coocurrence::CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315));
+                    coocurrenceMatricesOrientation[3].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315, CuboidWidth));
                 }
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
-                    cv::Mat mg = coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, 0, N);
-                    //printMatInConsole<float>(mg);
-                    //print2DstdVector(mag)
-                    //std::cout << "\n\n-------------------------------------\n\n";
+                    cv::Mat mg = CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, 0, CuboidWidth);
                     coocurrenceMatricesMagnitud[0].push_back(mg);
-                    coocurrenceMatricesMagnitud[1].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, -dy, N));
-                    coocurrenceMatricesMagnitud[2].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], 0, -dy, N));
-                    coocurrenceMatricesMagnitud[3].push_back(coocurrence::CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], -dy, -dx, N));
+                    coocurrenceMatricesMagnitud[1].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],   dx, - dy, CuboidWidth));
+                    coocurrenceMatricesMagnitud[2].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],    0, - dy, CuboidWidth));
+                    coocurrenceMatricesMagnitud[3].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], - dy, - dx, CuboidWidth));
                 }
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 orientationMatricesT.clear();
@@ -125,7 +106,7 @@ int main(int argc, char** argv){
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
 
-            //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
+            std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
             std::vector<std::vector<std::vector<std::vector<float>>>> resM = 
             std::vector<std::vector<std::vector<std::vector<float>>>> ( H, 
                                                                         std::vector<std::vector<std::vector<float>>>(W, 
@@ -140,25 +121,27 @@ int main(int argc, char** argv){
             getFeatures(coocurrenceMatricesOrientation[0], cuboidsSize, resO, T - 1);
             
             std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
-            //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
+            std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
             //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
-            cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(cuboidsSize.width*N, cuboidsSize.height*N), CV_8U);;
-
+            
+            cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(cuboidsSize.width*CuboidWidth, cuboidsSize.height*CuboidWidth), CV_8U);;
+            
             for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
             {
                 for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
                     for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
                         //std::cout << "i,j = " << i << ", " << j << std::endl;
-                        //std::cout << "==>   " << i  << "+ "<<  int(N/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(N/2)*((icub/9)%cuboidsSize.width) << std::endl;
+                        //std::cout << "==>   " << i  << "+ "<<  int(CuboidWidth/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(CuboidWidth/2)*((icub/9)%cuboidsSize.width) << std::endl;
                         int val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j] + 1) - 1;
-                        std::cout << "val = " << val << std::endl;
-                        CUBOID_IMG.at<unsigned char>(i + N*((icub/9)/(cuboidsSize.width)), j + N*((icub/9)%(cuboidsSize.width))) = val;     
+                        //if (val > 1)
+                        //    std::cout << "val = " << val << std::endl;
+                        CUBOID_IMG.at<unsigned char>(i + CuboidWidth*((icub/9)/(cuboidsSize.width)), j + CuboidWidth*((icub/9)%(cuboidsSize.width))) = val;     
                     }
                 }          
             }
 
-            cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*N, cuboidsSize.height*N), CV_8U);;
+            cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*CuboidWidth, cuboidsSize.height*CuboidWidth), CV_8U);;
             int valOrientation;
             for(int icub = 8; icub < orientationMatrices.size(); icub+=9 )
             {
@@ -171,7 +154,7 @@ int main(int argc, char** argv){
                         else{
                             valOrientation = 180;
                         }
-                        orientationImg.at<unsigned char>(i + N*((icub/9)/cuboidsSize.width), j + N*((icub/9)%cuboidsSize.width)) = valOrientation;
+                        orientationImg.at<unsigned char>(i + CuboidWidth*((icub/9)/cuboidsSize.width), j + CuboidWidth*((icub/9)%cuboidsSize.width)) = valOrientation;
                         
                     }
                 }          

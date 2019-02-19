@@ -1,7 +1,9 @@
 # ifndef __MISCC__
 # define __MISCC__
+
 # include <opencv2/opencv.hpp>
 # include <vector>
+
 template <class T>
 void printMatInConsole(const cv::Mat & matrix){
     for(int tt = 0; tt< matrix.rows; tt++) {
