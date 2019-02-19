@@ -25,6 +25,7 @@ add_library(base
   src/utils.cpp 
   src/haralick.cpp  
   src/coocurrence.cpp
+  src/opticalflow.cpp
 )
 
 

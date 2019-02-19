@@ -13,12 +13,14 @@ std::vector<std::vector<std::vector<int>>>              orientationMatricesT;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
 std::vector<std::vector<std::vector<int>>>              orientationMatrices;
 std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
+
 // 0: 0º, 1 > 45º, 2 > 90º, 3 > 135º
+
 std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagnitud(4);
 std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
 cv::Mat                                                 temp;
 
-int CuboidWidth     =                                   36; // width and height size
+int cuboidDim       =                                   18; // width and height size
 int T               =                                   10; // number of frames
 int dx              =                                   1;
 int dy              =                                   1;
@@ -44,11 +46,7 @@ int main(int argc, char** argv){
         std::cout << "Failed to open camera." << std::endl;
         return -1;
     }
-    unsigned char a = 10;
-    unsigned char b = 20;
-
-    std::cout << a - b << std::endl;
-    //return 0;
+    
     char k;
     int count = 0;
     for (;;)
@@ -66,35 +64,36 @@ int main(int argc, char** argv){
 
         if (imageBuffer.size() >= T)
         {
-            DenseSampling(imageBuffer, CuboidWidth, T, cuboids,cuboidsSize);
+            DenseSampling(imageBuffer, cuboidDim, T, cuboids,cuboidsSize);
             updateBuffer(imageBuffer);
             
             for(int icub = 0; icub < cuboids.size();icub++){
                 for(int i = 0; i < cuboids[icub].size() - 1; i++){
-                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i+1],3);
+                    int i_next = i + 1;
+                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i_next],3);
                 }
                 for (int io = 0; io < orientationMatricesT.size(); io++){
                     orientationMatrices.push_back(orientationMatricesT[io]);                    
-                    cv::Mat ang= CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, 0, 8, 315, CuboidWidth);
+                    cv::Mat ang= CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, 0, 8, 315, cuboidDim);
                     
                     // 0  º
                     coocurrenceMatricesOrientation[0].push_back(ang);
                     // 45 º
-                    coocurrenceMatricesOrientation[1].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315, CuboidWidth));
+                    coocurrenceMatricesOrientation[1].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], dx, -dy, 8, 315, cuboidDim));
                     // 90 º
-                    coocurrenceMatricesOrientation[2].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315 ,CuboidWidth));
+                    coocurrenceMatricesOrientation[2].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], 0, -dy, 8, 315 ,cuboidDim));
                     // 135º
-                    coocurrenceMatricesOrientation[3].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315, CuboidWidth));
+                    coocurrenceMatricesOrientation[3].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315, cuboidDim));
                 }
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
 
-                    cv::Mat mg = CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, 0, CuboidWidth);
+                    cv::Mat mg = CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], dx, 0, cuboidDim);
                     coocurrenceMatricesMagnitud[0].push_back(mg);
-                    coocurrenceMatricesMagnitud[1].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],   dx, - dy, CuboidWidth));
-                    coocurrenceMatricesMagnitud[2].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],    0, - dy, CuboidWidth));
-                    coocurrenceMatricesMagnitud[3].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], - dy, - dx, CuboidWidth));
+                    coocurrenceMatricesMagnitud[1].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],   dx, - dy, cuboidDim));
+                    coocurrenceMatricesMagnitud[2].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],    0, - dy, cuboidDim));
+                    coocurrenceMatricesMagnitud[3].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], - dy, - dx, cuboidDim));
                 }
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 orientationMatricesT.clear();
@@ -125,23 +124,51 @@ int main(int argc, char** argv){
             
             //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
             
-            cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(cuboidsSize.width*CuboidWidth, cuboidsSize.height*CuboidWidth), CV_8U);;
-            
-            for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
+            cv::Mat CUBOID_IMG = cv::Mat::zeros(cv::Size(cuboidsSize.width*cuboidDim/2, cuboidsSize.height*cuboidDim/2), CV_8U);
+
+            for (int i = 0; i < CUBOID_IMG.cols; i++ )
             {
-                for(int i = 0; i<magnitudeMatrices[icub].size(); i++) {
-                    for(int j = 0; j<magnitudeMatrices[icub][i].size(); j++) {
-                        //std::cout << "i,j = " << i << ", " << j << std::endl;
-                        //std::cout << "==>   " << i  << "+ "<<  int(CuboidWidth/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(CuboidWidth/2)*((icub/9)%cuboidsSize.width) << std::endl;
-                        int val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j] + 1) - 1;
-                        //if (val > 1)
-                        //    std::cout << "val = " << val << std::endl;
-                        CUBOID_IMG.at<unsigned char>(i + CuboidWidth*((icub/9)/(cuboidsSize.width)), j + CuboidWidth*((icub/9)%(cuboidsSize.width))) = val;     
-                    }
-                }          
+                for (int j = 0; j < CUBOID_IMG.rows; j++ )
+                {
+                    CUBOID_IMG.at<unsigned char>(j, i) = 155;
+                }
             }
 
-            cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*CuboidWidth, cuboidsSize.height*CuboidWidth), CV_8U);;
+
+            
+            //CUBOID_IMG = cv::Scalar(155);
+            for(int icub = 8; icub < magnitudeMatrices.size(); icub+=9 )
+            {
+                int icub_x = (icub/9) % cuboidsSize.width;
+                int icub_y = (icub/9) / cuboidsSize.width;
+
+                //std::cout << "icub = " << icub << ", icub_x = " << icub_x << ", icub_y = " << icub_y << std::endl;
+
+                
+                for(int i = 0; i<magnitudeMatrices[icub].size()/2; i++) {
+                    for(int j = 0; j<magnitudeMatrices[icub][i].size()/2; j++) {
+                        //std::cout << "i,j = " << i << ", " << j << std::endl;
+                        //std::cout << "==>   " << i  << "+ "<<  int(cuboidDim/2)*((icub/9)/cuboidsSize.width) << " , " << j <<" + " <<  int(cuboidDim/2)*((icub/9)%cuboidsSize.width) << std::endl;
+                        //std::cout << magnitudeMatrices[icub][i][j] << " ";
+                        int val = (int)pow(2.0,(double)magnitudeMatrices[icub][i][j] + 1) - 1;
+
+                        if (val > 255)
+                            val = 255;
+                        //if (val > 1)
+                        //    std::cout << "val = " << val << std::endl;
+                        CUBOID_IMG.at<unsigned char>(icub_y*cuboidDim/2 + j, icub_x*cuboidDim/2+ i) = val;
+                        
+                        //CUBOID_IMG.at<unsigned char>(i + cuboidDim*((icub/9)/(cuboidsSize.width)), j + cuboidDim*((icub/9)%(cuboidsSize.width))) = val;     
+                    }
+                    //std::cout<<std::endl;
+                }          
+                //std::cout << "==========" << std::endl;
+            }
+            cv::Rect myROI(0, 0 , cuboidDim/2, cuboidDim/2);
+            cv::Mat croppedRef(CUBOID_IMG, myROI);
+
+            cv::imshow("crop", croppedRef );
+            cv::Mat orientationImg = cv::Mat::zeros(cv::Size(cuboidsSize.width*cuboidDim, cuboidsSize.height*cuboidDim), CV_8U);;
             int valOrientation;
             for(int icub = 8; icub < orientationMatrices.size(); icub+=9 )
             {
@@ -149,12 +176,11 @@ int main(int argc, char** argv){
                     for(int j = 0; j<orientationMatrices[icub][i].size(); j++) {
                         if((int)pow(2.0,(double)magnitudeMatrices[icub][i][j]) > 1){
                             valOrientation = (int)(orientationMatrices[icub][i][j] * 45);
-                            //std::cout << " val " << valOrientation << std::endl;
                         }
                         else{
                             valOrientation = 180;
                         }
-                        orientationImg.at<unsigned char>(i + CuboidWidth*((icub/9)/cuboidsSize.width), j + CuboidWidth*((icub/9)%cuboidsSize.width)) = valOrientation;
+                        orientationImg.at<unsigned char>(i + cuboidDim*((icub/9)/cuboidsSize.width), j + cuboidDim*((icub/9)%cuboidsSize.width)) = valOrientation;
                         
                     }
                 }          
@@ -185,12 +211,12 @@ int main(int argc, char** argv){
             */
             cv::imshow("frame 10 : ", frame);
 
-            /*
-            cv::moveWindow("frame 10 : ", 100,100);
-            cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][0]);
+            
+            //cv::moveWindow("frame 10 : ", 100,100);
+            cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][9]);
             cv::moveWindow("Some Cubid (Resize): ", 100,100);
-            cv::imshow("Some Cubid (Resize): 30", cuboids[0][19]);
-            */
+            //cv::imshow("Some Cubid (Resize): 30", cuboids[0][]);
+            
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();

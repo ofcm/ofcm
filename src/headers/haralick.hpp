@@ -1,12 +1,14 @@
 #ifndef HARALICK_HPP
 #define HARALICK_HPP
 
-#include <vector>
+//#include <vector>
 
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/video/tracking.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+//#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/calib3d/calib3d.hpp>
+//#include <opencv2/video/tracking.hpp>
+
+#include "utils.hpp"
 
 float angular2ndMoment(cv::Mat Mco);
 float contrast(cv::Mat Mco);
