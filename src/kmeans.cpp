@@ -13,11 +13,11 @@ void kmeans::runKmeans(std::vector<int>& result){
     std::vector<std::vector<std::vector<float>>> cluster(numberClass);
     oldCenters = centers;
 
-    std::cout << "numberClass = " << numberClass << std::endl;
+    //std::cout << "numberClass = " << numberClass << std::endl;
     int itr = 0;
     while (flag == false){
         flag = true;
-        std::cout << "itr = " << itr << std::endl;
+        //std::cout << "itr = " << itr << std::endl;
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
         for(auto feature : features){
@@ -67,7 +67,7 @@ void kmeans::runKmeans(std::vector<int>& result){
         oldCenters = newCenters;
     }
     for(int k = 0;k < numberClass;k++){
-        std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
+        //std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
         result.push_back(cluster[k].size());
     }
 }
@@ -82,7 +82,7 @@ void kmeans::startingCenters(){
 int kmeans::getGoodCluster(std::vector<float> feature){
     int gc;
     float minError = std::numeric_limits<double>::infinity();
-    
+
     for(int k = 0;k < numberClass;k++){
         float sum = 0.0;
 

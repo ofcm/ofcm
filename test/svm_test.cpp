@@ -5,8 +5,8 @@ int n = 10;
 int main(){
     std::cout<<"hello"<<std::endl;
     std::vector<std::vector<float>> data{{0.8f , 0.8f}, {0.7f , 0.7f},
-                                    {0.9f , 0.8f}, {-0.8f , -0.9f},
-                                    {-0.8f , -0.7f}, {-0.7f , -0.7f}};
+                                        {0.9f , 0.8f}, {-0.8f , -0.9f},
+                                        {-0.8f , -0.7f}, {-0.7f , -0.7f}};
     
     std::vector<int> y{1, 1, 1, -1, -1 ,-1};
     std::vector<int> labels{-1, 1};

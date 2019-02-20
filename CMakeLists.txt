@@ -28,6 +28,7 @@ add_library(base
   src/opticalflow.cpp
   src/cuboids.cpp
   src/kmeans.cpp
+  src/ofcm.cpp
 )
 
 
