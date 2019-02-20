@@ -45,6 +45,16 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
                 }
 
             }
+
+            float sum = 0.0;
+            for (int fi = 0; fi < 12; fi++)
+            {
+                sum += abs(f[fi]);
+            }
+
+            if (sum == 0.0)
+                continue;
+
             res.push_back(f);
         }
     }
@@ -63,8 +73,17 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
                 {
                     f[fi] += ftmp[fi]/((float)T);
                 }
-
             }
+
+            float sum = 0.0;
+            for (int fi = 0; fi < 12; fi++)
+            {
+                sum += abs(f[fi]);
+            }
+
+            if (sum == 0.0)
+                continue;
+                
             res.push_back(f);
         }
     }

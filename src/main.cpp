@@ -135,9 +135,10 @@ int main(int argc, char** argv){
                 }
                 std::cout << std::endl;
             }
-            */
             
-            //std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
+           */
+            
+            std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
