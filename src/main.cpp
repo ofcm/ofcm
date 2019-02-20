@@ -240,18 +240,18 @@ int main(int argc, char** argv){
             cv::applyColorMap(MagnitudImg, MagnitudImg, cv::COLORMAP_HOT);
             cv::applyColorMap(OrientationImg, OrientationImg, cv::COLORMAP_HSV);
 
-            cv::resize(MagnitudImg,MagnitudImg, cv::Size(imageSize.width, imageSize.height));
-            cv::resize(OrientationImg,OrientationImg, cv::Size(imageSize.width, imageSize.height));
+            cv::resize(frame,frame, cv::Size(imageSize.width*2, imageSize.height*2));
+            cv::resize(MagnitudImg,MagnitudImg, cv::Size(imageSize.width*2, imageSize.height*2));
+            cv::resize(OrientationImg,OrientationImg, cv::Size(imageSize.width*2, imageSize.height*2));
 
             cv::imshow("Magnitud", MagnitudImg); 
             cv::imshow("OrientationImg", OrientationImg); 
-
-            cv::imshow("frame 10 : ", frame);
+            cv::imshow("frame", frame);
 
 
             //cv::imshow("Some Cubid (Resize): 9 ", cuboids[0][9]);
             //cv::moveWindow("Some Cubid (Resize): ", 100,100);
-            cv::moveWindow("frame 10 : ", 100,100);
+            cv::moveWindow("frame", 100,100);
             cv::moveWindow("Magnitud", 100 + frame.cols,100);
             cv::moveWindow("OrientationImg", 100 + frame.cols *2 ,100);
 
