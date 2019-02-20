@@ -44,4 +44,12 @@ void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vect
 void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0);
 
 std::vector<float> haralick(cv::Mat Mco, int size);
+
+void plotMO(cv::Mat& src1, 
+            cv::Mat& src2, 
+            std::vector<std::vector<std::vector<int>>>  magnitudeMatrices, 
+            std::vector<std::vector<std::vector<int>>> orientationMatrices,
+            cv::Size cuboidsSize,
+            int cuboidDim);
+            
 #endif
