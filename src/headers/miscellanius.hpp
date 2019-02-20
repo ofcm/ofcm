@@ -18,7 +18,7 @@ template <class T>
 void print2DstdVector(const std::vector<std::vector<T>> matrix){
     for(int tt = 0; tt< matrix.size(); tt++) {
         for(int hh = 0; hh< matrix[0].size(); hh++) {
-            std::cout << '(' << matrix[tt][hh] << ")";
+            std::cout << matrix[tt][hh] << std::endl;;
         }
         std::cout<<std::endl;
     }
