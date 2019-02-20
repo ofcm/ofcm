@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 #include <limits.h>
 #include <locale.h>
 #include <algorithm>
-#include <libsvm.hpp>
+#include "headers/libsvm.hpp"
 
 #ifndef __linux__
 #define strdup _strdup
