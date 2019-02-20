@@ -2,6 +2,7 @@
 #include "headers/ofcm.hpp"
 #include "headers/kmeans.hpp"
 #include "getOptions.cpp"
+#include "headers/miscellanius.hpp"
 
 std::string PATH_DATA               = "../data/";
 std::vector<std::string> itos       = {"walking","jogging","running","boxing","handwaving","handclapping"};
@@ -31,8 +32,8 @@ int main(int argc, char** argv){
 
     std::vector<std::vector<float>> centers;
 
-    kmeans BOW(centers, 3);
-
+    kmeans BOW(centers, 30);
+    FileHandler <int> fhandler("traindata.txt", "testdata.txt");
     for (int itrain = 0; itrain < 1; itrain++)
     {
         for(int isce = 0; isce < scenarios.size(); isce++)
@@ -101,7 +102,7 @@ int main(int argc, char** argv){
                         INIT = false;
                     }          
                     BOW.runKmeans(result);
-
+                    fhandler.AppendLine(result, ifile);
                     for(int ires = 0; ires < result.size(); ires++)
                         std::cout << result[ires] << " ";
                     std::cout << "\n=========" << std::endl;
@@ -115,5 +116,6 @@ int main(int argc, char** argv){
 
         }
     }
+    fhandler.Release();
     return 0;
 }
