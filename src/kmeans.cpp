@@ -1,9 +1,9 @@
-#include "../headers/kmeans.hpp"
+#include "headers/kmeans.hpp"
 
 
 kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>>,
                             int numberClass){
-    this->features = features;
+    this->features    = features;
     this->numberClass = numberClass;
     this->centers = centers;
     cluster = new std::vector<std::vector<float>>[numberClass];
@@ -54,7 +54,7 @@ void kmeans::runKmeans(std::vector<int>& result){
 void kmeans::startingCenters(){
     for(int k = 0;k < numberClass;k++){
         int random = rand() % (features.size() - 1);
-        centers.push_back(features[k]);
+        centers.push_back(features[random]);
     }  
 }   
 

@@ -27,6 +27,7 @@ add_library(base
   src/coocurrence.cpp
   src/opticalflow.cpp
   src/cuboids.cpp
+  src/kmeans.cpp
 )
 
 

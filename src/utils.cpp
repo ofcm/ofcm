@@ -1,6 +1,7 @@
 #include "headers/utils.hpp"
-
-void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T)
+// For a dimension of HxMxalphaxfx(t -1)
+/*
+void getHaralickFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T)
 {
     int W = cuboidsSize.width;
     int H = cuboidsSize.height;
@@ -22,7 +23,72 @@ void getFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vect
         }
     }
 }
+*/
+void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std::vector<cv::Mat>> AAM2, cv::Size cuboidsSize, std::vector<std::vector<float>>& res, int T)
+{
+    int W = cuboidsSize.width;
+    int H = cuboidsSize.height;
 
+    for (int iangle = 0; iangle < AAM1.size(); iangle++)
+    {
+        for (int i = 0; i < AAM1[iangle].size(); i+=9)
+        {
+            std::vector<float> f(12, 0.0);
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM1[iangle][i+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+
+                for (int fi = 0; fi < 12; fi++)
+                {
+                    f[fi] += ftmp[fi]/((float)T);
+                }
+
+            }
+
+            float sum = 0.0;
+            for (int fi = 0; fi < 12; fi++)
+            {
+                sum += abs(f[fi]);
+            }
+
+            if (sum == 0.0)
+                continue;
+
+            res.push_back(f);
+        }
+    }
+
+    for (int iangle = 0; iangle < AAM2.size(); iangle++)
+    {
+        for (int i = 0; i < AAM2[iangle].size(); i+=9)
+        {
+            std::vector<float> f(12, 0.0);
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM2[iangle][i+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+
+                for (int fi = 0; fi < 12; fi++)
+                {
+                    f[fi] += ftmp[fi]/((float)T);
+                }
+            }
+
+            float sum = 0.0;
+            for (int fi = 0; fi < 12; fi++)
+            {
+                sum += abs(f[fi]);
+            }
+
+            if (sum == 0.0)
+                continue;
+                
+            res.push_back(f);
+        }
+    }
+
+}
 void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0)
 {
     for(int i = x0; i < x0 + src.rows; i++)

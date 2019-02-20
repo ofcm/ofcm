@@ -82,7 +82,7 @@ int main(int argc, char** argv){
                     coocurrenceMatricesOrientation[3].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315, cuboidDim)); // 135º
                                     
                 }
-
+                
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 for (int im = 0; im < magnitudeMatricesT.size(); im++){
                     magnitudeMatrices.push_back(magnitudeMatricesT[im]);
@@ -93,6 +93,8 @@ int main(int argc, char** argv){
                     coocurrenceMatricesMagnitud[3].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], -dy, -dx, cuboidDim));
                     
                 }
+
+                //print2DstdVector<cv::Mat>(coocurrenceMatricesMagnitud);
                 //std::cout << "Sz cooc "<<coocurrenceMatricesOrientation[0].size()<<", "<<coocurrenceMatricesOrientation[0][0].size()<<std::endl;
                 orientationMatricesT.clear();
                 magnitudeMatricesT.clear();          
@@ -104,6 +106,8 @@ int main(int argc, char** argv){
             int H = cuboidsSize.height;
 
             //std::cout << "cuboidsSize = " << cuboidsSize << std::endl;
+            
+            /*
             std::vector<std::vector<std::vector<std::vector<float>>>> resM = 
             std::vector<std::vector<std::vector<std::vector<float>>>> ( H, 
                                                                         std::vector<std::vector<std::vector<float>>>(W, 
@@ -114,9 +118,27 @@ int main(int argc, char** argv){
                                                                         std::vector<std::vector<std::vector<float>>>(W, 
                                                                         std::vector<std::vector<float>>(12, std::vector<float>(T-1, 0))));
 
-            getFeatures(coocurrenceMatricesMagnitud[0], cuboidsSize, resM, T - 1);
-            getFeatures(coocurrenceMatricesOrientation[0], cuboidsSize, resO, T - 1);
+            */
+
+            std::vector<std::vector<float>> flattenFeatures;
+
+            //std::cout << "coocurrenceMatricesMagnitud Size : " << coocurrenceMatricesMagnitud.size() << " x " << coocurrenceMatricesMagnitud[0].size() << std::endl;
+            getHaralickFeatures(coocurrenceMatricesMagnitud, coocurrenceMatricesOrientation, cuboidsSize, flattenFeatures, T-1);
             
+            /*
+            for (int ift = 0; ift < flattenFeatures.size(); ift++)
+            {
+                std::cout << "ft = " << ift << "\t";
+                for (int fi = 0; fi < 12; fi++)
+                {
+                    std::cout << flattenFeatures[ift][fi] << " ";
+                }
+                std::cout << std::endl;
+            }
+            
+           */
+            
+            std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             

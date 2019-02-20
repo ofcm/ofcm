@@ -93,6 +93,8 @@ float correlation(cv::Mat Mco)
     sigmaY /= ((float)py.size());
     sigmaY  = sqrt(sigmaY);
 
+    if (sigmaY == 0 || sigmaX == 0)
+        return 0.0;
 
     float sumCR = 0.0;
     for (int i = 0; i < Mco.rows; i++)
@@ -103,7 +105,6 @@ float correlation(cv::Mat Mco)
         }
     }
     sumCR /= (sigmaX * sigmaY);
-
     return sumCR;
 }
 
@@ -195,6 +196,8 @@ float sumEntropy(cv::Mat Mco)
         sumEtp += (pX_plus_Y[i]) * log10(pX_plus_Y[i] + EPSILON);
     }
 
+    if (sumEtp == 0.0)
+        return 0.0;
     return -sumEtp;
 
 }
@@ -209,6 +212,9 @@ float Entropy(cv::Mat Mco)
             etp += Mco.at<float>(i,j) * log10(Mco.at<float>(i,j) + EPSILON);
         }
     } 
+
+    if (etp == 0.0)
+        return 0.0;
 
     return -etp;
 }
@@ -305,6 +311,9 @@ float informationCorrelation(cv::Mat Mco)
     for (auto i = 0; i < px.size(); ++i) {
         HX -= px[i] * log10(px[i] + EPSILON);
         HY -= py[i] * log10(py[i] + EPSILON);
+
+    if (HX == 0|| HY == 0)
+        return 0.0;
 
     float res = (HXY - HXY1) / std::max(HX, HY);
 
