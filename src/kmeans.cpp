@@ -1,12 +1,14 @@
 #include "headers/kmeans.hpp"
 
 
-kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>> centers,
+kmeans::kmeans(std::vector<std::vector<float>> centers,
                             int numberClass){
-    this->features    = features;
     this->numberClass = numberClass;
-    this->centers     = centers;
-    
+    this->centers     = centers;    
+}
+
+void kmeans::setFeatures(std::vector<std::vector<float>> features){
+    this->features = features;
 }
 
 void kmeans::runKmeans(std::vector<int>& result){

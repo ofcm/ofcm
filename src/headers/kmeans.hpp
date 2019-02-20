@@ -13,9 +13,10 @@ public:
     int numberClass;
     bool flag = false;
     
-    kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>> centers,
+    kmeans(std::vector<std::vector<float>> centers,
                             int numberClass);
     void runKmeans(std::vector<int>& result);
+    void setFeatures(std::vector<std::vector<float>>);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
     float limitError = 0.0001;

@@ -1,8 +1,8 @@
 #include "option.hpp"
 
-option::option(int person,
-            int action,
-            int d,
+option::option(std::string person,
+            std::string action,
+            std::string d,
             std::pair<int,int> sequence1,
             std::pair<int,int> sequence2,
             std::pair<int,int> sequence3,
