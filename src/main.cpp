@@ -237,7 +237,7 @@ int main(int argc, char** argv){
                 }
                 //std::cout << "==========" << std::endl;
             }
-            cv::applyColorMap(MagnitudImg, MagnitudImg, cv::COLORMAP_WINTER);
+            cv::applyColorMap(MagnitudImg, MagnitudImg, cv::COLORMAP_HOT);
             cv::applyColorMap(OrientationImg, OrientationImg, cv::COLORMAP_HSV);
 
             cv::resize(MagnitudImg,MagnitudImg, cv::Size(imageSize.width, imageSize.height));
