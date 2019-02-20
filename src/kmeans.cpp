@@ -18,15 +18,18 @@ void kmeans::runKmeans(std::vector<int>& result){
     while (flag == false){
         flag = true;
         std::cout << "itr = " << itr << std::endl;
+        for (int ic = 0; ic < cluster.size(); ic++)
+            cluster[ic].clear();
         for(auto feature : features){
             int goodClass = getGoodCluster(feature);
             //std::cout << "goodClass = " << goodClass << std::endl;
             cluster[goodClass].push_back(feature);
             //std::cout << "cluster " << goodClass << " = " <<cluster[goodClass].size() << std::endl;
         }
-        for(int k = 0;k < numberClass;k++){
-            std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
-        }
+        //for(int k = 0;k < numberClass;k++){
+        //    std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
+        //}
+
         std::vector<std::vector<float>> newCenters(numberClass, std::vector<float>(12,0.0));
         for(int k = 0;k < numberClass;k++){
             for(int i = 0;i < cluster[k].size();i++){
@@ -50,7 +53,7 @@ void kmeans::runKmeans(std::vector<int>& result){
             }
                 
             sum = sqrt(sum);
-            std::cout << "sum = " << sum << std::endl;
+            //std::cout << "sum = " << sum << std::endl;
             if(sum <= limitError)
             {
                 flag *= true;
@@ -76,15 +79,16 @@ void kmeans::startingCenters(){
     }  
 }   
 
-int kmeans::getGoodCluster(std::vector<float> feat){
+int kmeans::getGoodCluster(std::vector<float> feature){
     int gc;
+    float minError = std::numeric_limits<double>::infinity();
     
     for(int k = 0;k < numberClass;k++){
         float sum = 0.0;
-        for(auto value : feat){
-            for(auto center : centers[k]){
-                sum += pow(center - value,2);
-            }
+
+        for(int i = 0; i < feature.size(); i++)
+        {
+            sum += (centers[k][i] - feature[i]) * (centers[k][i] - feature[i]);
         }
         sum = sqrt(sum);
         if(sum < minError){

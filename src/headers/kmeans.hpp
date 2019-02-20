@@ -12,14 +12,13 @@ public:
     std::vector<float> classError;
     int numberClass;
     bool flag = false;
-    float minError = std::numeric_limits<double>::infinity();
     
     kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>> centers,
                             int numberClass);
     void runKmeans(std::vector<int>& result);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
-    float limitError = 0.01;
+    float limitError = 0.0001;
 };
 
 #endif

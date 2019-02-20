@@ -138,12 +138,12 @@ int main(int argc, char** argv){
             }
            */
             
-            std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
+            //std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
             
             std::vector<int> result;
 
             std::vector<std::vector<float>> centers;
-            kmeans BOW(flattenFeatures, centers, 3);
+            kmeans BOW(flattenFeatures, centers, 10);
             BOW.startingCenters();
             BOW.runKmeans(result);
             
