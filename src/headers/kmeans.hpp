@@ -15,9 +15,9 @@ public:
     bool flag;
     float minError = std::numeric_limits<double>::infinity();
     
-    kmeans(std::vector<std::vector<float>>,std::vector<std::vector<float>>,
-                        int);
-    void runKmeans(std::vector<int>&);
+    kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>> centers,
+                            int numberClass);
+    void runKmeans(std::vector<int>& result);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
     float limitError = 0.0001;

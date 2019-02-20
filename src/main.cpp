@@ -3,6 +3,7 @@
 #include "headers/coocurrence.hpp"
 #include "headers/cuboids.hpp"
 #include "headers/miscellanius.hpp"
+#include "headers/kmeans.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
@@ -135,10 +136,25 @@ int main(int argc, char** argv){
                 }
                 std::cout << std::endl;
             }
-            
            */
             
             std::cout << "Features Size : " << flattenFeatures.size() << " x " << flattenFeatures[0].size() << std::endl;
+            
+            std::vector<int> result;
+
+            std::vector<std::vector<float>> centers;
+            kmeans BOW(flattenFeatures, centers, 30);
+            BOW.startingCenters();
+            BOW.runKmeans(result);
+            
+            std::cout << "result.size() = " << result.size() << std::endl;
+            for (int i = 0; i < result.size(); i++)
+            {
+                std::cout << result[i] << " " << std::endl;
+            }
+            
+            std::cout << std::endl;
+
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
