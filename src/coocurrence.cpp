@@ -18,6 +18,9 @@ cv::Mat CoocurrenceFromSingleMatrixMag(std::vector<std::vector<int>> matrix, int
             if(isWithInMatrix(i + dy, j + dx, cuboidSize, cuboidSize)){
                 int val1 = matrix[i][j];
                 int val2 = matrix[i + dy][j + dx];
+
+                if (val1 < 0 || val2 < 0)
+                    continue;
                 //* since it is normalized from 0 to eight
                 //* Increment the historigram at values (v1, v2)
                 output.at<float>(val1, val2)++;
@@ -37,6 +40,9 @@ cv::Mat CoocurrenceFromSingleMatrixAngle(const std::vector<std::vector<int>> & m
             if(isWithInMatrix(i + dy, j + dx, cuboidSize, cuboidSize)){
                 int val1 = matrix[i][j];///widthbin;
                 int val2 = matrix[i + dy][j + dx];///widthbin;
+
+                if (val1 < 0 || val2 < 0)
+                    continue;
                 //* since it is normalized from 0 to eight
                 //* Increment the historigram at values (v1, v2)
                 output.at<float>(val1, val2)++;

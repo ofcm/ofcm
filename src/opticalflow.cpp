@@ -19,10 +19,10 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
     //std::cout << "row = " << rows << ", cols = " << cols << std::endl;
     std::vector<std::vector<int> >  orientationMatrix(
                                     rows,
-                                    std::vector<int>(cols, 0));
+                                    std::vector<int>(cols, -1));
     std::vector<std::vector<int> >  magnitudeMatrix(
                                     rows,
-                                    std::vector<int>(cols, 0));
+                                    std::vector<int>(cols, -1));
 
     getBetterPoints(prevPoints,prevImage,nextImage);
     //orientationMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
@@ -85,13 +85,9 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
         dX = nextPoints[i].x - prevPoints[i].x;
 
         distance = sqrt((dX * dX) + (dY*dY));
-        if (distance > 0)
-            std::cout << "distance = " << distance << std::endl; 
-        
+
         if(dY == 0)
-        {
             angle = 0.0;
-        }    //div_ = 0;
 
         else
         {
@@ -100,13 +96,13 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
             angle = angle * 180.0 / PI;
         }
 
-        angInt  = static_cast<float>(floor(angle / (maxAngle / orientationBin)));
+        angInt  = static_cast<float>(floor(orientationBin * angle / (maxAngle)));
         //distInt = static_cast<int>(floor(log2(distance)));
         distInt = static_cast<int>(floor(magnitudBin * distance / 3.0));
         
         
         //std::cout << "distInt = " << distInt << std::endl; 
-
+        //std::cout << "angInt : " << angInt << std::endl;
 
         if(distInt < 0)
             distInt = 0;
