@@ -15,7 +15,7 @@ public:
     bool flag;
     float minError = std::numeric_limits<double>::infinity();
     
-    kmeans(std::vector<std::vector<float>>,
+    kmeans(std::vector<std::vector<float>>,std::vector<std::vector<float>>,
                         int);
     void runKmeans(std::vector<int>&);
     void startingCenters();

@@ -1,10 +1,11 @@
 #include "../headers/kmeans.hpp"
 
 
-kmeans::kmeans(std::vector<std::vector<float>> features,
+kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>>,
                             int numberClass){
     this->features = features;
     this->numberClass = numberClass;
+    this->centers = centers;
     cluster = new std::vector<std::vector<float>>[numberClass];
 }
 
@@ -38,9 +39,10 @@ void kmeans::runKmeans(std::vector<int>& result){
                 }
                 sum = sqrt(sum);
                 if(sum <= limitError)
-                    flag = true;
-                else
-                    flag = false;
+                    flag *= true;
+                else{
+                    flag *= false;
+                }
             }
         }
     }
