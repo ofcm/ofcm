@@ -143,7 +143,7 @@ int main(int argc, char** argv){
             std::vector<int> result;
 
             std::vector<std::vector<float>> centers;
-            kmeans BOW(flattenFeatures, centers, 30);
+            kmeans BOW(flattenFeatures, centers, 3);
             BOW.startingCenters();
             BOW.runKmeans(result);
             

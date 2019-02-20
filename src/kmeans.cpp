@@ -14,40 +14,54 @@ void kmeans::runKmeans(std::vector<int>& result){
     oldCenters = centers;
 
     std::cout << "numberClass = " << numberClass << std::endl;
+    int itr = 0;
     while (flag == false){
+        flag = true;
+        std::cout << "itr = " << itr << std::endl;
         for(auto feature : features){
             int goodClass = getGoodCluster(feature);
             //std::cout << "goodClass = " << goodClass << std::endl;
             cluster[goodClass].push_back(feature);
+            //std::cout << "cluster " << goodClass << " = " <<cluster[goodClass].size() << std::endl;
         }
+        for(int k = 0;k < numberClass;k++){
+            std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
+        }
+        std::vector<std::vector<float>> newCenters(numberClass, std::vector<float>(12,0.0));
         for(int k = 0;k < numberClass;k++){
             for(int i = 0;i < cluster[k].size();i++){
-                for(int j = 0;j < cluster[k].size();j++){
-                    if(i != j){
-                        int sum = 0;
-                        for(int val = 0;val < cluster[k][i].size();val++){
-                            centers[k][val] += val/cluster[k].size();
-                        }
-                    } 
+                for(int val = 0;val < cluster[k][i].size();val++){
+//                    std::cout << "k = "<< k << ", val = "<< val << " (i) = "<< i <<std::endl;
+                    newCenters[k][val] += cluster[k][i][val]/cluster[k].size();
                 }
             }
         }
+
+        
         for(int k = 0;k < numberClass;k++){
-            for(int i = 0;i < centers[numberClass].size();i++){
-                float sum = 0.0;
-                for(auto cValue : centers[numberClass]){
-                    for(auto vOldCenter : oldCenters[k]){
-                        sum += pow(vOldCenter - cValue,2);
-                    }
-                }
-                sum = sqrt(sum);
-                if(sum <= limitError)
-                    flag *= true;
-                else{
-                    flag *= false;
-                }
+
+            float sum = 0.0;
+
+            //std::cout << "----->" << oldCenters[0].size() << std::endl;
+
+            for(int i =0; i< newCenters[k].size();i++)
+            {
+                sum += ((oldCenters[k][i] - newCenters[k][i])*(oldCenters[k][i] - newCenters[k][i]));
             }
+                
+            sum = sqrt(sum);
+            std::cout << "sum = " << sum << std::endl;
+            if(sum <= limitError)
+            {
+                flag *= true;
+            }
+            else{
+                flag *= false;
+            }
+            
         }
+        itr++;
+        oldCenters = newCenters;
     }
     for(int k = 0;k < numberClass;k++){
         std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
