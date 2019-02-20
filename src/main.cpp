@@ -3,7 +3,7 @@
 #include "headers/kmeans.hpp"
 #include "getOptions.cpp"
 
-std::string PATH_DATA =                                 "../data/";
+std::string PATH_DATA               = "../data/";
 std::vector<std::string> itos       = {"walking","jogging","running","boxing","handwaving","handclapping"};
 std::vector<std::string> nperson    = { "01","02","03","04","05","06","07","08","09","10",
                                         "11","12","13","14","15","16","17","18","19","20",
@@ -30,6 +30,8 @@ int main(int argc, char** argv){
     cv::VideoCapture cap;
 
     std::vector<std::vector<float>> centers;
+
+    kmeans BOW(centers, 30);
 
     for (int itrain = 0; itrain < 1; itrain++)
     {
@@ -79,7 +81,8 @@ int main(int argc, char** argv){
                     }
                     std::vector<int> result; 
                     std::cout << "runing kmeans " << std::endl;
-                    kmeans BOW(toKmeans,centers, 30);
+                    
+                    BOW.setFeatures(toKmeans);
                     if (INIT == true)
                     {
                         BOW.startingCenters();
