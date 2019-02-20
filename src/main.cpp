@@ -101,10 +101,11 @@ int main(int argc, char** argv){
                         INIT = false;
                     }          
                     BOW.runKmeans(result);
-
+                    
                     for(int ires = 0; ires < result.size(); ires++)
                         std::cout << result[ires] << " ";
                     std::cout << "\n=========" << std::endl;
+                    
                 }
 
                 if (ALL == true)

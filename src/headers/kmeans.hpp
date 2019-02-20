@@ -19,7 +19,7 @@ public:
     void setFeatures(std::vector<std::vector<float>>);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
-    float limitError = 0.0001;
+    float limitError = 0.00001;
 };
 
 #endif
