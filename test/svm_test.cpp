@@ -2,6 +2,7 @@
 # include <vector>
 
 int n = 10;
+
 int main(){
     std::cout<<"hello"<<std::endl;
     std::vector<std::vector<float>> data{{0.8f , 0.8f}, {0.7f , 0.7f},
@@ -12,7 +13,12 @@ int main(){
     std::vector<int> labels{-1, 1};
 
     // Create SVM Handler
-    SVMhandler svmhandler;
+    // Create Class Template accordance to the datatype
+    // In this case 'float'
+    SVMhandler <float> svmhandler;
+    // Change the Kernell type
+    // By default it is with RBF
+    svmhandler.setKernell(LINEAR);
     // Train the model
     bool val = svmhandler.fit(y, labels, data, nullptr);
     std::cout<<"Training successfully>> " << val<<std::endl;
@@ -24,4 +30,7 @@ int main(){
     for(int i = 0; i < answer.size(); i++){
         std::cout<<answer[i]<<std::endl;
     }
+    float accuracy = svmhandler.validate(query, std::vector<int> {1, -1, -1, -1});
+    std::cout<<"Accuracy >> "<<accuracy<<std::endl;
+
 }

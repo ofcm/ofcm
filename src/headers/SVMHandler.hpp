@@ -10,11 +10,12 @@
  *  labels:     The Set of labels
  *  features:   Features of problem
  */ 
+template <class T>
 class SVMhandler{
     public:
     SVMhandler(){
         this->parameters.C = 0.1;
-        this->parameters.kernel_type = LINEAR;
+        this->parameters.kernel_type = RBF;
         this->parameters.svm_type = C_SVC;
         this->parameters.cache_size = 10;
         this->parameters.eps = 0.001;
@@ -29,7 +30,7 @@ class SVMhandler{
     private:
     svm_parameter parameters;
     svm_model * sModel = nullptr;
-    template <class T>
+
     svm_problem * CreateProblem(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data){
     
         if(predicted.size() != data.size()){
@@ -56,7 +57,7 @@ class SVMhandler{
 
         return problem;
     }
-    template <class T>
+
     svm_node ** CreateFeatureNodes(const std::vector<std::vector<T>> & data){
         // Fill The set of features
         int n = data.size();
@@ -78,7 +79,7 @@ class SVMhandler{
         return d;
     }
     public:
-    template <class T>
+
     bool fit(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data, svm_parameter * p = nullptr){
         if(p != nullptr)
             this->parameters = *p;
@@ -93,7 +94,6 @@ class SVMhandler{
         return true;
     }
 
-    template <class T>
     std::vector<int> predict(std::vector<std::vector<T>> data){
         int n = data.size();
         std::vector<int> predicted(n);
@@ -108,6 +108,33 @@ class SVMhandler{
             predicted[i] = lbl;
         }
         return predicted;
+    }
+
+    /*
+     * Cumpute The accuracy of certain data
+     */
+    float validate(const std::vector<std::vector<T>> & data, std::vector<int> y){
+        if(this->sModel==nullptr){
+            std::cout<<"Model is not fitted yet!"<<std::endl;
+            return 0.0;
+        }
+        std::vector<int> y_hat = this->predict(data);
+        int n = data.size();
+        float accuracy = 0.0f;
+        for(int i = 0; i < n; i++){
+            if(y_hat[i] == y[i]){
+                accuracy += 1.0f;
+            }
+        }
+        accuracy /= float(n);
+        return accuracy;
+    }
+    void setKernell(int kernel_type){
+        if(kernel_type != LINEAR && kernel_type !=  POLY && kernel_type != RBF && kernel_type != SIGMOID && kernel_type != PRECOMPUTED){
+            std::cout<<"Kernell not available!!"<<std::endl;
+            return;
+        }
+        this->parameters.kernel_type = kernel_type;
     }
 
 
