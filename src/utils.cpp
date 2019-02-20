@@ -1,29 +1,5 @@
 #include "headers/utils.hpp"
-// For a dimension of HxMxalphaxfx(t -1)
-/*
-void getHaralickFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T)
-{
-    int W = cuboidsSize.width;
-    int H = cuboidsSize.height;
 
-    //std::vector<std::vector<std::vector<float>>> res(W, H, T);
-
-
-    for (int i = 0; i < Mco_Array.size(); i++)
-    {
-        cv::Mat Mco          = Mco_Array[i];
-        //std::cout<<"....sss"<<std::endl;
-        std::vector<float> f = haralick(Mco, 12);
-
-        
-        for (int fi = 0; fi < f.size(); fi++)
-        {
-            //std::cout << "-> " << (i/9) / W << ", " <<(i/9) % W << ", " << fi << ", "<< i%9 <<std::endl;
-            res[(i/9) / W][(i/9) % W][fi][i%9] = f[fi];
-        }
-    }
-}
-*/
 void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std::vector<cv::Mat>> AAM2, cv::Size cuboidsSize, std::vector<std::vector<float>>& res, int T)
 {
     int W = cuboidsSize.width;

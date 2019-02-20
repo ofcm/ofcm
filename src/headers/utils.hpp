@@ -1,13 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define PI 3.14159265
-static  int threshold           = 15;
-static  float maxAngle          = 361.0;
-static  float orientationBin    = 8.0;
-static  float magnitudBin       = 8.0;
-static  int maxDistance = 15;
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -16,6 +9,14 @@ static  int maxDistance = 15;
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/video/tracking.hpp>
+
+#define PI 3.14159265
+
+static  int threshold           = 15;
+static  float maxAngle          = 361.0;
+static  float orientationBin    = 8.0;
+static  float magnitudBin       = 8.0;
+static  int maxDistance = 15;
 
 void updateBuffer(std::vector<cv::Mat>& imageBuffer);
 void DenseSampling(std::vector<cv::Mat> imageBuffer, 
@@ -52,5 +53,4 @@ void plotMO(cv::Mat& src1,
             std::vector<std::vector<std::vector<int>>> orientationMatrices,
             cv::Size cuboidsSize,
             int cuboidDim);
-
 #endif
