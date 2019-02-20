@@ -31,7 +31,7 @@ int main(int argc, char** argv){
 
     std::vector<std::vector<float>> centers;
 
-    kmeans BOW(centers, 30);
+    kmeans BOW(centers, 3);
 
     for (int itrain = 0; itrain < 1; itrain++)
     {
@@ -58,29 +58,41 @@ int main(int argc, char** argv){
                 {
                     personActionfeatures[ifile].push_back(res[ir]);
                 }
-                /*
+                
                 std::cout << "personActionfeatures size 0: " << personActionfeatures[0].size() << std::endl;
                 std::cout << "personActionfeatures size 1: " << personActionfeatures[1].size() << std::endl;
                 std::cout << "personActionfeatures size 2: " << personActionfeatures[2].size() << std::endl;
                 std::cout << "personActionfeatures size 3: " << personActionfeatures[3].size() << std::endl;
                 std::cout << "personActionfeatures size 4: " << personActionfeatures[4].size() << std::endl;
                 std::cout << "personActionfeatures size 5: " << personActionfeatures[5].size() << std::endl;
-                */
+                
             }
 
             std::vector<std::vector<float>> toKmeans;
 
-            for (int ikm = 0; ikm < personActionfeatures[0].size(); ikm+=280)
+            int ikm = 0;
+
+            bool ALL = true;
+            while (true)
             {
+                ALL = true;
                 for (int ifile = 0; ifile < filenames.size(); ifile++)
                 {
+                    if (ikm >= personActionfeatures[ifile].size())
+                    {
+                        ALL *= true;
+                        continue;
+                    }
+                    ALL *= false;
+
                     toKmeans.clear();
                     for(int itf = ikm; itf < ikm + 280; itf++)
                     {
                         toKmeans.push_back(personActionfeatures[ifile][itf]);
                     }
                     std::vector<int> result; 
-                    std::cout << "runing kmeans " << std::endl;
+                    std::cout << "toKmeans size = " << toKmeans.size() << std::endl;
+                    //std::cout << "runing kmeans " << std::endl;
                     
                     BOW.setFeatures(toKmeans);
                     if (INIT == true)
@@ -89,8 +101,18 @@ int main(int argc, char** argv){
                         INIT = false;
                     }          
                     BOW.runKmeans(result);
+
+                    for(int ires = 0; ires < result.size(); ires++)
+                        std::cout << result[ires] << " ";
+                    std::cout << "\n=========" << std::endl;
                 }
+
+                if (ALL == true)
+                    break;
+                
+                ikm += 280;
             }
+
         }
     }
     return 0;

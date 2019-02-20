@@ -17,6 +17,9 @@ void kmeans::runKmeans(std::vector<int>& result){
 
     //std::cout << "numberClass = " << numberClass << std::endl;
     int itr = 0;
+
+    flag = false;
+    
     while (flag == false){
         flag = true;
         //std::cout << "itr = " << itr << std::endl;
