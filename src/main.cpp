@@ -103,9 +103,11 @@ int main(int argc, char** argv){
                     }          
                     BOW.runKmeans(result);
                     fhandler.AppendLine(result, ifile);
+
                     for(int ires = 0; ires < result.size(); ires++)
                         std::cout << result[ires] << " ";
                     std::cout << "\n=========" << std::endl;
+                    
                 }
 
                 if (ALL == true)
