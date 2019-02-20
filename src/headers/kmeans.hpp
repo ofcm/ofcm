@@ -17,7 +17,7 @@ public:
     
     kmeans(std::vector<std::vector<float>>,std::vector<std::vector<float>>,
                         int);
-    void runKmeans(std::vector<int>&);
+    std::vector<std::vector<float>> runKmeans(std::vector<int>&);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
     float limitError = 0.0001;

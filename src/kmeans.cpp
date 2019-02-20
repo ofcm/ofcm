@@ -1,16 +1,14 @@
 #include "headers/kmeans.hpp"
 
 
-kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>>,
+kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<float>> centers,
                             int numberClass){
     this->features    = features;
     this->numberClass = numberClass;
-    this->centers = centers;
     cluster = new std::vector<std::vector<float>>[numberClass];
 }
 
-void kmeans::runKmeans(std::vector<int>& result){
-    startingCenters();
+std::vector<std::vector<float>> kmeans::runKmeans(std::vector<int>& result){
     oldCenters = centers;
     while (flag == false){
         for(auto feature : features){
@@ -49,6 +47,7 @@ void kmeans::runKmeans(std::vector<int>& result){
     for(int k = 0;k < numberClass;k++){
         result.push_back(cluster[k].size());
     }
+    return centers;
 }
 
 void kmeans::startingCenters(){
