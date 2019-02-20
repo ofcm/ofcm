@@ -7,7 +7,6 @@
 class kmeans{
 public:
     std::vector<std::vector<float>> features;
-    std::vector<std::vector<float>> * cluster;
     std::vector<std::vector<float>> centers;
     std::vector<std::vector<float>> oldCenters;
     std::vector<float> classError;

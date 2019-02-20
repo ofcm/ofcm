@@ -6,15 +6,18 @@ kmeans::kmeans(std::vector<std::vector<float>> features,std::vector<std::vector<
     this->features    = features;
     this->numberClass = numberClass;
     this->centers     = centers;
-    cluster = new std::vector<std::vector<float>>[numberClass];
+    
 }
 
 void kmeans::runKmeans(std::vector<int>& result){
-    //startingCenters();
+    std::vector<std::vector<std::vector<float>>> cluster(numberClass);
     oldCenters = centers;
+
+    std::cout << "numberClass = " << numberClass << std::endl;
     while (flag == false){
         for(auto feature : features){
             int goodClass = getGoodCluster(feature);
+            //std::cout << "goodClass = " << goodClass << std::endl;
             cluster[goodClass].push_back(feature);
         }
         for(int k = 0;k < numberClass;k++){
@@ -47,6 +50,7 @@ void kmeans::runKmeans(std::vector<int>& result){
         }
     }
     for(int k = 0;k < numberClass;k++){
+        std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
         result.push_back(cluster[k].size());
     }
 }

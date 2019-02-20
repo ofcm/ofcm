@@ -147,6 +147,7 @@ int main(int argc, char** argv){
             BOW.startingCenters();
             BOW.runKmeans(result);
             
+            /*
             std::cout << "result.size() = " << result.size() << std::endl;
             for (int i = 0; i < result.size(); i++)
             {
@@ -154,7 +155,7 @@ int main(int argc, char** argv){
             }
             
             std::cout << std::endl;
-
+            */
             //std::cout << "Final size matrix 1: " << orientationMatrices.size() << std::endl;
             //std::cout << "Final size matrix 2: " << magnitudeMatrices.size()   << std::endl;
             
