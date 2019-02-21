@@ -20,12 +20,14 @@ int main(int argc, char** argv){
     //fhandler.Release();
 
     //Uncomment to Generate Training data"
-    /*
-    SingleFileHandler <float> fhandler("centers_model.txt");
+    
+    SingleFileHandler <float> fhandler("../models/centroids/centers_model.txt");
     fhandler.LoadFromFile(centers);
     int res2 = getHistograms(centers, K_CLASSES);
-    */
+    
    
+    // Uncomment to train the data
+    /*
     std::string trainingfile = "../models/training/trainingdata.txt";
     std::string labelsfile   = "../models/training/labeldata.txt";
     FileHandlerML <int> fhandler(trainingfile, labelsfile);
@@ -40,6 +42,6 @@ int main(int argc, char** argv){
     svmhandler.fit(y, lbls, data);
 
     std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
-    
+    */
     return 0;
 }

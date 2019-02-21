@@ -14,13 +14,13 @@ template <class T>
 class SVMhandler{
     public:
     SVMhandler(){
-        this->parameters.C = 0.99;
+        this->parameters.C = 1.0;
         this->parameters.kernel_type = RBF;
         this->parameters.svm_type = C_SVC;
         this->parameters.cache_size = 10;
         this->parameters.eps = 0.001;
         this->parameters.nr_weight = 0;
-        this->parameters.gamma = 1.0;
+        this->parameters.gamma = 2;
         this->parameters.coef0 = 0;
         this->parameters.degree = 0;
         this->parameters.shrinking = 0;

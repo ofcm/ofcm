@@ -202,8 +202,8 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
     for(int i = 0; i < train_data.size();i++)
         std::cout << train_data[i].person << std::endl;
     */
-    //for (int itrain = 0; itrain < train_data.size(); itrain+=24)
-    for (int itrain = 0; itrain < 24; itrain+=24)
+    for (int itrain = 0; itrain < train_data.size(); itrain+=24)
+    //for (int itrain = 0; itrain < 24; itrain+=24)
     {
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
@@ -241,8 +241,8 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
                 return -1;
             }
 
-            //for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
-            for (int iv = 0;  iv < 2; iv+=2)
+            for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
+            //for (int iv = 0;  iv < 2; iv+=2)
             {
                 std::pair<int,int> input_sequence(train_data[itrain + idata].sequence[iv], train_data[itrain + idata].sequence[iv + 1]);
 
