@@ -79,6 +79,7 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
             while (true)
             {
                 ALL = true;
+                toKmeans.clear();
                 for (int ifile = 0; ifile < filenames.size(); ifile++)
                 {
                     if (ikm >= personActionfeatures[ifile].size())
@@ -88,44 +89,45 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
                     }
                     ALL *= false;
 
-                    toKmeans.clear();
+                    
                     for(int itf = ikm; itf < ikm + 280; itf++)
                     {
                         toKmeans.push_back(personActionfeatures[ifile][itf]);
                     }
-                    std::vector<int> result; 
-                    //std::cout << "toKmeans size = " << toKmeans.size() << std::endl;
-                    //std::cout << "runing kmeans " << std::endl;
-                    
-                    BOW.setFeatures(toKmeans);
-                    if (INIT == true)
-                    {
-                        BOW.startingCenters();
-                        INIT = false;
-                    }          
-                    BOW.runKmeans();       
-                    centers = BOW.getCentroids();
-                    /*
-                    //std::cout << "centers size = " << centers.size() << std::endl;
-                    for (int k = 0; k < K_CLASES; k++)
-                    {
-                        for (int icen = 0; icen < centers[k].size(); icen++)
-                        {
-                            std::cout << centers[k][icen] << " ";
-                        }
-                        std::cout << std::endl;
-                    }         
-                    */
-                    BOW.getHistogram(result);                      
-                    std::cout << "\nClass = "<< itos[ifile] << " => ";
-                    //fhandler.AppendLine(result, ifile);
-
-                    for(int ires = 0; ires < result.size(); ires++)
-                        std::cout << result[ires] << " ";
                 }
 
                 if (ALL == true)
                     break;
+
+                std::vector<int> result; 
+
+                BOW.setFeatures(toKmeans);
+                if (INIT == true)
+                {
+                    BOW.startingCenters();
+                    INIT = false;
+                }          
+                BOW.runKmeans();       
+                centers = BOW.getCentroids();
+                
+                std::cout << "\ncenters size = " << centers.size() << std::endl;
+                std::cout << "====================" << std::endl;
+                for (int k = 0; k < K_CLASES; k++)
+                {
+                    for (int icen = 0; icen < centers[k].size(); icen++)
+                    {
+                        std::cout << centers[k][icen] << " ";
+                    }
+                    std::cout << std::endl;
+                }         
+                
+                //BOW.getHistogram(result);                      
+                //std::cout << "\nClass = "<< itos[ifile] << " => ";
+                //fhandler.AppendLine(result, ifile);
+
+                for(int ires = 0; ires < result.size(); ires++)
+                    std::cout << result[ires] << " ";
+
                 
                 ikm += 280;
             }

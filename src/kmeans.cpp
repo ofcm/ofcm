@@ -38,21 +38,24 @@ void kmeans::runKmeans(){
 
     flag = false;
 
-    while (flag == false){
+    while (true){
         flag = true;
-        //std::cout << "oldCenters size = " << oldCenters.size() << std::endl;
+
+        /*
         std::cout << "\ncentroids (it = "<< itr << ") :\n" << std::endl;
         for (int k = 0; k < numberClass; k++)
         {
             for (int icen = 0; icen < centers[k].size(); icen++)
             {
-                std::cout << oldCenters[k][icen] << " ";
+                std::cout << centers[k][icen] << " ";
             }
             std::cout << std::endl;
         }
-        
+        */
+       
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
+
         for(auto feature : features){
             int goodClass = getGoodCluster(feature);
             cluster[goodClass].push_back(feature);
@@ -65,7 +68,7 @@ void kmeans::runKmeans(){
                 centers[k][icen] = 0.0;
             }
         }
-
+        
         for(int k = 0;k < numberClass;k++){
             for(int i = 0;i < cluster[k].size();i++){
                 for(int val = 0;val < cluster[k][i].size();val++){
@@ -73,7 +76,6 @@ void kmeans::runKmeans(){
                 }
             }
         }
-
         
         for(int k = 0;k < numberClass;k++){
             float sum = 0.0;
@@ -88,6 +90,8 @@ void kmeans::runKmeans(){
             else
                 flag *= false;            
         }
+        if (flag == true)
+            break;
         itr++;
         //std::cout << "itr = " << itr << std::endl;
         oldCenters = centers;
