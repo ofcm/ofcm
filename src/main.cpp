@@ -2,6 +2,7 @@
 #include "headers/centroids.hpp"
 #include "headers/miscellanius.hpp"
 #include "headers/SVMHandler.hpp"
+#include "headers/kmeans.hpp"
 
 // Mode
 // 0: Train K-Means Centers
@@ -10,7 +11,7 @@
 // 3: Prediction off-line
 // 4: Prediction on-line
 
-int mode = 1;
+int mode = 2;
 int main(int argc, char** argv){   
     int K_CLASSES = 2*6;
     std::vector<std::vector<float>> centers;
@@ -33,6 +34,7 @@ int main(int argc, char** argv){
         }
         // 2: Training SVM classifier
         case 2: {
+            std::cout<<"Training the SVM classifier"<<std::endl;
             std::string trainingfile = "../models/training/trainingdata.txt";
             std::string labelsfile   = "../models/training/labeldata.txt";
             FileHandlerML <int> fhandler(trainingfile, labelsfile);
@@ -56,11 +58,26 @@ int main(int argc, char** argv){
         }
         // 3: Prediction off-line
         case 3: {
-
+            
             break;
         }
         case 4: {
-            
+            // Starting real time aplication
+
+            // Loading Centers
+            std::cout<<"Real time predictions"<<std::endl<<std::endl;
+            std::cout<<"Loading Center K - means"<<std::endl;
+            std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
+            SingleFileHandler <float> fhandler(modelcenters_file);
+            fhandler.LoadFromFile(centers);
+
+            // Loading SVM model
+            std::cout<<"Loading SVM model"<<std::endl;
+            SVMhandler <int> svmhandler;
+            svmhandler.LoadModelFromFile("../models/svm/svm_model");
+
+            // Initialize K - means model
+            //kmeans kmeans
             break;
         }
         default:
@@ -68,7 +85,7 @@ int main(int argc, char** argv){
             break;
     }
     // Uncomment to generate centers
-    int res1 = getCentroids(centers, K_CLASSES);
+    // int res1 = getCentroids(centers, K_CLASSES);
     
     /*
     SingleFileHandler <float> fhandler(std::string("centers_model.txt"));
