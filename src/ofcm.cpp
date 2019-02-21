@@ -96,9 +96,13 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             std::vector<std::vector<float>> flattenFeatures;
             getHaralickFeatures(coocurrenceMatricesMagnitud, coocurrenceMatricesOrientation, cuboidsSize, flattenFeatures, T-1);
 
-            for (int ift = 0; ift < flattenFeatures.size(); ift++)
+            for (int ift = 0; ift < flattenFeatures.size(); ift++){
                 AllflattenFeatures.push_back(flattenFeatures[ift]);
-
+                std::cout<< "===========================> " <<  flattenFeatures[ift].size() <<std::endl;
+                for (int ifeat = 0; ifeat < flattenFeatures[ift].size(); ifeat++)
+                    std::cout << flattenFeatures[ift][ifeat] << " ";
+                std::cout<<std::endl;
+            }
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             

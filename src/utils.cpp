@@ -8,7 +8,7 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
     
     for (int i = 0; i < AAM1[0].size(); i+=9)
     {
-        std::vector<float> f8(12*8, 0.0);
+        std::vector<float> f8;
         for (int iangle = 0; iangle < AAM1.size(); iangle++)
         {
             std::vector<float> f(12, 0.0);
