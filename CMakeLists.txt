@@ -20,15 +20,10 @@ message(STATUS "    config: ${OpenCV_DIR}")
 message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
+file(GLOB SOURCES "src/*.cpp")
 
 add_library(base
-  src/utils.cpp 
-  src/haralick.cpp  
-  src/coocurrence.cpp
-  src/opticalflow.cpp
-  src/cuboids.cpp
-  src/kmeans.cpp
-  src/ofcm.cpp
+  ${SOURCES}
 )
 
 
