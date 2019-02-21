@@ -33,6 +33,43 @@ class FileHandler{
     std::fstream flabel;
     std::string trainfile;
     std::string labelfile;
+
+    std::vector<int> ParseLine(std::string line){
+        std::vector<int> answer;
+        std::string numberst = "";
+        for(int i = 0; i < line.size(); i++){
+            if(line[i] != ','){
+                numberst.append(1, line[i]);
+            }
+            else{
+                try{
+                    int num = std::stoi(numberst);
+                    answer.push_back(num);
+                    numberst = "";
+                }
+                catch(const std::invalid_argument & ia){
+                    std::cout<<"Bad parsing!>> "<<numberst<<std::endl;
+                }
+                catch(const std::out_of_range & orng){
+                    std::cout<<"Out rangeZ! "<<numberst<<std::endl;
+                }
+            }
+        }
+        if(numberst.size() > 0){
+            try{
+                int num = std::stoi(numberst);
+                answer.push_back(num);
+                numberst = "";
+            }
+            catch(const std::invalid_argument & ia){
+                std::cout<<"Bad parsing!>> "<<numberst<<std::endl;
+            }
+            catch(const std::out_of_range & orng){
+                std::cout<<"Out rangeZ! "<<numberst<<std::endl;
+            }
+        }
+        return answer;
+    }
     public:
     FileHandler(std::string tr, std::string lbl):trainfile(tr), labelfile(lbl){};
 
@@ -71,9 +108,26 @@ class FileHandler{
         this->Release();
         this->ftrain.open(trainfile, std::fstream::in);
         this->flabel.open(labelfile, std::fstream::in);
-        
-        // ** Reading training file
 
+        // Reading line training file
+        std::string linetr;
+
+        while(std::getline(this->ftrain, linetr)){
+            std::vector<int> ans = ParseLine(linetr);
+            data.push_back(ans);
+            //std::cout<<ans.size()<<std::endl;
+        }
+        // Reading line of Labels
+        
+        // ** Reading labels file
+        std::string linelbl;
+        while(std::getline(this->flabel, linelbl)){
+            std::vector<int> ans  = ParseLine(linelbl);
+            if(ans.size() == 1){
+                y.push_back(ans[0]);
+            }
+        }
+        //std::cout<<y.size()<<std::endl;
     }
     void Release(){
         if(this->ftrain.is_open())

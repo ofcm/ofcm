@@ -119,5 +119,9 @@ int main(int argc, char** argv){
         }
     }
     fhandler.Release();
+    std::vector<std::vector<int>> data;
+    std::vector<int> et;
+    fhandler.LoadFromFile(data, et);
+    
     return 0;
 }
