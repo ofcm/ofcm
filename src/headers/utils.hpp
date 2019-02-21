@@ -12,7 +12,7 @@
 
 #define PI 3.14159265
 
-static  int threshold           = 15;
+static  int threshold           = 30;
 static  float maxAngle          = 361.0;
 static  float orientationBin    = 8.0;
 static  float magnitudBin       = 8.0;

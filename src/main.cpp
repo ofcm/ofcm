@@ -33,8 +33,10 @@ int main(int argc, char** argv){
 
     std::vector<std::vector<float>> centers;
 
-    kmeans BOW(centers, 30);
+
+    kmeans BOW(centers, 6*3);
     FileHandler <int> fhandler("traindata.txt", "testdata.txt");
+
     for (int itrain = 0; itrain < 1; itrain++)
     {
         for(int isce = 0; isce < scenarios.size(); isce++)
@@ -60,14 +62,14 @@ int main(int argc, char** argv){
                 {
                     personActionfeatures[ifile].push_back(res[ir]);
                 }
-                
+                /*
                 std::cout << "personActionfeatures size 0: " << personActionfeatures[0].size() << std::endl;
                 std::cout << "personActionfeatures size 1: " << personActionfeatures[1].size() << std::endl;
                 std::cout << "personActionfeatures size 2: " << personActionfeatures[2].size() << std::endl;
                 std::cout << "personActionfeatures size 3: " << personActionfeatures[3].size() << std::endl;
                 std::cout << "personActionfeatures size 4: " << personActionfeatures[4].size() << std::endl;
                 std::cout << "personActionfeatures size 5: " << personActionfeatures[5].size() << std::endl;
-                
+                */
             }
 
             std::vector<std::vector<float>> toKmeans;
@@ -93,7 +95,7 @@ int main(int argc, char** argv){
                         toKmeans.push_back(personActionfeatures[ifile][itf]);
                     }
                     std::vector<int> result; 
-                    std::cout << "toKmeans size = " << toKmeans.size() << std::endl;
+                    //std::cout << "toKmeans size = " << toKmeans.size() << std::endl;
                     //std::cout << "runing kmeans " << std::endl;
                     
                     BOW.setFeatures(toKmeans);
@@ -102,13 +104,13 @@ int main(int argc, char** argv){
                         BOW.startingCenters();
                         INIT = false;
                     }          
-                    BOW.runKmeans(result);
+                    BOW.runKmeans(result);                   
+                    std::cout << "\nClass = "<< itos[ifile] << " => ";
                     fhandler.AppendLine(result, ifile);
+
 
                     for(int ires = 0; ires < result.size(); ires++)
                         std::cout << result[ires] << " ";
-                    std::cout << "\n=========" << std::endl;
-                    
                 }
 
                 if (ALL == true)
