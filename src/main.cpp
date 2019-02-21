@@ -70,14 +70,15 @@ int main(int argc, char** argv){
             std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
             SingleFileHandler <float> fhandler(modelcenters_file);
             fhandler.LoadFromFile(centers);
-
+            std::cout<<"Model loaded ... > "<<1<<std::endl;
             // Loading SVM model
             std::cout<<"Loading SVM model"<<std::endl;
             SVMhandler <int> svmhandler;
             svmhandler.LoadModelFromFile("../models/svm/svm_model");
 
             // Initialize K - means model
-            //kmeans kmeans
+            kmeans bwords(centers, K_CLASSES);
+            //bwords.setFeatures()
             break;
         }
         default:
