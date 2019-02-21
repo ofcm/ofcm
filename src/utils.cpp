@@ -211,5 +211,5 @@ void plotMO(cv::Mat& src1,
 
 void PrintLabelInImage(cv::Mat & src, std::map<int, std::string> labels, int predicted){
     std::string action = labels[predicted];
-    //cv::putText(src, action, cv::Point())
+    cv::putText(src, action, cv::Point(10, src.rows - 10), 1, 1.8, cv::Scalar(120, 5, 150), 2, 4);
 }

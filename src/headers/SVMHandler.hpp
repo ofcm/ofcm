@@ -4,6 +4,7 @@
 # include "libsvm.hpp"
 # include <vector>
 # include <iostream>
+# include <stdio.h>
 /*
  *  @Brief
  *  predicted:  The predicted value of labels
@@ -135,6 +136,29 @@ class SVMhandler{
             return;
         }
         this->parameters.kernel_type = kernel_type;
+    }
+    int SaveModel(std::string modelname){
+        if(this->sModel == nullptr){
+            std::cout<<"There is not model fitted yet!!"<<std::endl;
+            return -1;
+        }
+        FILE * pFile;
+        pFile = fopen(modelname.c_str(), "w");
+        int retval = svm_save_model(pFile, this->sModel);
+        fclose(pFile);
+        return retval;
+    }
+
+    bool LoadModelFromFile(std::string modelname){
+        FILE * pFile;
+        if(this->sModel != nullptr)
+            delete this->sModel;
+        pFile = fopen(modelname.c_str(), "r");
+
+        this->sModel = svm_load_model(pFile);
+        fclose(pFile);
+
+        return 0;
     }
 
 
