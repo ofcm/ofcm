@@ -42,6 +42,7 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
 
     
     std::string FILENAME = "../data/kth.txt";
+    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
 
     getOptions(train_data, valid_data, test_data, FILENAME);
     /*
@@ -162,6 +163,12 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
             
             ikm += 35;
         }
+        // ** Save model
+        std::string fnme = "centroids_it_" +std::to_string(itrain) + ".txt";
+        SingleFileHandler <float> fhandler(MODEL_CENTROIDS_PATH + fnme);
+        for(int ii = 0; ii < centers.size(); ii++)
+            fhandler.AppendLine(centers[ii]);
+        fhandler.Release();
     }
 
     return 0;
@@ -185,13 +192,18 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
 
     
     std::string FILENAME = "../data/kth.txt";
+    std::string MODEL_TRAINING_PATH = "../models/training/";
+
+    // ** Class Writer historigram
+    FileHandlerML <int> fhandlerML(MODEL_TRAINING_PATH + "trainingdata.txt",MODEL_TRAINING_PATH + "labeldata.txt");
 
     getOptions(train_data, valid_data, test_data, FILENAME);
     /*
     for(int i = 0; i < train_data.size();i++)
         std::cout << train_data[i].person << std::endl;
     */
-    for (int itrain = 0; itrain < train_data.size(); itrain+=24)
+    //for (int itrain = 0; itrain < train_data.size(); itrain+=24)
+    for (int itrain = 0; itrain < 24; itrain+=24)
     {
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
@@ -199,7 +211,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
         }        
         for (int idata = 0; idata < 24; idata++)
         {
-            int ifile = idata/6;
+            int ifile = idata/4;
 
             std::string PERSON = train_data[itrain + idata].person;
             std::string ACTION = train_data[itrain + idata].action;
@@ -270,13 +282,16 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
 
                 BOW.setFeatures(toKmeans);
                 BOW.getHistogram(result);  
-
+                std::cout<<"Class>> "<<ifile<<std::endl;
+                std::cout<<"#Features>> "<<result.size()<<std::endl;
                 for(int ires = 0; ires < result.size(); ires++)
                     std::cout << result[ires] << " ";
                 
                 /*
-                * escribir aqui los result en el txt
-                */       
+                 * escribir aqui los result en el txt
+                 */ 
+                fhandlerML.AppendLine(result, ifile);  
+                fhandlerML.Release(); 
             }
 
             if (ALL == true)
@@ -287,6 +302,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
             
             ikm += 35;
         }
-    }
+    } 
+    
     return 0;
 }

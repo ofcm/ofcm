@@ -80,7 +80,7 @@ class FileHandlerML{
             return;
         }
         if(!this->ftrain.is_open())
-            this->ftrain.open(this->trainfile, std::ios_base::app);
+            this->ftrain.open(this->trainfile, std::ios_base::app | std::fstream::out);
        
         // Row data feature
         int nFeatures = data.size();
@@ -94,7 +94,7 @@ class FileHandlerML{
                 line.append("\n");
         }
         if(!this->flabel.is_open())
-            flabel.open(this->labelfile, std::ios_base::app);
+            flabel.open(this->labelfile, std::ios_base::app | std::fstream::out);
         
         // Preparing Label
         std::string linelbl = "";
@@ -231,6 +231,9 @@ class SingleFileHandler{
 
         // Writing in files
         fhanler.write(line.c_str(), line.size()*sizeof(char));
+    }
+    void SetFilename(std::string newfn){
+        this->filename = newfn;
     }
     
 };

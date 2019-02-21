@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -54,4 +55,6 @@ void plotMO(cv::Mat& src1,
             std::vector<std::vector<std::vector<int>>> orientationMatrices,
             cv::Size cuboidsSize,
             int cuboidDim);
+
+void PrintLabelInImage(cv::Mat & src, std::map<int, std::string> labels, int predicted);
 #endif

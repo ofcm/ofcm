@@ -208,3 +208,8 @@ void plotMO(cv::Mat& src1,
     cv::applyColorMap(src1, src1, cv::COLORMAP_HOT);
     cv::applyColorMap(src2, src2, cv::COLORMAP_HSV);
 }
+
+void PrintLabelInImage(cv::Mat & src, std::map<int, std::string> labels, int predicted){
+    std::string action = labels[predicted];
+    //cv::putText(src, action, cv::Point())
+}
