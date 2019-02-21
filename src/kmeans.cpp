@@ -52,7 +52,7 @@ void kmeans::runKmeans(){
             std::cout << std::endl;
         }
         */
-       
+
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
 
@@ -92,7 +92,11 @@ void kmeans::runKmeans(){
         }
         if (flag == true)
             break;
+
         itr++;
+
+        if (itr > 50)
+            break;
         //std::cout << "itr = " << itr << std::endl;
         oldCenters = centers;
     }

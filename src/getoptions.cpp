@@ -2,9 +2,10 @@
 #include <fstream>
 #include <string>
 #include <ctype.h>
-void getOptions(std::vector<option> trainingOption,
-            std::vector<option> validationOption,
-            std::vector<option> testOption,
+
+void getOptions(std::vector<option>& trainingOption,
+            std::vector<option>&     validationOption,
+            std::vector<option>&     testOption,
             std::string optionFile){
     std::ifstream myfile(optionFile);
     std::string line;
@@ -146,15 +147,15 @@ void getOptions(std::vector<option> trainingOption,
                         }
                     }
                     int numberIndex = atoi(textNumber.c_str());
-                    std::cout << " numero index " << numberIndex << std::endl; 
-                    
+                    //std::cout << " numero index " << numberIndex << std::endl; 
+                    /*
                     if(numberIndex == 18){
                         for(auto n : number){
                             std::cout << " numberr " << n << std::endl;
                         }
                         std::cout << " -- " << std::endl;
                     }
-
+                    */
                     for(auto indext : trainingIndex){
                         if(indext == numberIndex){
                             //std::cout << " person " << indext << "training d " << opt.d << " number " << opt.sequence[2] << " - " << opt.sequence[3] <<  std::endl;

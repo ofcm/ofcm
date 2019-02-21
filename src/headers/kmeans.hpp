@@ -21,7 +21,7 @@ public:
     void getHistogram(std::vector<int>& result);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
-    float limitError = 0.00001;
+    float limitError = 1e-6;
 };
 
 #endif

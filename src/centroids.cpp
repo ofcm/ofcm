@@ -1,7 +1,7 @@
-#include "headers/utils.hpp"
+//#include "headers/utils.hpp"
 #include "headers/ofcm.hpp"
 #include "headers/kmeans.hpp"
-//#include "getOptions.cpp"
+//#include "headers/option.hpp"
 #include "headers/miscellanius.hpp"
 #include "headers/centroids.hpp"
 
@@ -26,16 +26,18 @@ std::string END    = "_uncomp.avi";
 
 
 int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){   
-    std::vector<int> trainingPerson    = {11,12,13};
+
+    std::vector<int> trainingPerson    = {11, 12, 13, 14, 15, 16, 17, 18};
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<float>>> personActionfeatures(6);
     cv::VideoCapture cap;
     bool INIT          = true;
 
+
     kmeans BOW(centers, K_CLASES);
     //FileHandler <int> fhandler("traindata.txt", "testdata.txt");
 
-    for (int itrain = 0; itrain < 1; itrain++)
+    for (int itrain = 0; itrain < trainingPerson.size(); itrain++)
     {
         for(int isce = 0; isce < scenarios.size(); isce++)
         {
@@ -54,7 +56,7 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
                     std::cout << "Failed to open camera." << std::endl;
                     return -1;
                 }
-                std::pair<int,int> sequence(1, 20);
+                std::pair<int,int> sequence(1, 230);
                 std::vector<std::vector<float>> res = OFCM(cap, sequence);
 
                 for(int ir = 0; ir < res.size(); ir++)

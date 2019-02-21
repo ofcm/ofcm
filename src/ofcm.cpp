@@ -10,7 +10,7 @@ cv::Size                                                cuboidsSize;
 
 
 
-int cuboidDim       =                                   36; // width and height size
+int cuboidDim       =                                   40; // width and height size
 int T               =                                   10; // number of frames
 int dx              =                                   1;
 int dy              =                                   1;
@@ -50,7 +50,7 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
         if(FRAMECOUNT >= sequence.second)
             break;
 
-        cv::resize(frame,frame, cv::Size(144, 108));
+        //cv::resize(frame,frame, cv::Size(144, 108));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
