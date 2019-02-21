@@ -26,7 +26,6 @@ add_library(base
   ${SOURCES}
 )
 
-
 add_executable(out src/main.cpp)
 
 set_target_properties(out PROPERTIES 
