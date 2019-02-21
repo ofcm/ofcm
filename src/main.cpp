@@ -3,6 +3,7 @@
 #include "headers/kmeans.hpp"
 #include "getOptions.cpp"
 #include "headers/miscellanius.hpp"
+#include "headers/SVMHandler.hpp"
 
 std::string PATH_DATA               = "../data/";
 std::vector<std::string> itos       = {"walking","jogging","running","boxing","handwaving","handclapping"};
@@ -120,8 +121,19 @@ int main(int argc, char** argv){
     }
     fhandler.Release();
     std::vector<std::vector<int>> data;
-    std::vector<int> et;
-    fhandler.LoadFromFile(data, et);
-    
+    std::vector<int> y_;
+    fhandler.LoadFromFile(data, y_);
+
+    /*
+     * Creating SVM model
+     */
+    // Since historygram data is integer
+    // By default it is initialized with RBF kernell
+    SVMhandler <int> svmhandler;
+    std::vector<int> labelsV{0, 1, 2, 3, 4, 5};
+    bool val = svmhandler.fit(y_, labelsV, data, nullptr);
+
+    float acc = svmhandler.validate(data, y_);
+    std::cout<<"Accuracy:>> "<<acc<<std::endl;
     return 0;
 }
