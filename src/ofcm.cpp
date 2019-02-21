@@ -10,12 +10,12 @@ cv::Size                                                cuboidsSize;
 
 
 
-int cuboidDim       =                                   40; // width and height size
+int cuboidDim       =                                   72; // width and height size
 int T               =                                   10; // number of frames
 int dx              =                                   1;
 int dy              =                                   1;
-int tHeight         =                                   160;
-int tWidth          =                                   120;
+int tWidth          =                                   160;
+int tHeight         =                                   120;
 
 std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int> sequence)
 {
@@ -50,7 +50,7 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
         if(FRAMECOUNT >= sequence.second)
             break;
 
-        //cv::resize(frame,frame, cv::Size(144, 108));
+        cv::resize(frame,frame, cv::Size(72*2, 72));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
@@ -92,25 +92,26 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             }
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
-
+            //std::cout << "cuboidsSize = " << W << " x " << H << std::endl;  
             std::vector<std::vector<float>> flattenFeatures;
             getHaralickFeatures(coocurrenceMatricesMagnitud, coocurrenceMatricesOrientation, cuboidsSize, flattenFeatures, T-1);
 
             for (int ift = 0; ift < flattenFeatures.size(); ift++){
                 AllflattenFeatures.push_back(flattenFeatures[ift]);
-                std::cout<< "===========================> " <<  flattenFeatures[ift].size() <<std::endl;
-                for (int ifeat = 0; ifeat < flattenFeatures[ift].size(); ifeat++)
-                    std::cout << flattenFeatures[ift][ifeat] << " ";
-                std::cout<<std::endl;
+                //std::cout<< "===========================> " <<  flattenFeatures[ift].size() <<std::endl;
+                //for (int ifeat = 0; ifeat < flattenFeatures[ift].size(); ifeat++)
+                //    std::cout << flattenFeatures[ift][ifeat] << " ";
+                //std::cout<<std::endl;
             }
+            /*
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             
             plotMO(MagnitudImg, OrientationImg, magnitudeMatrices, orientationMatrices, cuboidsSize, cuboidDim);
 
-            cv::resize(frame,frame, cv::Size(imageSize.width*2, imageSize.height*2));
-            cv::resize(MagnitudImg,MagnitudImg, cv::Size(imageSize.width*2, imageSize.height*2));
-            cv::resize(OrientationImg,OrientationImg, cv::Size(imageSize.width*2, imageSize.height*2));
+            cv::resize(frame,frame, cv::Size(tWidth*2, tHeight*2));
+            cv::resize(MagnitudImg,MagnitudImg, cv::Size(tWidth*2, tHeight*2));
+            cv::resize(OrientationImg,OrientationImg, cv::Size(tWidth*2, tHeight*2));
 
             cv::imshow("Magnitud", MagnitudImg); 
             cv::imshow("OrientationImg", OrientationImg); 
@@ -119,7 +120,7 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             cv::moveWindow("frame", 100,100);
             cv::moveWindow("Magnitud", 100 + frame.cols,100);
             cv::moveWindow("OrientationImg", 100 + frame.cols *2 ,100);
-
+            */
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
