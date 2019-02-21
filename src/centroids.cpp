@@ -57,6 +57,8 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/6;
+            if (ifile < 3)
+                continue;
             std::string PERSON = train_data[itrain + idata].person;
             std::string ACTION = train_data[itrain + idata].action;
             std::string TYPE   = train_data[itrain + idata].d;
@@ -87,7 +89,7 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
 
             for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
             {
-                std::pair<int,int> input_sequence(train_data[itrain + idata].sequence[0], train_data[itrain + idata].sequence[1]);
+                std::pair<int,int> input_sequence(train_data[itrain + idata].sequence[iv], train_data[itrain + idata].sequence[iv + 1]);
 
                 std::vector<std::vector<float>> res = OFCM(cap, input_sequence);
 
