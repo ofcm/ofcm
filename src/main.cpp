@@ -3,8 +3,11 @@
 
 int main(int argc, char** argv){   
     std::vector<std::vector<float>> centers;
-    int K_CLASSES = 4*6;
-    int res = getCentroids(centers, K_CLASSES);
+    
+    int K_CLASSES = 2*6;
+    
+    int res1 = getCentroids(centers, K_CLASSES);
+    int res2 = getHistograms(centers, K_CLASSES);
 
     return 0;
 }

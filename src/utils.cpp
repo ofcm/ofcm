@@ -4,10 +4,12 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
 {
     int W = cuboidsSize.width;
     int H = cuboidsSize.height;
-
-    for (int iangle = 0; iangle < AAM1.size(); iangle++)
+    
+    
+    for (int i = 0; i < AAM1[0].size(); i+=9)
     {
-        for (int i = 0; i < AAM1[iangle].size(); i+=9)
+        std::vector<float> f8(12*8, 0.0);
+        for (int iangle = 0; iangle < AAM1.size(); iangle++)
         {
             std::vector<float> f(12, 0.0);
             for (int ti = 0; ti < T; ti++)
@@ -18,9 +20,26 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
                 for (int fi = 0; fi < 12; fi++)
                 {
                     f[fi] += ftmp[fi]/((float)T);
+                    
                 }
 
             }
+
+            for (int ift = 0; ift < f.size(); ift++)
+                f8.push_back(f[ift]);
+            //res.push_back(f);
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM2[iangle][i+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+
+                for (int fi = 0; fi < 12; fi++)
+                {
+                    f[fi] += ftmp[fi]/((float)T);
+                }
+            }
+            for (int ift = 0; ift < f.size(); ift++)
+                f8.push_back(f[ift]);
             /*
             float sum = 0.0;
             for (int fi = 0; fi < 12; fi++)
@@ -31,10 +50,11 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
             if (sum == 0.0)
                 continue;
             */
-            res.push_back(f);
+            //res.push_back(f);
         }
+        res.push_back(f8);
     }
-
+    /*
     for (int iangle = 0; iangle < AAM2.size(); iangle++)
     {
         for (int i = 0; i < AAM2[iangle].size(); i+=9)
@@ -50,7 +70,7 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
                     f[fi] += ftmp[fi]/((float)T);
                 }
             }
-            /*
+            
             float sum = 0.0;
             for (int fi = 0; fi < 12; fi++)
             {
@@ -59,11 +79,11 @@ void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std
 
             if (sum == 0.0)
                 continue;
-            */
+            
             res.push_back(f);
         }
     }
-
+    */
 }
 void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0)
 {
