@@ -29,6 +29,7 @@ add_library(base
   src/cuboids.cpp
   src/kmeans.cpp
   src/ofcm.cpp
+  src/option.cpp
 )
 
 
