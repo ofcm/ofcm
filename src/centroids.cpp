@@ -57,8 +57,7 @@ int getCentroids(std::vector<std::vector<float>>& centers, int K_CLASES){
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/6;
-            if (ifile < 3)
-                continue;
+
             std::string PERSON = train_data[itrain + idata].person;
             std::string ACTION = train_data[itrain + idata].action;
             std::string TYPE   = train_data[itrain + idata].d;
