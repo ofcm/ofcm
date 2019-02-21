@@ -63,10 +63,14 @@ void kmeans::runKmeans(){
 
         for (int k = 0; k < numberClass; k++)
         {
-            for (int icen = 0; icen < centers[k].size(); icen++)
+            if (cluster[k].size() != 0)
             {
-                centers[k][icen] = 0.0;
+                for (int icen = 0; icen < centers[k].size(); icen++)
+                {
+                    centers[k][icen] = 0.0;
+                }
             }
+
         }
         
         for(int k = 0;k < numberClass;k++){

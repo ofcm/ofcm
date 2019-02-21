@@ -9,21 +9,21 @@ int main(int argc, char** argv){
     int K_CLASSES = 2*6;
     
     // Uncomment to generate centers
-    //int res1 = getCentroids(centers, K_CLASSES);
+    int res1 = getCentroids(centers, K_CLASSES);
     
-
-
-    //SingleFileHandler <float> fhandler(std::string("centers_model.txt"));
-    //for(int i = 0; i < centers.size(); i++){
-    //    fhandler.AppendLine(centers[i]);
-    //}
-    //fhandler.Release();
-
+    /*
+    SingleFileHandler <float> fhandler(std::string("centers_model.txt"));
+    for(int i = 0; i < centers.size(); i++){
+        fhandler.AppendLine(centers[i]);
+    }
+    fhandler.Release();
+    */
+   
     //Uncomment to Generate Training data"
     
-    SingleFileHandler <float> fhandler("../models/centroids/centers_model.txt");
-    fhandler.LoadFromFile(centers);
-    int res2 = getHistograms(centers, K_CLASSES);
+    //SingleFileHandler <float> fhandler("../models/centroids/centers_model.txt");
+    //fhandler.LoadFromFile(centers);
+    //int res2 = getHistograms(centers, K_CLASSES);
     
    
     // Uncomment to train the data
