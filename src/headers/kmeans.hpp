@@ -15,11 +15,13 @@ public:
     
     kmeans(std::vector<std::vector<float>> centers,
                             int numberClass);
-    void runKmeans(std::vector<int>& result);
+    void runKmeans();
     void setFeatures(std::vector<std::vector<float>>);
+    std::vector<std::vector<float>> getCentroids();
+    void getHistogram(std::vector<int>& result);
     void startingCenters();
     int getGoodCluster(std::vector<float>);
-    float limitError = 0.0001;
+    float limitError = 0.00001;
 };
 
 #endif

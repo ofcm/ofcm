@@ -11,66 +11,90 @@ void kmeans::setFeatures(std::vector<std::vector<float>> features){
     this->features = features;
 }
 
-void kmeans::runKmeans(std::vector<int>& result){
+std::vector<std::vector<float>> kmeans::getCentroids(){
+    return centers;
+}
+
+void kmeans::getHistogram(std::vector<int>& result)
+{
+    std::vector<std::vector<std::vector<float>>> cluster(numberClass);
+
+    for(auto feature : features)
+    {
+        int goodClass = getGoodCluster(feature);
+        cluster[goodClass].push_back(feature);
+    }
+
+    for(int k = 0;k < numberClass;k++){
+        result.push_back(cluster[k].size());
+    }
+}
+
+void kmeans::runKmeans(){
     std::vector<std::vector<std::vector<float>>> cluster(numberClass);
     oldCenters = centers;
 
-    //std::cout << "numberClass = " << numberClass << std::endl;
     int itr = 0;
-    while (flag == false){
+
+    flag = false;
+
+    while (true){
         flag = true;
-        //std::cout << "itr = " << itr << std::endl;
+
+        /*
+        std::cout << "\ncentroids (it = "<< itr << ") :\n" << std::endl;
+        for (int k = 0; k < numberClass; k++)
+        {
+            for (int icen = 0; icen < centers[k].size(); icen++)
+            {
+                std::cout << centers[k][icen] << " ";
+            }
+            std::cout << std::endl;
+        }
+        */
+       
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
+
         for(auto feature : features){
             int goodClass = getGoodCluster(feature);
-            //std::cout << "goodClass = " << goodClass << std::endl;
             cluster[goodClass].push_back(feature);
-            //std::cout << "cluster " << goodClass << " = " <<cluster[goodClass].size() << std::endl;
         }
-        //for(int k = 0;k < numberClass;k++){
-        //    std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
-        //}
 
-        std::vector<std::vector<float>> newCenters(numberClass, std::vector<float>(12,0.0));
+        for (int k = 0; k < numberClass; k++)
+        {
+            for (int icen = 0; icen < centers[k].size(); icen++)
+            {
+                centers[k][icen] = 0.0;
+            }
+        }
+        
         for(int k = 0;k < numberClass;k++){
             for(int i = 0;i < cluster[k].size();i++){
                 for(int val = 0;val < cluster[k][i].size();val++){
-//                    std::cout << "k = "<< k << ", val = "<< val << " (i) = "<< i <<std::endl;
-                    newCenters[k][val] += cluster[k][i][val]/cluster[k].size();
+                    centers[k][val] += cluster[k][i][val]/cluster[k].size();
                 }
             }
         }
-
         
         for(int k = 0;k < numberClass;k++){
-
             float sum = 0.0;
-
-            //std::cout << "----->" << oldCenters[0].size() << std::endl;
-
-            for(int i =0; i< newCenters[k].size();i++)
+            for(int i =0; i< centers[k].size();i++)
             {
-                sum += ((oldCenters[k][i] - newCenters[k][i])*(oldCenters[k][i] - newCenters[k][i]));
+                sum += ((oldCenters[k][i] - centers[k][i])*(oldCenters[k][i] - centers[k][i]));
             }
                 
             sum = sqrt(sum);
-            //std::cout << "sum = " << sum << std::endl;
             if(sum <= limitError)
-            {
                 flag *= true;
-            }
-            else{
-                flag *= false;
-            }
-            
+            else
+                flag *= false;            
         }
+        if (flag == true)
+            break;
         itr++;
-        oldCenters = newCenters;
-    }
-    for(int k = 0;k < numberClass;k++){
-        //std::cout << "size = " << k << " -> "<< cluster[k].size() << std::endl;
-        result.push_back(cluster[k].size());
+        //std::cout << "itr = " << itr << std::endl;
+        oldCenters = centers;
     }
 }
 
@@ -98,5 +122,6 @@ int kmeans::getGoodCluster(std::vector<float> feature){
             gc = k;
         }
     }
+
     return gc;
 }

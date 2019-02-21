@@ -20,6 +20,7 @@ message(STATUS "    config: ${OpenCV_DIR}")
 message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
+file(GLOB SOURCES "src/*.cpp")
 
 add_library(base
   src/utils.cpp 
@@ -31,7 +32,6 @@ add_library(base
   src/ofcm.cpp
   src/option.cpp
 )
-
 
 add_executable(out src/main.cpp)
 
