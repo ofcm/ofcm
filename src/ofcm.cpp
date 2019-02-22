@@ -34,7 +34,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
     std::vector<std::vector<cv::Mat>>                       coMM(4);
     std::vector<std::vector<cv::Mat>>                       coMO(4);
 
-    std::vector<std::vector<std::vector<float>>>            AllflattenFeatures;
+    std::vector<std::vector<std::vector<float>>>            global_framesFeatures;
     
     cv::Size imageSize;
     cv::Mat frame;
@@ -105,7 +105,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             getHaralickFeatures(coMM, coMO, cuboidsSize, framesFeatures, T-1);
 
             for (int ift = 0; ift < framesFeatures.size(); ift++){
-                AllflattenFeatures.push_back(framesFeatures[ift]);
+                global_framesFeatures.push_back(framesFeatures[ift]);
                 //std::cout<< "\t==> framesFeatures size : " <<  framesFeatures[ift].size() << " x " << framesFeatures[ift][0].size() << std::endl;
             }
             
@@ -149,5 +149,5 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
     cuboids.clear();
 
     //video.release();
-    return AllflattenFeatures;
+    return global_framesFeatures;
 }
