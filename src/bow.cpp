@@ -91,7 +91,6 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
         }     
         */
         cuboidsCenters[icuboid] = BOW.getCentroids();
-        
     }
 
 }
@@ -142,11 +141,11 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
                 std::cout << "Failed to open camera." << std::endl;
             }
 
-            //for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
-            for (int iv = 0;  iv < 2; iv+=2)
+            for (int iv = 0;  iv < database[itrain + idata].sequence.size(); iv+=2)
+            //for (int iv = 0;  iv < 2; iv+=2)
             {
-                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
-                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
+                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
+                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
@@ -169,6 +168,8 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
         }
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
     }
+
+
     return cuboidsCenters;
 }
 
