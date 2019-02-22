@@ -3,7 +3,7 @@
 void getHaralickFeatures(   std::vector<std::vector<cv::Mat>>   AAM1, 
                             std::vector<std::vector<cv::Mat>>   AAM2, 
                             cv::Size                            cuboidsSize, 
-                            std::vector<std::vector<std::vector<float>>>& res, 
+                            std::vector<std::vector<float>>&    res, 
                             int T)
 {
     int W = cuboidsSize.width;
@@ -11,36 +11,35 @@ void getHaralickFeatures(   std::vector<std::vector<cv::Mat>>   AAM1,
     
     int ncuboids = W * H;
     
-    for (int i = 0; i < AAM1[0].size(); i+=ncuboids)
-    {
-        std::vector<std::vector<float>> cuboidFeature;
-        for (int icub = 0; icub < ncuboids; icub++)
+    std::vector<std::vector<float>> cuboidFeature;
+
+    
+
+    for (int icub = 0; icub < ncuboids; icub++)
+    { 
+        std::vector<float> f864;
+        for (int iangle = 0; iangle < AAM1.size(); iangle++)
         {
-            std::vector<float> f72;
-            for (int iangle = 0; iangle < AAM1.size(); iangle++)
+            for (int ti = 0; ti < T; ti++)
             {
-                for (int ti = 0; ti < T; ti++)
-                {
-                    cv::Mat Mco             = AAM1[iangle][i+ti];
-                    std::vector<float> ftmp = haralick(Mco, 12);
-                    
-                    for (int fi = 0; fi < 12; fi++)
-                        f72.push_back(ftmp[fi]);
-                }
-
-                for (int ti = 0; ti < T; ti++)
-                {
-                    cv::Mat Mco             = AAM2[iangle][i+ti];
-                    std::vector<float> ftmp = haralick(Mco, 12);
-
-                    for (int fi = 0; fi < 12; fi++)
-                        f72.push_back(ftmp[fi]);
-                }
+                cv::Mat Mco             = AAM1[iangle][icub*T+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+                
+                for (int fi = 0; fi < 12; fi++)
+                    f864.push_back(ftmp[fi]);
             }
-            
-            cuboidFeature.push_back(f72);
+
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM2[iangle][icub*T+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+
+                for (int fi = 0; fi < 12; fi++)
+                    f864.push_back(ftmp[fi]);
+            }
         }
-        res.push_back(cuboidFeature);
+        
+        res.push_back(f864);
     }
 }
 void Mat2Mat(cv::Mat src, cv::Mat& dst, int x0, int y0)

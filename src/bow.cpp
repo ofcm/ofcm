@@ -28,14 +28,14 @@ void addString(std::string& src, std::string s, int maxSize)
         src += s[i]; 
 }
 
-int getCentroids(std::vector<option> database, std::vector<std::vector<float>>& centers, int K_CLASES){   
+int getCentroids(std::vector<option> database, std::vector<std::vector<std::vector<float>>>& centers, int K_CLASES){   
     std::vector<std::string> filenames(6);
-    std::vector<std::vector<std::vector<float>>> personActionfeatures(6);
+    std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
     bool INIT          = true;
 
     std::string PATH_DATA               = "../data/";
-    kmeans BOW(centers, K_CLASES);
+    //kmeans BOW(centers, K_CLASES);
     
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
 
@@ -45,10 +45,12 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<float>>& 
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
+        /*
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
         }        
+        */
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -67,7 +69,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<float>>& 
             addString(videofile, TYPE  , TYPE.size());
             videofile +=  END;
 
-            std::cout << PATH_DATA + videofile << std::endl;
+            std::cout << "\nreading : "<<PATH_DATA + videofile << "\n"<< std::endl;
             cap.open(PATH_DATA + videofile);
 
             if (!cap.isOpened())
@@ -82,12 +84,28 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<float>>& 
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence);
-                //for(int ir = 0; ir < res.size(); ir++)
-               // {
-                //    personActionfeatures[ifile].push_back(res[ir]);
-                //}
+                std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<<std::endl;
+
+                for(int ir = 0; ir < res.size(); ir++)
+                {
+                    personActionfeatures[ifile].push_back(res[ir]);
+                }
+                for (int ires = 0; ires < res.size(); ires++)
+                {
+                    for (int jres = 0; jres < res[ires].size(); jres++)
+                        res[ires][jres].clear();
+                }
+            }
+            for(int ir = 0; ir < personActionfeatures.size(); ir++)
+            {
+                std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
             }
         }
+    }
+
+    /*
+    * All data on personActionfeatures
+    */
         /*
         std::vector<std::vector<float>> toKmeans;
 
@@ -181,7 +199,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<float>>& 
             fhandler.AppendLine(centers[ii]);
         fhandler.Release();
         */
-    }
+    //}
 
     return 0;
 }

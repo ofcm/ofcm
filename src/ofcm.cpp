@@ -14,12 +14,6 @@ OFCM::OFCM(int re_rows,int re_cols)
     this->reRows = re_rows;
     this->reCols = re_cols;
 }
-
-OFCM::~OFCM()
-{
-    std::cout << "OFCM deleted" << std::endl;
-}
-
 std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence)
 {
     cv::VideoWriter video("../data/outcpp.avi",CV_FOURCC('M','J','P','G'),30, cv::Size(tWidth*6, tHeight*2)); 
@@ -99,15 +93,13 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
 
-            std::vector<std::vector<std::vector<float>>> framesFeatures;
+            std::vector<std::vector<float>> framesFeatures;
 
             //std::cout<< "==> cuboidsSize : " << cuboidsSize << std::endl;
             getHaralickFeatures(coMM, coMO, cuboidsSize, framesFeatures, T-1);
-
-            for (int ift = 0; ift < framesFeatures.size(); ift++){
-                global_framesFeatures.push_back(framesFeatures[ift]);
-                //std::cout<< "\t==> framesFeatures size : " <<  framesFeatures[ift].size() << " x " << framesFeatures[ift][0].size() << std::endl;
-            }
+            //std::cout<< "\t==> framesFeatures size : " << framesFeatures.size() << " x "<<  framesFeatures[0].size() << std::endl;
+            global_framesFeatures.push_back(framesFeatures);
+            //std::cout<< "\t==> global_framesFeatures size : " << global_framesFeatures.size() << " x "<<  global_framesFeatures[0].size() << std::endl;
             
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);

@@ -17,7 +17,6 @@ class OFCM
         int reCols;
 
         OFCM(int re_rows,int re_cols);
-        ~OFCM();
         std::vector<std::vector<std::vector<float>>> get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence);
 
     private:

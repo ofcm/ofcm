@@ -12,10 +12,9 @@
 // 3: Prediction off-line
 // 4: Prediction on-line
 
-
 int main(int argc, char** argv){   
     int K_CLASSES = 5;
-    std::vector<std::vector<float>> centers;
+    std::vector<std::vector<std::vector<float>>> cuboidCenters;
     
     int mode = std::stoi(argv[1]);
 
@@ -23,7 +22,7 @@ int main(int argc, char** argv){
     std::vector<option> valid_data;
     std::vector<option>  test_data;
 
-    std::string OPTION_FILE             = "../data/kth.txt";
+    std::string OPTION_FILE             = "../options/kth.txt";
 
     getOptions(train_data, valid_data, test_data, OPTION_FILE);
 
@@ -31,7 +30,7 @@ int main(int argc, char** argv){
     {
         // 0: Train K-Means Centers
         case 0: {
-            int res1 = getCentroids(train_data,centers, K_CLASSES);
+            int res1 = getCentroids(train_data,cuboidCenters, K_CLASSES);
             break;
         }
         // 1: Generate data of training
@@ -39,8 +38,8 @@ int main(int argc, char** argv){
             std::cout<<"Generating training data"<<std::endl;
             std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
             SingleFileHandler <float> fhandler(modelcenters_file);
-            fhandler.LoadFromFile(centers);
-            int res2 = getHistograms(centers, K_CLASSES);
+            //fhandler.LoadFromFile(cuboidCenters);
+            //int res2 = getHistograms(cuboidCenters, K_CLASSES);
             break;
         }
         // 2: Training SVM classifier
@@ -80,7 +79,7 @@ int main(int argc, char** argv){
             std::cout<<"Loading Center K - means"<<std::endl;
             std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
             SingleFileHandler <float> fhandler(modelcenters_file);
-            fhandler.LoadFromFile(centers);
+            //fhandler.LoadFromFile(centers);
             std::cout<<"Model loaded ... > "<<1<<std::endl;
             // Loading SVM model
             std::cout<<"Loading SVM model"<<std::endl;
@@ -88,7 +87,7 @@ int main(int argc, char** argv){
             svmhandler.LoadModelFromFile("../models/svm/svm_model");
 
             // Initialize K - means model
-            kmeans bwords(centers, K_CLASSES);
+            //kmeans bwords(centers, K_CLASSES);
             //bwords.setFeatures()
             break;
         }
