@@ -84,7 +84,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
             for (int icen = 0; icen < cuboidsCenters[icuboid][k].size(); icen++)
             {
                 std::cout << cuboidsCenters[icuboid][k][icen] << " ";
-                if (icen % 12)
+                if (icen % 12 == 0)
                     std::cout << std::endl;
             }
             std::cout << std::endl;

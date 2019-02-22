@@ -48,7 +48,7 @@ void kmeans::runKmeans(){
             for (int icen = 0; icen < centers[k].size(); icen++)
             {
                 std::cout << centers[k][icen] << " ";
-                if (icen % 12)
+                if (icen % 12 == 0)
                     std::cout << std::endl;
             }
             
