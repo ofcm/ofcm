@@ -14,7 +14,7 @@ OFCM::OFCM(int re_rows,int re_cols)
     this->reRows = re_rows;
     this->reCols = re_cols;
 }
-std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence)
+std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence, int& cuboidsize)
 {
     cv::VideoWriter video("../data/outcpp.avi",CV_FOURCC('M','J','P','G'),30, cv::Size(tWidth*6, tHeight*2)); 
 
@@ -93,6 +93,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
 
+            cuboidsize = W*H;
             std::vector<std::vector<float>> framesFeatures;
 
             //std::cout<< "==> cuboidsSize : " << cuboidsSize << std::endl;

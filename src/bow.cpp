@@ -89,7 +89,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
             }
             std::cout << std::endl;
         }     
-        
+
         cuboidsCenters[icuboid] = BOW.getCentroids();
     }
 
@@ -98,8 +98,8 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
-    bool INIT          = true;
 
+    int cuboidSize;
     std::string PATH_DATA               = "../data/";
     //kmeans BOW(centers, K_CLASES);
     
@@ -149,7 +149,8 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
                 OFCM Haralick(108,144);
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence);
+                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
+                
                 std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<<std::endl;
 
                 for(int ir = 0; ir < res.size(); ir++)
@@ -167,6 +168,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
                 std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
             }
         }
+        cuboidsCenters.resize(5);
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters);
     }
 
@@ -279,7 +281,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
     std::vector<std::vector<std::vector<float>>> personActionfeatures(6);
     cv::VideoCapture cap;
     bool INIT          = true;
-
+    int cuboidSize;
     std::string PATH_DATA               = "../data/";
     kmeans BOW(centers, K_CLASES);
 
@@ -344,7 +346,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
                 std::pair<int,int> input_sequence(test_data[itrain + idata].sequence[iv], test_data[itrain + idata].sequence[iv + 1]);
 
                 OFCM Haralick(108,144);
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence);
+                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
 
                 //for(int ir = 0; ir < res.size(); ir++)
                 //{
