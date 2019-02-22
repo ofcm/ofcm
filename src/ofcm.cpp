@@ -3,34 +3,38 @@
 #include "headers/opticalflow.hpp"
 #include "headers/kmeans.hpp"
 #include "headers/coocurrence.hpp"
+#include "headers/ofcm.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
 cv::Size                                                cuboidsSize;
 
-
-
-int cuboidDim       =                                   72; // width and height size
-int T               =                                   10; // number of frames
-int dx              =                                   1;
-int dy              =                                   1;
-int tWidth          =                                   160;
-int tHeight         =                                   120;
-
-std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int> sequence)
+OFCM::OFCM(int re_rows,int re_cols)
 {
-    std::vector<std::vector<std::vector<int>>>              orientationMatricesT;
-    std::vector<std::vector<std::vector<int>>>              magnitudeMatricesT;
+    this->reRows = re_rows;
+    this->reCols = re_cols;
+}
+
+OFCM::~OFCM()
+{
+    std::cout << "OFCM deleted" << std::endl;
+}
+
+std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence)
+{
+    cv::VideoWriter video("../data/outcpp.avi",CV_FOURCC('M','J','P','G'),30, cv::Size(tWidth*6, tHeight*2)); 
+
+    std::vector<std::vector<std::vector<int>>>              oMTemp;
+    std::vector<std::vector<std::vector<int>>>              mMTemp;
     std::vector<std::vector<std::vector<int>>>              orientationMatrices;
     std::vector<std::vector<std::vector<int>>>              magnitudeMatrices;
     std::vector<cv::Mat>                                    imageBuffer;
     std::vector<std::vector<cv::Mat>>                       cuboids;
 
-    std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesMagnitud(4);
-    std::vector<std::vector<cv::Mat>>                       coocurrenceMatricesOrientation(4);
+    std::vector<std::vector<cv::Mat>>                       coMM(4);
+    std::vector<std::vector<cv::Mat>>                       coMO(4);
 
-    std::vector<std::vector<float>>                         AllflattenFeatures;
-
+    std::vector<std::vector<std::vector<float>>>            AllflattenFeatures;
     
     cv::Size imageSize;
     cv::Mat frame;
@@ -40,9 +44,12 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
     int FRAMECOUNT = sequence.first;
     capTemp.set(CV_CAP_PROP_POS_FRAMES, sequence.first);
     
+    
+
     int proc = 0;
     for (;;)
     {
+        cv::Mat Template = cv::Mat(tHeight*2, tWidth*6, CV_8UC3, cv::Scalar(45));
         capTemp >> frame;
         if(frame.empty())
             break;    
@@ -50,7 +57,7 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
         if(FRAMECOUNT >= sequence.second)
             break;
 
-        cv::resize(frame,frame, cv::Size(72*2, 72));
+        cv::resize(frame,frame, cv::Size(reCols, reRows));
         imageSize  = frame.size();
         cv::Mat fr = frame.clone();
 
@@ -65,45 +72,43 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             for(int icub = 0; icub < cuboids.size();icub++){
                 for(int i = 0; i < cuboids[icub].size() - 1; i++){
                     int i_next = i + 1;
-                    opticalFlow(orientationMatricesT,magnitudeMatricesT,cuboids[icub][i],cuboids[icub][i_next],3);
-                }
-                for (int io = 0; io < orientationMatricesT.size(); io++){
-                    orientationMatrices.push_back(orientationMatricesT[io]);                    
-                    
-                    coocurrenceMatricesOrientation[0].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io],  dx,   0, 8, 315, cuboidDim)); // 0  º
-                    coocurrenceMatricesOrientation[1].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io],  dx, -dy, 8, 315, cuboidDim)); // 45 º
-                    coocurrenceMatricesOrientation[2].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io],   0, -dy, 8, 315, cuboidDim)); // 90 º
-                    coocurrenceMatricesOrientation[3].push_back(CoocurrenceFromSingleMatrixAngle(orientationMatricesT[io], -dy, -dx, 8, 315, cuboidDim)); // 135º
-                                    
+                    opticalFlow(oMTemp,mMTemp,cuboids[icub][i],cuboids[icub][i_next], Levels, windSize);
                 }
 
-                for (int im = 0; im < magnitudeMatricesT.size(); im++){
-                    magnitudeMatrices.push_back(magnitudeMatricesT[im]);
+                for (int io = 0; io < oMTemp.size(); io++){
+                    orientationMatrices.push_back(oMTemp[io]);                    
                     
-                    coocurrenceMatricesMagnitud[0].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],  dx,   0, cuboidDim));
-                    coocurrenceMatricesMagnitud[1].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],  dx, -dy, cuboidDim));
-                    coocurrenceMatricesMagnitud[2].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im],   0, -dy, cuboidDim));
-                    coocurrenceMatricesMagnitud[3].push_back(CoocurrenceFromSingleMatrixMag(magnitudeMatricesT[im], -dy, -dx, cuboidDim));
-                    
+                    coMO[0].push_back(CoocurrenceFromSingleMatrixAngle(oMTemp[io],  dx,   0, 8, 315, cuboidDim)); // 0  º
+                    coMO[1].push_back(CoocurrenceFromSingleMatrixAngle(oMTemp[io],  dx, -dy, 8, 315, cuboidDim)); // 45 º
+                    coMO[2].push_back(CoocurrenceFromSingleMatrixAngle(oMTemp[io],   0, -dy, 8, 315, cuboidDim)); // 90 º
+                    coMO[3].push_back(CoocurrenceFromSingleMatrixAngle(oMTemp[io], -dy, -dx, 8, 315, cuboidDim)); // 135º
                 }
 
-                orientationMatricesT.clear();
-                magnitudeMatricesT.clear();          
+                for (int im = 0; im < mMTemp.size(); im++){
+                    magnitudeMatrices.push_back(mMTemp[im]);
+                    
+                    coMM[0].push_back(CoocurrenceFromSingleMatrixMag(mMTemp[im],  dx,   0, cuboidDim));
+                    coMM[1].push_back(CoocurrenceFromSingleMatrixMag(mMTemp[im],  dx, -dy, cuboidDim));
+                    coMM[2].push_back(CoocurrenceFromSingleMatrixMag(mMTemp[im],   0, -dy, cuboidDim));
+                    coMM[3].push_back(CoocurrenceFromSingleMatrixMag(mMTemp[im], -dy, -dx, cuboidDim));
+                    
+                }
+                oMTemp.clear();
+                mMTemp.clear();          
             }
             int W = cuboidsSize.width;
             int H = cuboidsSize.height;
-            //std::cout << "cuboidsSize = " << W << " x " << H << std::endl;  
-            std::vector<std::vector<float>> flattenFeatures;
-            getHaralickFeatures(coocurrenceMatricesMagnitud, coocurrenceMatricesOrientation, cuboidsSize, flattenFeatures, T-1);
 
-            for (int ift = 0; ift < flattenFeatures.size(); ift++){
-                AllflattenFeatures.push_back(flattenFeatures[ift]);
-                //std::cout<< "===========================> " <<  flattenFeatures[ift].size() <<std::endl;
-                //for (int ifeat = 0; ifeat < flattenFeatures[ift].size(); ifeat++)
-                //    std::cout << flattenFeatures[ift][ifeat] << " ";
-                //std::cout<<std::endl;
+            std::vector<std::vector<std::vector<float>>> framesFeatures;
+
+            //std::cout<< "==> cuboidsSize : " << cuboidsSize << std::endl;
+            getHaralickFeatures(coMM, coMO, cuboidsSize, framesFeatures, T-1);
+
+            for (int ift = 0; ift < framesFeatures.size(); ift++){
+                AllflattenFeatures.push_back(framesFeatures[ift]);
+                //std::cout<< "\t==> framesFeatures size : " <<  framesFeatures[ift].size() << " x " << framesFeatures[ift][0].size() << std::endl;
             }
-            /*
+            
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             
@@ -113,21 +118,19 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             cv::resize(MagnitudImg,MagnitudImg, cv::Size(tWidth*2, tHeight*2));
             cv::resize(OrientationImg,OrientationImg, cv::Size(tWidth*2, tHeight*2));
 
-            cv::imshow("Magnitud", MagnitudImg); 
-            cv::imshow("OrientationImg", OrientationImg); 
-            cv::imshow("frame", frame);
-
-            cv::moveWindow("frame", 100,100);
-            cv::moveWindow("Magnitud", 100 + frame.cols,100);
-            cv::moveWindow("OrientationImg", 100 + frame.cols *2 ,100);
-            */
+            Mat2Mat(frame           , Template, 0, 0);
+            Mat2Mat(MagnitudImg     , Template, 0, tWidth*2);
+            Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
 
+            cv::imshow("Template",Template);
+
+            video.write(Template);
             for(int qq = 0; qq < 4; qq++){
-                coocurrenceMatricesMagnitud[qq].clear();
-                coocurrenceMatricesOrientation[qq].clear();
+                coMM[qq].clear();
+                coMO[qq].clear();
             }
         }
 
@@ -136,15 +139,15 @@ std::vector<std::vector<float>> OFCM(cv::VideoCapture capTemp, std::pair<int,int
             break;
 
         FRAMECOUNT++;
-        //std::cout << "FRAMECOUNT = " << FRAMECOUNT << std::endl;
     }
     
     for(int icub = 0; icub < cuboids.size();icub++)
     {
         cuboids[icub].clear();
     }
+
     cuboids.clear();
 
-    
+    //video.release();
     return AllflattenFeatures;
 }

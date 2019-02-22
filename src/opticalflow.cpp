@@ -4,7 +4,8 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
                std::vector<std::vector<std::vector<int>>> &magnitudeMatrices,
                 cv::Mat prevImage,
                 cv::Mat nextImage,
-                int maxLevel){
+                int maxLevel,
+                int windSize){
     cv::TermCriteria termC(cv::TermCriteria::COUNT|cv::TermCriteria::EPS,20,0.03);
     
     std::vector<cv::Point2f> prevPoints;
@@ -12,11 +13,11 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
     std::vector<uchar> status;
     std::vector<float> errors;
 
-    cv::Size winSize(31,31);  
+    cv::Size winSize(windSize, windSize);  
+    
     int rows = prevImage.rows;
     int cols = prevImage.cols;
 
-    //std::cout << "row = " << rows << ", cols = " << cols << std::endl;
     std::vector<std::vector<int> >  orientationMatrix(
                                     rows,
                                     std::vector<int>(cols, -1));
@@ -25,8 +26,7 @@ void opticalFlow(std::vector<std::vector<std::vector<int>>> &orientationMatrices
                                     std::vector<int>(cols, -1));
 
     getBetterPoints(prevPoints,prevImage,nextImage);
-    //orientationMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
-    //magnitudeMatrix = cv::Mat(cols,rows,CV_16SC1,-1);
+
     cv::cvtColor(prevImage, prevImage, cv::COLOR_RGB2GRAY);
     cv::cvtColor(nextImage, nextImage, cv::COLOR_RGB2GRAY);
 
@@ -98,8 +98,10 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
 
         angInt  = static_cast<float>(floor(orientationBin * angle / (maxAngle)));
         //distInt = static_cast<int>(floor(log2(distance)));
-        distInt = static_cast<int>(floor(magnitudBin * distance / 3.0));
+        distInt = static_cast<int>(floor(magnitudBin * distance / 6.0));
         
+        //if (distInt > 0)
+        //    std::cout << "distInt = " << distInt << std::endl;
         
         //std::cout << "distInt = " << distInt << std::endl; 
         //std::cout << "angInt : " << angInt << std::endl;

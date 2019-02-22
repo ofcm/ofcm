@@ -70,7 +70,6 @@ void kmeans::runKmeans(){
                     centers[k][icen] = 0.0;
                 }
             }
-
         }
         
         for(int k = 0;k < numberClass;k++){

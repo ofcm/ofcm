@@ -12,14 +12,6 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/video/tracking.hpp>
 
-#define PI 3.14159265
-
-static  int threshold           = 30;
-static  float maxAngle          = 361.0;
-static  float orientationBin    = 8.0;
-static  float magnitudBin       = 8.0;
-static  int maxDistance = 15;
-
 void updateBuffer(std::vector<cv::Mat>& imageBuffer);
 void DenseSampling(std::vector<cv::Mat> imageBuffer, 
                                         int N, 
@@ -43,9 +35,13 @@ void getMatrixOI(std::vector<cv::Point2f> prevPoints,
                 std::vector<std::vector<int>> &magnitudeMatrix);
 
 
-//void getHaralickFeatures(std::vector<cv::Mat> Mco_Array, cv::Size cuboidsSize, std::vector<std::vector<std::vector<std::vector<float>>>>& res, int T);
-void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std::vector<cv::Mat>> AAM2, cv::Size cuboidsSize, std::vector<std::vector<float>>& res, int T);
-void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0);
+void getHaralickFeatures(   std::vector<std::vector<cv::Mat>>   AAM1, 
+                            std::vector<std::vector<cv::Mat>>   AAM2, 
+                            cv::Size                            cuboidsSize, 
+                            std::vector<std::vector<std::vector<float>>>& res, 
+                            int T);
+                            
+void Mat2Mat(cv::Mat src, cv::Mat& dst, int x0, int y0);
 
 std::vector<float> haralick(cv::Mat Mco, int size);
 

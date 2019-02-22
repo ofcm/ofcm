@@ -1,7 +1,8 @@
 #include "headers/utils.hpp"
-#include "headers/centroids.hpp"
+#include "headers/bow.hpp"
 #include "headers/miscellanius.hpp"
 #include "headers/SVMHandler.hpp"
+#include "getoptions.cpp"
 
 // Mode
 // 0: Train K-Means Centers
@@ -10,16 +11,25 @@
 // 3: Prediction off-line
 // 4: Prediction on-line
 
-int mode = 1;
 int main(int argc, char** argv){   
-    int K_CLASSES = 2*6;
+    int K_CLASSES = 5;
     std::vector<std::vector<float>> centers;
     
+    int mode = std::stoi(argv[1]);
+
+    std::vector<option> train_data;
+    std::vector<option> valid_data;
+    std::vector<option>  test_data;
+
+    std::string OPTION_FILE             = "../data/kth.txt";
+
+    getOptions(train_data, valid_data, test_data, OPTION_FILE);
+
     switch (mode)
     {
         // 0: Train K-Means Centers
         case 0: {
-            int res1 = getCentroids(centers, K_CLASSES);
+            int res1 = getCentroids(train_data,centers, K_CLASSES);
             break;
         }
         // 1: Generate data of training
@@ -46,11 +56,11 @@ int main(int argc, char** argv){
 
             svmhandler.fit(y, lbls, data);
             std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
-            int val = svmhandler.SaveModel("../models/svm/svm_model");
-            if(val == 0)
-                std::cout<<"Model SVM Saved"<<std::endl;
-            else
-                std::cout<<"Problem saving the SVM model"<<std::endl;
+            //int val = svmhandler.SaveModel("../models/svm/svm_model");
+            //if(val == 0)
+            //    std::cout<<"Model SVM Saved"<<std::endl;
+            //else
+            //    std::cout<<"Problem saving the SVM model"<<std::endl;
 
             break;
         }
@@ -68,7 +78,7 @@ int main(int argc, char** argv){
             break;
     }
     // Uncomment to generate centers
-    int res1 = getCentroids(centers, K_CLASSES);
+    //int res1 = getCentroids(centers, K_CLASSES);
     
     /*
     SingleFileHandler <float> fhandler(std::string("centers_model.txt"));

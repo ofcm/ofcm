@@ -1,91 +1,49 @@
 #include "headers/utils.hpp"
 
-void getHaralickFeatures(std::vector<std::vector<cv::Mat>> AAM1, std::vector<std::vector<cv::Mat>> AAM2, cv::Size cuboidsSize, std::vector<std::vector<float>>& res, int T)
+void getHaralickFeatures(   std::vector<std::vector<cv::Mat>>   AAM1, 
+                            std::vector<std::vector<cv::Mat>>   AAM2, 
+                            cv::Size                            cuboidsSize, 
+                            std::vector<std::vector<std::vector<float>>>& res, 
+                            int T)
 {
     int W = cuboidsSize.width;
     int H = cuboidsSize.height;
     
+    int ncuboids = W * H;
     
-    for (int i = 0; i < AAM1[0].size(); i+=9)
+    for (int i = 0; i < AAM1[0].size(); i+=ncuboids)
     {
-        std::vector<float> f8;
-        for (int iangle = 0; iangle < AAM1.size(); iangle++)
+        std::vector<std::vector<float>> cuboidFeature;
+        for (int icub = 0; icub < ncuboids; icub++)
         {
-            std::vector<float> f(12, 0.0);
-            for (int ti = 0; ti < T; ti++)
+            std::vector<float> f72;
+            for (int iangle = 0; iangle < AAM1.size(); iangle++)
             {
-                cv::Mat Mco             = AAM1[iangle][i+ti];
-                std::vector<float> ftmp = haralick(Mco, 12);
-
-                for (int fi = 0; fi < 12; fi++)
+                for (int ti = 0; ti < T; ti++)
                 {
-                    f[fi] += ftmp[fi]/((float)T);
+                    cv::Mat Mco             = AAM1[iangle][i+ti];
+                    std::vector<float> ftmp = haralick(Mco, 12);
                     
+                    for (int fi = 0; fi < 12; fi++)
+                        f72.push_back(ftmp[fi]);
                 }
 
-            }
-
-            for (int ift = 0; ift < f.size(); ift++)
-                f8.push_back(f[ift]);
-            //res.push_back(f);
-            for (int ti = 0; ti < T; ti++)
-            {
-                cv::Mat Mco             = AAM2[iangle][i+ti];
-                std::vector<float> ftmp = haralick(Mco, 12);
-
-                for (int fi = 0; fi < 12; fi++)
+                for (int ti = 0; ti < T; ti++)
                 {
-                    f[fi] += ftmp[fi]/((float)T);
-                }
-            }
-            for (int ift = 0; ift < f.size(); ift++)
-                f8.push_back(f[ift]);
-            /*
-            float sum = 0.0;
-            for (int fi = 0; fi < 12; fi++)
-            {
-                sum += abs(f[fi]);
-            }
+                    cv::Mat Mco             = AAM2[iangle][i+ti];
+                    std::vector<float> ftmp = haralick(Mco, 12);
 
-            if (sum == 0.0)
-                continue;
-            */
-            //res.push_back(f);
-        }
-        res.push_back(f8);
-    }
-    /*
-    for (int iangle = 0; iangle < AAM2.size(); iangle++)
-    {
-        for (int i = 0; i < AAM2[iangle].size(); i+=9)
-        {
-            std::vector<float> f(12, 0.0);
-            for (int ti = 0; ti < T; ti++)
-            {
-                cv::Mat Mco             = AAM2[iangle][i+ti];
-                std::vector<float> ftmp = haralick(Mco, 12);
-
-                for (int fi = 0; fi < 12; fi++)
-                {
-                    f[fi] += ftmp[fi]/((float)T);
+                    for (int fi = 0; fi < 12; fi++)
+                        f72.push_back(ftmp[fi]);
                 }
             }
             
-            float sum = 0.0;
-            for (int fi = 0; fi < 12; fi++)
-            {
-                sum += abs(f[fi]);
-            }
-
-            if (sum == 0.0)
-                continue;
-            
-            res.push_back(f);
+            cuboidFeature.push_back(f72);
         }
+        res.push_back(cuboidFeature);
     }
-    */
 }
-void Mat2Mat(cv::Mat& src, cv::Mat& dst, int x0, int y0)
+void Mat2Mat(cv::Mat src, cv::Mat& dst, int x0, int y0)
 {
     for(int i = x0; i < x0 + src.rows; i++)
     {
@@ -205,7 +163,7 @@ void plotMO(cv::Mat& src1,
             }                     
         }
     }
-    cv::applyColorMap(src1, src1, cv::COLORMAP_HOT);
+    cv::applyColorMap(src1, src1, cv::COLORMAP_JET);
     cv::applyColorMap(src2, src2, cv::COLORMAP_HSV);
 }
 

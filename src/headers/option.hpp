@@ -1,3 +1,6 @@
+#ifndef _OPTION_
+#define _OPTION_
+
 #include "utils.hpp"
 
 class option{
@@ -12,3 +15,5 @@ public:
             std::string d,
             std::vector<int> sequence);
 };
+
+#endif
