@@ -32,7 +32,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
                  std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
                  int classes,
                  int mclusters,
-                 int INIT)
+                 int setRandomCenter)
 {
     
     std::cout << "cuboids size = " << cuboidsCenters.size() << std::endl;
@@ -69,12 +69,12 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
 
 
         BOW.setFeatures(features);
-        if (INIT == 0)
+        if (setRandomCenter == 0)
             BOW.startingCenters(); 
         BOW.runKmeans();       
         
         cuboidsCenters[icuboid] = BOW.getCentroids();
-        
+
         std::cout << "\nCenters size = " << cuboidsCenters[icuboid].size() << " , cubid = " << icuboid << std::endl;
         std::cout << "==================================================================" << std::endl;
         for (int k = 0; k < mclusters; k++)
@@ -144,6 +144,7 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
             for (int iv = 0;  iv < 2; iv+=2)
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
+                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
