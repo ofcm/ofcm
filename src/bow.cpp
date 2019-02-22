@@ -35,9 +35,10 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
                  int setRandomCenter)
 {
     
-    std::cout << "cuboids size = " << cuboidsCenters.size() << std::endl;
+    std::cout << "\nKmeans running ...\n\n\tCuboids size = " << cuboidsCenters.size() << std::endl;
     for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
     {
+        std::cout << "\n\tcuboid = " << icuboid << "\n"<<std::endl;
         int ikm = 0;
         bool ALL = true;
 
@@ -75,6 +76,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
         
         cuboidsCenters[icuboid] = BOW.getCentroids();
 
+        /*
         std::cout << "\nCenters size = " << cuboidsCenters[icuboid].size() << " , cubid = " << icuboid << std::endl;
         std::cout << "==================================================================" << std::endl;
         for (int k = 0; k < mclusters; k++)
@@ -87,7 +89,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
             }
             std::cout << std::endl;
         }     
-
+        */
         cuboidsCenters[icuboid] = BOW.getCentroids();
         
     }
@@ -143,8 +145,8 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
             //for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
             for (int iv = 0;  iv < 2; iv+=2)
             {
-                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
-                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
+                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
+                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
@@ -167,105 +169,6 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
         }
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
     }
-
-    /*
-    * All data on personActionfeatures
-    */
-        /*
-        std::vector<std::vector<float>> toKmeans;
-
-        int ikm = 0;
-
-        bool ALL = true;
-        while (true)
-        {
-            ALL = true;
-            toKmeans.clear();
-            for (int ifile = 0; ifile < filenames.size(); ifile++)
-            {
-                if (ikm >= personActionfeatures[ifile].size())
-                {
-                    ALL *= true;
-                    continue;
-                }
-                ALL *= false;
-
-                int itf_limit = (ikm + 35 < personActionfeatures[ifile].size()) ? ikm + 35: personActionfeatures[ifile].size(); 
-                for(int itf = ikm; itf < itf_limit; itf++)
-                {
-                    toKmeans.push_back(personActionfeatures[ifile][itf]);
-                }
-            }
-
-            if (ALL == true)
-                break;
-
-            std::vector<int> result; 
-
-            BOW.setFeatures(toKmeans);
-            if (INIT == true)
-            {
-                BOW.startingCenters();
-                INIT = false;
-            }          
-            BOW.runKmeans();       
-            centers = BOW.getCentroids();
-
-            
-            for (int ifile = 0; ifile < filenames.size(); ifile++)
-            {
-                toKmeans.clear();
-                if (ikm >= personActionfeatures[ifile].size())
-                {
-                    ALL *= true;
-                    continue;
-                }
-                ALL *= false;
-
-                int itf_limit = (ikm + 35 < personActionfeatures[ifile].size()) ? ikm + 35: personActionfeatures[ifile].size(); 
-                for(int itf = ikm; itf < itf_limit; itf++)
-                {
-                    toKmeans.push_back(personActionfeatures[ifile][itf]);
-                }
-                BOW.getHistogram(result);                      
-                std::cout << "\nClass = "<< itos[ifile] << " => ";
-                //fhandler.AppendLine(result, ifile);
-
-                for(int ires = 0; ires < result.size(); ires++)
-                    std::cout << result[ires] << " ";
-                std::cout << std::endl;
-            }
-            
-            std::cout << "\ncenters size = " << centers.size() << std::endl;
-            std::cout << "====================" << std::endl;
-            for (int k = 0; k < K_CLASES; k++)
-            {
-                for (int icen = 0; icen < centers[k].size(); icen++)
-                {
-                    std::cout << centers[k][icen] << " ";
-                }
-                std::cout << std::endl;
-            }         
-            
-            //BW.getHistogram(result);                      
-            //std::cout << "\nClass = "<< itos[ifile] << " => ";
-            //fhandler.AppendLine(result, ifile);
-
-            //for(int ires = 0; ires < result.size(); ires++)
-            //    std::cout << result[ires] << " ";
-
-            
-            ikm += 35;
-        }
-        // ** Save model
-        std::string fnme = "centroids_it_" +std::to_string(itrain) + ".txt";
-        SingleFileHandler <float> fhandler(MODEL_CENTROIDS_PATH + fnme);
-        for(int ii = 0; ii < centers.size(); ii++)
-            fhandler.AppendLine(centers[ii]);
-        fhandler.Release();
-        */
-    //}
-
     return cuboidsCenters;
 }
 

@@ -40,7 +40,7 @@ void kmeans::runKmeans(){
 
     while (true){
         flag = true;
-
+        /*
         std::cout << "\nCentroids conv (it = "<< itr << ") :\n" << std::endl;
         for (int k = 0; k < numberClass; k++)
         {
@@ -53,7 +53,7 @@ void kmeans::runKmeans(){
             std::cout << std::endl;
         }
         
-
+        */
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
 
@@ -71,6 +71,11 @@ void kmeans::runKmeans(){
                     centers[k][icen] = 0.0;
                 }
             }
+            /*
+            else{
+                std::cout << "*" << k <<" " << numberClass <<std::endl;
+            }
+            */
         }
         
         for(int k = 0;k < numberClass;k++){
@@ -81,19 +86,25 @@ void kmeans::runKmeans(){
             }
         }
         
+        float loss = 0.0;
         for(int k = 0;k < numberClass;k++){
             float sum = 0.0;
             for(int i =0; i< centers[k].size();i++)
             {
                 sum += ((oldCenters[k][i] - centers[k][i])*(oldCenters[k][i] - centers[k][i]));
             }
-                
+            //std::cout << "\tsum = " << sum << std::endl;
             sum = sqrt(sum);
+            //std::cout << "\tsum sqrt = " << sum << std::endl;
+            loss += sum;
             if(sum <= limitError)
                 flag *= true;
             else
                 flag *= false;            
         }
+
+        std::cout << "\t\tKmeans loss itr "<< itr + 1 << " : \t"<< loss/((float)numberClass) << std::endl;
+        
         if (flag == true)
             break;
 
@@ -101,7 +112,7 @@ void kmeans::runKmeans(){
 
         if (itr > 50)
             break;
-        //std::cout << "itr = " << itr << std::endl;
+
         oldCenters = centers;
     }
 }
