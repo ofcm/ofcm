@@ -31,11 +31,12 @@ void addString(std::string& src, std::string s, int maxSize)
 void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
                  std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
                  int classes,
-                 int mclusters)
+                 int mclusters,
+                 int INIT)
 {
     
     std::cout << "cuboids size = " << cuboidsCenters.size() << std::endl;
-    for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid)
+    for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
     {
         int ikm = 0;
         bool ALL = true;
@@ -68,15 +69,12 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
 
 
         BOW.setFeatures(features);
-        if (INIT == true)
-        {
-            BOW.startingCenters();
-            INIT = false;
-        }          
+        if (INIT == 0)
+            BOW.startingCenters(); 
         BOW.runKmeans();       
         
         cuboidsCenters[icuboid] = BOW.getCentroids();
-
+        
         std::cout << "\nCenters size = " << cuboidsCenters[icuboid].size() << " , cubid = " << icuboid << std::endl;
         std::cout << "==================================================================" << std::endl;
         for (int k = 0; k < mclusters; k++)
@@ -84,28 +82,27 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
             for (int icen = 0; icen < cuboidsCenters[icuboid][k].size(); icen++)
             {
                 std::cout << cuboidsCenters[icuboid][k][icen] << " ";
-                if (icen % 12 == 0)
+                if ((icen+1) % 24 == 0)
                     std::cout << std::endl;
             }
             std::cout << std::endl;
         }     
 
         cuboidsCenters[icuboid] = BOW.getCentroids();
+        
     }
 
 }
-int getCentroids(std::vector<option> database, std::vector<std::vector<std::vector<float>>>& cuboidsCenters, int mClusters){   
+std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> database, int mClusters){   
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
 
     int cuboidSize;
     std::string PATH_DATA               = "../data/";
-    //kmeans BOW(centers, K_CLASES);
-    
-    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
 
-    
+    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
     
     std::cout << "data size : " << database.size() << std::endl;
 
@@ -141,7 +138,6 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
             if (!cap.isOpened())
             {
                 std::cout << "Failed to open camera." << std::endl;
-                return -1;
             }
 
             //for (int iv = 0;  iv < train_data[itrain + idata].sequence.size(); iv+=2)
@@ -151,7 +147,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
-                std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<<std::endl;
+                std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
                 for(int ir = 0; ir < res.size(); ir++)
                 {
@@ -168,8 +164,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
                 std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
             }
         }
-        cuboidsCenters.resize(5);
-        getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters);
+        getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
     }
 
     /*
@@ -270,7 +265,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
         */
     //}
 
-    return 0;
+    return cuboidsCenters;
 }
 
 

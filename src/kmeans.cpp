@@ -4,7 +4,7 @@
 kmeans::kmeans(std::vector<std::vector<float>> centers,
                             int numberClass){
     this->numberClass = numberClass;
-    this->centers     = centers;    
+    this->centers     = centers;   
 }
 
 void kmeans::setFeatures(std::vector<std::vector<float>> features){
@@ -41,17 +41,15 @@ void kmeans::runKmeans(){
     while (true){
         flag = true;
 
-        
         std::cout << "\nCentroids conv (it = "<< itr << ") :\n" << std::endl;
         for (int k = 0; k < numberClass; k++)
         {
             for (int icen = 0; icen < centers[k].size(); icen++)
             {
                 std::cout << centers[k][icen] << " ";
-                if (icen % 12 == 0)
+                if ((icen+1) % 24 == 0)
                     std::cout << std::endl;
             }
-            
             std::cout << std::endl;
         }
         

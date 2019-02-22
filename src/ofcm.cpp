@@ -120,7 +120,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
 
             cv::imshow("Template",Template);
 
-            video.write(Template);
+            //video.write(Template);
             for(int qq = 0; qq < 4; qq++){
                 coMM[qq].clear();
                 coMO[qq].clear();

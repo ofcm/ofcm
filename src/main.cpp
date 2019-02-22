@@ -14,7 +14,7 @@
 
 int main(int argc, char** argv){   
     int K_CLASSES = 5;
-    std::vector<std::vector<std::vector<float>>> cuboidCenters;
+    
     
     int mode = std::stoi(argv[1]);
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv){
     {
         // 0: Train K-Means Centers
         case 0: {
-            int res1 = getCentroids(train_data,cuboidCenters, K_CLASSES);
+            std::vector<std::vector<std::vector<float>>> cuboidCenters = getCentroids(train_data, K_CLASSES);
             break;
         }
         // 1: Generate data of training
