@@ -28,7 +28,73 @@ void addString(std::string& src, std::string s, int maxSize)
         src += s[i]; 
 }
 
-int getCentroids(std::vector<option> database, std::vector<std::vector<std::vector<float>>>& centers, int K_CLASES){   
+void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
+                 std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
+                 int classes,
+                 int mclusters)
+{
+    
+    std::cout << "cuboids size = " << cuboidsCenters.size() << std::endl;
+    for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid)
+    {
+        int ikm = 0;
+        bool ALL = true;
+
+        kmeans BOW(cuboidsCenters[icuboid], mclusters);
+        bool INIT = true;
+
+        std::vector<std::vector<float>> features;
+
+        while (true)
+        {
+            ALL = true;
+            
+            for (int iclass = 0; iclass < classes; iclass++)
+            {
+                if (ikm >= personActionfeatures[iclass].size())
+                {
+                    ALL *= true;
+                    continue;
+                }
+
+                ALL *= false;
+                features.push_back(personActionfeatures[iclass][ikm][icuboid]);
+            }
+
+            if (ALL == true)
+                break;               
+            ikm++;
+        }
+
+
+        BOW.setFeatures(features);
+        if (INIT == true)
+        {
+            BOW.startingCenters();
+            INIT = false;
+        }          
+        BOW.runKmeans();       
+        
+        cuboidsCenters[icuboid] = BOW.getCentroids();
+
+        std::cout << "\nCenters size = " << cuboidsCenters[icuboid].size() << " , cubid = " << icuboid << std::endl;
+        std::cout << "==================================================================" << std::endl;
+        for (int k = 0; k < mclusters; k++)
+        {
+            for (int icen = 0; icen < cuboidsCenters[icuboid][k].size(); icen++)
+            {
+                std::cout << cuboidsCenters[icuboid][k][icen] << " ";
+                if (icen % 12)
+                    std::cout << std::endl;
+            }
+            std::cout << std::endl;
+        }     
+        
+        cuboidsCenters[icuboid] = BOW.getCentroids();
+    }
+
+}
+int getCentroids(std::vector<option> database, std::vector<std::vector<std::vector<float>>>& cuboidsCenters, int mClusters){   
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
@@ -45,12 +111,12 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
-        /*
+        
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
         }        
-        */
+        
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -101,6 +167,7 @@ int getCentroids(std::vector<option> database, std::vector<std::vector<std::vect
                 std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
             }
         }
+        getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters);
     }
 
     /*

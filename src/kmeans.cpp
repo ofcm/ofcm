@@ -41,17 +41,20 @@ void kmeans::runKmeans(){
     while (true){
         flag = true;
 
-        /*
-        std::cout << "\ncentroids (it = "<< itr << ") :\n" << std::endl;
+        
+        std::cout << "\nCentroids conv (it = "<< itr << ") :\n" << std::endl;
         for (int k = 0; k < numberClass; k++)
         {
             for (int icen = 0; icen < centers[k].size(); icen++)
             {
                 std::cout << centers[k][icen] << " ";
+                if (icen % 12)
+                    std::cout << std::endl;
             }
+            
             std::cout << std::endl;
         }
-        */
+        
 
         for (int ic = 0; ic < cluster.size(); ic++)
             cluster[ic].clear();
