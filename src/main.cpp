@@ -25,6 +25,10 @@ int main(int argc, char** argv){
 
     std::string OPTION_FILE             = "../options/kth.txt";
     std::string CENTROIDS_FILE          = "../models/centroids/centroids.txt";
+    std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
+    std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
+    std::string TESTDATA_FILE           = "../models/test/testdata.txt";
+    std::string TESTLABEL_FILE          = "../models/test/testlabel.txt";
 
     getOptions(train_data, valid_data, test_data, OPTION_FILE);
 
@@ -34,42 +38,32 @@ int main(int argc, char** argv){
         case 0: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Getting Centroids ...\n";
-            std::vector<std::vector<std::vector<float>>> cuboidCenters = getCentroids(train_data, K_CLASSES);
-
-            SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
-
-            /*
-            for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
-            {
-                cuboidsCenters[icuboid] 5x864
-            }
-            */
-
+            std::vector<std::vector<std::vector<float>>> cuboidCenters = runBOW(train_data, K_CLASSES);
+            //SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
             break;
         }
         // 1: Generate data of training
         case 1: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Generating training data"<<std::endl;
-
-            SingleFileHandler <float> fhandler(CENTROIDS_FILE);
             std::vector<std::vector<std::vector<float>>> cuboidCenters;
-            std::cout<<"Centroids loaded!"<<std::endl;
+            LoadCentroidsFromFile(CENTROIDS_FILE, cuboidCenters);
             //fhandler.LoadFromFile(cuboidCenters);
             //int res2 = getHistograms(cuboidCenters, K_CLASSES);
+
+            std::vector<std::vector<float>> histograms;
+            std::vector<float> labels;
+            getHistograms(train_data,K_CLASSES,cuboidCenters,histograms,labels);
             break;
         }
         // 2: Training SVM classifier
         case 2: {
+            std::cout<<"\n==============================================\n";
             std::cout<<"Training the SVM classifier"<<std::endl;
-            std::string trainingfile = "../models/training/trainingdata.txt";
-            std::string labelsfile   = "../models/training/labeldata.txt";
-            FileHandlerML <int> fhandler(trainingfile, labelsfile);
-
             std::vector<std::vector<int>> data;
             std::vector<int> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
-            fhandler.LoadFromFile(data, y);
+            //fhandler.LoadFromFile(data, y);
 
             SVMhandler <int>svmhandler;
 

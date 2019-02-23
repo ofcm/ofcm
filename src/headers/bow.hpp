@@ -6,7 +6,12 @@
 
 void addString(std::string& src, std::string s, int maxSize);
 
-std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> database, int mClusters);
-int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES);
+std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database, 
+                                                    int mClusters);
+void getHistograms( std::vector<option> database, 
+                    int mClusters,
+                    std::vector<std::vector<std::vector<float>>> cuboidsCenters,
+                    std::vector<std::vector<float>>& histograms,
+                    std::vector<float>& labels);
 
 #endif
