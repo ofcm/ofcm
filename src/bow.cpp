@@ -77,8 +77,14 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
+        for (int i = 0; i < personActionfeatures.size(); i++)
+        {
+            for (int j = 0; j < personActionfeatures.size(); j++)
+                personActionfeatures[i][j].clear();
+            personActionfeatures[i].clear();
+        }
         personActionfeatures.clear();
-
+     
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -138,6 +144,15 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
         SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidsCenters);
     }
+
+    for (int i = 0; i < personActionfeatures.size(); i++)
+    {
+        for (int j = 0; j < personActionfeatures.size(); j++)
+            personActionfeatures[i][j].clear();
+        personActionfeatures[i].clear();
+    }
+    personActionfeatures.clear();
+    
     return cuboidsCenters;
 }
 
@@ -145,7 +160,7 @@ void getHistograms( std::vector<option> database,
                     int mClusters,
                     std::vector<std::vector<std::vector<float>>> cuboidsCenters,
                     std::vector<std::vector<float>>& histograms,
-                    std::vector<float>& labels)
+                    std::vector<int>& labels)
 {   
 
     std::vector<std::string> filenames(6);

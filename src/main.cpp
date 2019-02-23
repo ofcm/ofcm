@@ -52,7 +52,7 @@ int main(int argc, char** argv){
             //int res2 = getHistograms(cuboidCenters, K_CLASSES);
 
             std::vector<std::vector<float>> histograms;
-            std::vector<float> labels;
+            std::vector<int> labels;
             getHistograms(train_data,K_CLASSES,cuboidCenters,histograms,labels);
             break;
         }

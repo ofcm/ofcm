@@ -12,6 +12,6 @@ void getHistograms( std::vector<option> database,
                     int mClusters,
                     std::vector<std::vector<std::vector<float>>> cuboidsCenters,
                     std::vector<std::vector<float>>& histograms,
-                    std::vector<float>& labels);
+                    std::vector<int>& labels);
 
 #endif
