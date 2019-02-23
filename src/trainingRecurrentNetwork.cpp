@@ -4,12 +4,11 @@
 * Contador
 */
 int count=0;
-std::vector<std::vector<float>> trainData(100,std::vector<float>(176,1.0f));
-std::vector<std::vector<float>> validationData(20,std::vector<float>(176,1.0f));
+
 /*
 * Programa Principal
 */
-int main(int argc, char* argv[])
+void trainingRecurrent(std::vector<std::vector<float>> trainData,std::vector<std::vector<float>> validationData)
 {
 
     /*
@@ -74,9 +73,7 @@ int main(int argc, char* argv[])
     double MUTime;
 
     int numberOutputNeuron = 6;
-    int numberInputNeuron = 175;
-
-    double errorOut[numberOutputNeuron];
+    int numberInputNeuron = 35;
 
     /*
      * Leemos los parametros de la red de tipo Perceptron Multicapa y los parametros necesarios para
@@ -108,6 +105,7 @@ int main(int argc, char* argv[])
       	{
       		random = ((double)rand()/(RAND_MAX));
       		connection[i][j].weightValue = random;
+          std::cout << connection[i][j].weightValue << std::endl;
       	}
     }
 
@@ -154,6 +152,7 @@ int main(int argc, char* argv[])
     totalerror = 0;
     n=0;
     CountTime=1;
+
     /*
     	* Recorremos los tiempos establecidos
     	*/
@@ -202,14 +201,14 @@ int main(int argc, char* argv[])
       		*/
       	for(int i = numberInputNeuron;i < NumberNeurons;i++)
       	{
-      		for(int j = 0;j < NumberNeurons;j++)
-      		{
-      			/*
-      				* Las salidas dinamicas influyen en la actualizacion de los pesos de las conexiones
-      				*/
-      			OutDinamicSystem[j][i] = neuron[i].resultDerivateActivationFunction * SumOutDinamicSystem[j][i];
-      			connection[j][i].updateWeightValue(LearningRatio,errorOut[i],OutDinamicSystem[j][i]);
-      		}
+        		for(int j = 0;j < NumberNeurons;j++)
+        		{
+          			/*
+          				* Las salidas dinamicas influyen en la actualizacion de los pesos de las conexiones
+          				*/
+          			OutDinamicSystem[j][i] = neuron[i].resultDerivateActivationFunction * SumOutDinamicSystem[j][i];
+          			connection[j][i].updateWeightValue(LearningRatio,errorOut[i],OutDinamicSystem[j][i]);
+        		}
       	}
       	for(int k = 0;k < 6;k++){
         		errorOut[k] = 0.5 * pow(errorOut[k] ,2);
@@ -219,30 +218,30 @@ int main(int argc, char* argv[])
       	totalerror = ErrorSum/(n+1);
 
       	std::cout << " tiempo " << CountTime << " error " << totalerror << std::endl;
-      	/*textinsert = textinsert + "insert into ResultRealTime values(" + to_string(CountTime) + ", " + to_string(totalerror) + ", "  + to_string(CountCross+1) + ", '"  + function + "');";
-      	sql = textinsert.c_str();
-      	resultDB = database.InsertResult(sql);
-      	if(resultDB == true)cout<<"Records created successfully"<<endl;
-      	else cout<<"Error while registering the date"<<endl;*/
 
       	for(int i = 0;i < validationData.size();i++)
       	{
         		//inicializamos entradas
         		for(int j = 0;j < numberInputNeuron;j++){
-        			neuron[i].resultActivationFunction = validationData[i][j];
+        			  neuron[i].resultActivationFunction = validationData[i][j];
         		}
 
         		for(int i = numberInputNeuron;i<NumberNeurons;i++){
-        			MUTime =0;
-        			for(int j = 0;j<NumberNeurons;j++){
-        				MUTime = MUTime + (connection[j][i].weightValue * neuron[j].resultActivationFunction);
-        			}
-        			neuron[i].MU = MUTime;
-        			cache[i] = neuron[i].resultActivationFunction;
-        			neuron[i].startActivationFunction();
+          			MUTime =0;
+          			for(int j = 0;j<NumberNeurons;j++){
+          				MUTime = MUTime + (connection[j][i].weightValue * neuron[j].resultActivationFunction);
+          			}
+          			neuron[i].MU = MUTime;
+          			cache[i] = neuron[i].resultActivationFunction;
+          			neuron[i].startActivationFunction();
         		}
-        		std::cout<< "output " << i << neuron[NumberNeurons - 1].resultActivationFunction << std::endl;
+            double sumTotal = 0;
             for(int j = 0;j < 6;j++){
+                sumTotal += neuron[NumberNeurons - j].resultActivationFunction;
+            }
+
+            for(int j = 0;j < 6;j++){
+                std::cout<< "output " << i << " class " << j  << " " << neuron[NumberNeurons - j].resultActivationFunction / sumTotal << std::endl;
                 MSE_out[j] += pow((validationData[i][13] - neuron[NumberNeurons - j].resultActivationFunction),2);
             }
         		for(int i = numberInputNeuron;i<NumberNeurons;i++){
@@ -250,11 +249,15 @@ int main(int argc, char* argv[])
         		}
       	}
         double validationError=0;
-        for(int i = 0;i < 6;i++){
-            MSE_out[i] = (1/validationData.size()) * (0.5*MSE_out[i]);
-            validationError += MSE_out[i];
-        }
 
+        for(int i = 0;i < 6;i++){
+            MSE_out[i] +=  (0.5*MSE_out[i]);
+            std::cout << " mseout " << MSE_out[i] << std::endl;
+            std::cout << " error validation " << validationError << std::endl;
+        }
+        for(int k = 0;k < 6;k++ ){
+            validationError /=  (1/validationData.size());
+        }
       	/*
       		* Invocamos a la función InsertWeightValues
       		*/
