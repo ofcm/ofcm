@@ -1,9 +1,10 @@
 #include "headers/recurrentNetwork.hpp"
+#define     e      (2.71828)
 
 Connection::Connection(double weightValue){
     this->weightValue = weightValue;
 }
-Connection::updateWeight(double reasonLearning, double resultActivation,double error){
+double Connection::updateWeightValue(double learningRatio, double resultActivation,double error){
     this->weightValue += (learningRatio * resultActivation * error);
     return this->weightValue;
 }
@@ -45,14 +46,12 @@ double Neuron::updateBias(double learningRatio,double error){
     return this->bias;
 }
 double Neuron::startActivationFunction(){
-    ActivationFunction::MU = this->MU;
-    ActivationFunction::typeFunction = this->typeFunction;
-    this->resultActivationFunction = ActivationFunction::startFunction();
+    ActivationFunction af(this->MU,this->typeFunction);
+    this->resultActivationFunction = af.startFunction();
     return this->resultActivationFunction;
 }
 double Neuron::derivateActivationFunction(){
-    ActivationFunction::MU = this->MU;
-    ActivationFunction::typeFunction = this->typeFunction;
-    this->resultDerivateActivationFunction = ActivationFunction::derivateFunction();
-    return this->resultActivationFunction;
+    ActivationFunction af(this->MU,this->typeFunction);
+    this->resultDerivateActivationFunction = af.derivateFunction();
+    return this->resultDerivateActivationFunction;
 }
