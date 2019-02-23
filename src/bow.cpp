@@ -71,23 +71,23 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
 
     
     
-    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-    //std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
-    //std::vector<std::vector<std::vector<float>>> cuboidsCenters;
-    //std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_person\rperson17.txt";
-    //LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
+    //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
+    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson11.txt";
+    LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
     std::cout << "data size : " << database.size() << std::endl;
 
-    for (int itrain = 0; itrain < database.size(); itrain+=24)
+    for (int itrain = 24; itrain < database.size(); itrain+=24)
     {
         for (int i = 0; i < personActionfeatures.size(); i++)
         {
-            for (int j = 0; j < personActionfeatures.size(); j++)
+            for (int j = 0; j < personActionfeatures[i].size(); j++)
                 personActionfeatures[i][j].clear();
             personActionfeatures[i].clear();
         }
         personActionfeatures.clear();
-     
+
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
