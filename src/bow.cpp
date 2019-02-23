@@ -135,7 +135,7 @@ std::vector<std::vector<float>> getHistograms(std::vector<std::vector<std::vecto
             ikm++;
         }
     }
-    std::cout << "==>" <<std::endl;
+    //std::cout << "==>" <<std::endl;
     
     for (int i = 0; i < cuboidLabels[0].size(); i++)
     {
@@ -154,10 +154,8 @@ std::vector<std::vector<float>> getHistograms(std::vector<std::vector<std::vecto
 }
 
 std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database, 
-                                                    int mClusters, 
-                                                    bool HISTOGRAM, 
-                                                    std::vector<std::vector<float>>& result,
-                                                    std::vector<float>& labels){   
+                                                    int mClusters)
+{   
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
@@ -204,15 +202,15 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
                 std::cout << "Failed to open camera." << std::endl;
             }
 
-            for (int iv = 0;  iv < database[itrain + idata].sequence.size(); iv+=2)
-            //for (int iv = 0;  iv < 2; iv+=2)
+            //for (int iv = 0;  iv < database[itrain + idata].sequence.size(); iv+=2)
+            for (int iv = 0;  iv < 2; iv+=2)
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
-                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
+                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
-                std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
+                std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
                 for(int ir = 0; ir < res.size(); ir++)
                 {
@@ -223,8 +221,8 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
                     for (int jres = 0; jres < res[ires].size(); jres++)
                         res[ires][jres].clear();
                 }
-                std::cout << "->" << std::endl;
             }
+            std::cout << std::endl;
             for(int ir = 0; ir < personActionfeatures.size(); ir++)
             {
                 std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
@@ -235,28 +233,5 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
 
     getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, 0);
 
-    if (HISTOGRAM == true)
-    {
-        std::vector<std::vector<float>> cuboidLabels = getHistograms(personActionfeatures, cuboidsCenters, 6, mClusters, result);
-        for (int il = 0; il < cuboidLabels[0].size(); il++)
-        {
-            int label0 = cuboidLabels[0][il];
-            for(int ic = 1; ic < cuboidLabels.size(); ic++)
-            {
-                assert (label0 == cuboidLabels[ic][il]);
-            }
-            labels.push_back(label0);
-        }
-        for (int i = 0; i < result.size(); i++)
-        {
-            std::cout << "data " << i << "\t, (class "<< cuboidLabels[0][i] << ")\n"<< std::endl;
-            std::cout << "\n\t";
-            for (int ih = 0; ih < result[i].size(); ih++)
-            {
-                std::cout << result[i][ih] << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
     return cuboidsCenters;
 }

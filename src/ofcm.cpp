@@ -38,11 +38,12 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
     int FRAMECOUNT = sequence.first;
     capTemp.set(CV_CAP_PROP_POS_FRAMES, sequence.first);
     
-    
+    //std::cout << "-->" << std::endl;
 
     int proc = 0;
     for (;;)
     {
+        //std::cout << "-->" << FRAMECOUNT << std::endl;
         cv::Mat Template = cv::Mat(tHeight*2, tWidth*6, CV_8UC3, cv::Scalar(45));
         capTemp >> frame;
         if(frame.empty())
@@ -102,6 +103,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             global_framesFeatures.push_back(framesFeatures);
             //std::cout<< "\t==> global_framesFeatures size : " << global_framesFeatures.size() << " x "<<  global_framesFeatures[0].size() << std::endl;
             
+            /*
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             
@@ -114,11 +116,14 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             Mat2Mat(frame           , Template, 0, 0);
             Mat2Mat(MagnitudImg     , Template, 0, tWidth*2);
             Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
+            
+            cv::imshow("Template",Template);
+            */
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
 
-            cv::imshow("Template",Template);
+            
 
             //video.write(Template);
             for(int qq = 0; qq < 4; qq++){
