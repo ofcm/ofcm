@@ -81,10 +81,10 @@ class FileHandlerML{
         }
         if(!this->ftrain.is_open())
             this->ftrain.open(this->trainfile, std::ios_base::app | std::fstream::out);
-       
+
         // Row data feature
         int nFeatures = data.size();
-        
+
         std::string line = "";
         for(int j = 0; j < nFeatures; j++){
             line.append(std::to_string(data[j]));
@@ -95,7 +95,7 @@ class FileHandlerML{
         }
         if(!this->flabel.is_open())
             flabel.open(this->labelfile, std::ios_base::app | std::fstream::out);
-        
+
         // Preparing Label
         std::string linelbl = "";
         linelbl.append(std::to_string(label));
@@ -119,7 +119,7 @@ class FileHandlerML{
             //std::cout<<ans.size()<<std::endl;
         }
         // Reading line of Labels
-        
+
         // ** Reading labels file
         std::string linelbl;
         while(std::getline(this->flabel, linelbl)){
@@ -143,6 +143,8 @@ class SingleFileHandler{
     private:
     std::fstream fhanler;
     std::string filename;
+
+    public:
     std::vector<T> ParseLine(std::string line){
         std::vector<T> answer;
         std::string numberst = "";
@@ -157,7 +159,7 @@ class SingleFileHandler{
                         num = std::stoi(numberst);
                     else if (typeid(T) == typeid(float))
                         num = std::stof(numberst);
-                    
+
                     answer.push_back(num);
                     numberst = "";
                 }
@@ -176,7 +178,7 @@ class SingleFileHandler{
                     num = std::stoi(numberst);
                 else if (typeid(T) == typeid(float))
                     num = std::stof(numberst);
-                
+
                 answer.push_back(num);
                 numberst = "";
             }
@@ -190,7 +192,6 @@ class SingleFileHandler{
         return answer;
     }
 
-    public:
     SingleFileHandler(std::string fln):filename(fln){};
 
     bool LoadFromFile(std::vector<std::vector<T>> & data){
@@ -216,10 +217,10 @@ class SingleFileHandler{
         }
         if(!this->fhanler.is_open())
             this->fhanler.open(this->filename, std::ios_base::app);
-       
+
         // Row data feature
         int nFeatures = data.size();
-        
+
         std::string line = "";
         for(int j = 0; j < nFeatures; j++){
             line.append(std::to_string(data[j]));
@@ -241,7 +242,19 @@ class SingleFileHandler{
     void SetFilename(std::string newfn){
         this->filename = newfn;
     }
-    
+
+    void OpenReadingfile(){
+        this->Release();
+        this->fhanler.open(this->filename, std::fstream::in);
+    }
+    bool Getline(std::string & line){
+        bool val = false;
+        if(this->fhanler.is_open()){
+            if(std::getline(this->fhanler, line))
+                val = true;
+        }
+        return val;
+    }
 };
 template <class T>
 void SaveCentroidsInFile(std::string filename, std::vector<std::vector<std::vector<T>>> cuboidCenters){
@@ -249,7 +262,7 @@ void SaveCentroidsInFile(std::string filename, std::vector<std::vector<std::vect
     std::cout<<"Saving File of Computed Centroids...\n"<<std::endl;
     SingleFileHandler<T> fhandler(filename);
     for (int icuboid = 0; icuboid < cuboidCenters.size(); icuboid++)
-    { 
+    {
         std::string nameinit = "cuboid > " + std::to_string(icuboid+1);
         fhandler.AppendTextLine(nameinit);
         for(int icluster = 0; icluster < cuboidCenters[0].size(); icluster++){
@@ -260,15 +273,51 @@ void SaveCentroidsInFile(std::string filename, std::vector<std::vector<std::vect
     std::cout<<"Saved Centroids."<<std::endl;
     std::cout<<"\n==============================================\n";
 }
-/*
+
 template <class T>
 void LoadCentroidsFromFile(std::string fname, std::vector<std::vector<std::vector<T>>> & centers){
     std::cout<<"\n==============================================\n";
     std::cout<<"Loading precomputed Centroids...\n"<<std::endl;
     SingleFileHandler<T> fhandler(fname);
+    fhandler.OpenReadingfile();
     std::string line;
-    while(std::getline(this->fhanler, line)){
-            std::vector<T> ans = this->ParseLine(line);
+    bool newcuboid = false;
+    int icuboid = 0;
+    int icluster = 0;
+    std::vector<std::vector<T>> temp;
+    while(fhandler.Getline(line)){
+        //std::cout<<line<<std::endl;
+        if(line.size() > 0){
+            if(line[0] != 'c'){
+                std::vector<T> ans = fhandler.ParseLine(line);
+                temp.push_back(ans);
+                newcuboid = false;
+            }
+            else{
+                if(temp.size() > 0){
+                    centers.push_back(temp);
+                    temp.clear();
+                }
+                newcuboid = true;
+                icuboid++;
+                icluster = 0;
+            }
+        }
     }
-}*/
+
+
+    if(temp.size() > 0)
+        centers.push_back(temp);
+    
+    fhandler.Release();
+    std::cout<<"["<<centers.size()<<"]";
+    if(centers.size() > 0){
+        std::cout<<"["<<centers[0].size()<<"]";
+        if(centers[0].size() > 0){
+           std::cout<<"["<<centers[0][0].size()<<"]"; 
+        }
+    }
+    std::cout<<"\nCenters Loaded!";
+    std::cout<<"\n==============================================\n";
+}
 # endif
