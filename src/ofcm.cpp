@@ -57,7 +57,6 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
         cv::Mat fr = frame.clone();
 
         imageBuffer.push_back(fr);
-
         if (imageBuffer.size() >= T)
         {
             proc++;

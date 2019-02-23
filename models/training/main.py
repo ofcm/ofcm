@@ -23,7 +23,7 @@ print(len(X_train), len(X_test), len(y_train), len(y_test))
 
 from sklearn import svm
 
-clf = svm.SVC(kernel='rbf', C=5, gamma=0.10).fit(X_train, y_train)
+clf = svm.SVC(kernel='rbf', C=10, gamma=0.01, max_iter=100000).fit(X_train, y_train)
 
 
 print(clf.score(X_train, y_train))

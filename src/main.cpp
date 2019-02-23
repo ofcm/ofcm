@@ -1,5 +1,5 @@
 #include "headers/utils.hpp"
-#include "headers/bow.hpp"
+#include "headers/clusters.hpp"
 #include "headers/miscellanius.hpp"
 #include "headers/SVMHandler.hpp"
 #include "getoptions.cpp"
@@ -38,27 +38,27 @@ int main(int argc, char** argv){
         case 0: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Getting Centroids ...\n";
-            std::vector<std::vector<std::vector<float>>> cuboidCenters = runBOW(train_data, K_CLASSES);
+            std::vector<std::vector<std::vector<float>>> cuboidCenters = getCuboidCentroids(train_data, K_CLASSES);
             //SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
             break;
         }
         // 1: Generate data of training
         case 1: {
             std::cout<<"\n==============================================\n";
-            std::cout<<"Generating training data"<<std::endl;
+            std::cout<<"Generating testing data"<<std::endl;
             std::vector<std::vector<std::vector<float>>> cuboidCenters;
             LoadCentroidsFromFile(CENTROIDS_FILE, cuboidCenters);
             //fhandler.LoadFromFile(cuboidCenters);
             //int res2 = getHistograms(cuboidCenters, K_CLASSES);
 
-            std::vector<std::vector<float>> histograms;
+            std::vector<std::vector<float>> cuboidsClusters;
             std::vector<int> labels;
-            getHistograms(train_data,K_CLASSES,cuboidCenters,histograms,labels);
+            clustering(test_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
 
             FileHandlerML <float, float> fhandlerML(TRAININGDATA_FILE, TRAININGLABEL_FILE);
 
-            for(int i = 0; i < histograms.size(); i++)
-                fhandlerML.AppendRow(histograms[i], labels[i]);
+            for(int i = 0; i < cuboidsClusters.size(); i++)
+                fhandlerML.AppendRow(cuboidsClusters[i], labels[i]);
             fhandlerML.Release();
 
             break;
