@@ -23,6 +23,7 @@ int main(int argc, char** argv){
     std::vector<option>  test_data;
 
     std::string OPTION_FILE             = "../options/kth.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/centroids.txt";
 
     getOptions(train_data, valid_data, test_data, OPTION_FILE);
 
@@ -30,20 +31,20 @@ int main(int argc, char** argv){
     {
         // 0: Train K-Means Centers
         case 0: {
+            std::cout<<"\n==============================================\n";
+            std::cout<<"Getting Centroids ...\n";
             std::vector<std::vector<std::vector<float>>> cuboidCenters = getCentroids(train_data, K_CLASSES);
-            /*
-            for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
-            {
-                cuboidsCenters[icuboid] 5x864
-            }    
-            */
+            SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
             break;
         }
         // 1: Generate data of training
         case 1: {
+            std::cout<<"\n==============================================\n";
             std::cout<<"Generating training data"<<std::endl;
-            std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
-            SingleFileHandler <float> fhandler(modelcenters_file);
+            
+            SingleFileHandler <float> fhandler(CENTROIDS_FILE);
+            std::vector<std::vector<std::vector<float>>> cuboidCenters;
+            std::cout<<"Centroids loaded!"<<std::endl;
             //fhandler.LoadFromFile(cuboidCenters);
             //int res2 = getHistograms(cuboidCenters, K_CLASSES);
             break;
