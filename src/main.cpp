@@ -39,7 +39,7 @@ int main(int argc, char** argv){
             std::cout<<"\n==============================================\n";
             std::cout<<"Getting Centroids ...\n";
             std::vector<std::vector<std::vector<float>>> cuboidCenters = runBOW(train_data, K_CLASSES);
-            SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
+            //SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
             break;
         }
         // 1: Generate data of training
@@ -50,6 +50,10 @@ int main(int argc, char** argv){
             LoadCentroidsFromFile(CENTROIDS_FILE, cuboidCenters);
             //fhandler.LoadFromFile(cuboidCenters);
             //int res2 = getHistograms(cuboidCenters, K_CLASSES);
+
+            std::vector<std::vector<float>> histograms;
+            std::vector<float> labels;
+            getHistograms(train_data,K_CLASSES,cuboidCenters,histograms,labels);
             break;
         }
         // 2: Training SVM classifier
