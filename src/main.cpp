@@ -30,7 +30,9 @@ int main(int argc, char** argv){
     {
         // 0: Train K-Means Centers
         case 0: {
-            std::vector<std::vector<std::vector<float>>> cuboidCenters = getCentroids(train_data, K_CLASSES);
+            std::vector<std::vector<float>> result;
+            std::vector<float> labels;
+            std::vector<std::vector<std::vector<float>>> cuboidCenters = runBOW(train_data, K_CLASSES, true, result, labels);
             /*
             for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
             {

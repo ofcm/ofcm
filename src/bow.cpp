@@ -94,7 +94,70 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
     }
 
 }
-std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> database, int mClusters){   
+
+std::vector<std::vector<float>> getHistograms(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
+                  std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
+                  int classes,
+                  int mclusters,
+                  std::vector<std::vector<float>>& result)
+{
+    
+    std::cout << "\nGetting Histograms ...\n\n\tCuboids size = " << cuboidsCenters.size() << std::endl;
+
+    std::vector<std::vector<std::vector<float>>> cuboidFeatures(cuboidsCenters.size());
+    std::vector<std::vector<float>>              cuboidLabels(cuboidsCenters.size());
+    for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
+    {
+        std::cout << "\n\tcuboid = " << icuboid << "\n"<<std::endl;
+        int ikm = 0;
+        bool ALL = true;
+
+        while (true)
+        {
+            ALL = true;
+            //std::cout << "===>" <<std::endl;
+            for (int iclass = 0; iclass < classes; iclass++)
+            {
+                //std::cout << "===>" << iclass <<std::endl;
+                if (ikm >= personActionfeatures[iclass].size())
+                {
+                    ALL *= true;
+                    continue;
+                }
+
+                ALL *= false;
+                cuboidFeatures[icuboid].push_back(personActionfeatures[iclass][ikm][icuboid]);
+                cuboidLabels[icuboid].push_back((float)iclass);
+            }
+
+            if (ALL == true)
+                break;               
+            ikm++;
+        }
+    }
+    std::cout << "==>" <<std::endl;
+    
+    for (int i = 0; i < cuboidLabels[0].size(); i++)
+    {
+        std::vector<float> histogram;
+        for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
+        {
+            kmeans BOW(cuboidsCenters[icuboid], mclusters);
+            int cuboidKmeansClass = BOW.getGoodCluster(cuboidFeatures[icuboid][i]);
+            histogram.push_back((float)cuboidKmeansClass);
+        }
+
+        result.push_back(histogram);
+    }
+
+    return cuboidLabels;
+}
+
+std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database, 
+                                                    int mClusters, 
+                                                    bool HISTOGRAM, 
+                                                    std::vector<std::vector<float>>& result,
+                                                    std::vector<float>& labels){   
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
@@ -109,12 +172,12 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
-        
+        /*
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
         }        
-        
+        */
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -145,7 +208,7 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
             //for (int iv = 0;  iv < 2; iv+=2)
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
-                //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
+                std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 
@@ -160,149 +223,40 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
                     for (int jres = 0; jres < res[ires].size(); jres++)
                         res[ires][jres].clear();
                 }
+                std::cout << "->" << std::endl;
             }
             for(int ir = 0; ir < personActionfeatures.size(); ir++)
             {
                 std::cout<< "\tpersonActionfeatures["<< ir <<"].size() = " << personActionfeatures[ir].size() << std::endl;
             }
         }
-        getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
+        
     }
 
+    getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, 0);
 
-    return cuboidsCenters;
-}
-
-
-int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){   
-
-    //std::vector<int> trainingPerson    = {11, 12, 13, 14, 15, 16, 17, 18};
-    std::vector<std::string> filenames(6);
-    std::vector<std::vector<std::vector<float>>> personActionfeatures(6);
-    cv::VideoCapture cap;
-    bool INIT          = true;
-    int cuboidSize;
-    std::string PATH_DATA               = "../data/";
-    kmeans BOW(centers, K_CLASES);
-
-    std::vector<option> train_data;
-    std::vector<option> valid_data;
-    std::vector<option>  test_data;
-
-    
-    std::string FILENAME = "../data/kth.txt";
-    std::string MODEL_TRAINING_PATH = "../models/test/";
-
-    // ** Class Writer historigram
-    FileHandlerML <int> fhandlerML(MODEL_TRAINING_PATH + "testdata.txt",MODEL_TRAINING_PATH + "labeldata_test.txt");
-
-    //getOptions(train_data, valid_data, test_data, FILENAME);
-    /*
-    for(int i = 0; i < train_data.size();i++)
-        std::cout << train_data[i].person << std::endl;
-    */
-    for (int itrain = 0; itrain < test_data.size(); itrain+=24)
-    //for (int itrain = 0; itrain < 24; itrain+=24)
+    if (HISTOGRAM == true)
     {
-        for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
+        std::vector<std::vector<float>> cuboidLabels = getHistograms(personActionfeatures, cuboidsCenters, 6, mClusters, result);
+        for (int il = 0; il < cuboidLabels[0].size(); il++)
         {
-            personActionfeatures[ipaf].clear();
-        }        
-        for (int idata = 0; idata < 24; idata++)
-        {
-            int ifile = idata/4;
-
-            std::string PERSON = test_data[itrain + idata].person;
-            std::string ACTION = test_data[itrain + idata].action;
-            std::string TYPE   = test_data[itrain + idata].d;
-
-            std::string filename_temp = "";
-            for (int i = 0; i < ACTION.size(); i++)
-                filename_temp += ACTION[i];
-            filename_temp +=  "/";
-            for (int i = PERSON.size()-8; i < PERSON.size(); i++)
-                filename_temp += PERSON[i];
-            filename_temp +=  "_";
-            for (int i = 0; i < ACTION.size(); i++)
-                filename_temp += ACTION[i];
-            filename_temp +=  "_";
-            for (int i = 0; i < TYPE.size(); i++)
-                filename_temp += TYPE[i];
-            filename_temp +=  END;
-
-            std::string videlname = PATH_DATA + filename_temp;
-            std::cout << videlname << std::endl;
-            cap.open(videlname);
-
-            if (!cap.isOpened())
+            int label0 = cuboidLabels[0][il];
+            for(int ic = 1; ic < cuboidLabels.size(); ic++)
             {
-                std::cout << "Failed to open camera." << std::endl;
-                return -1;
+                assert (label0 == cuboidLabels[ic][il]);
             }
-
-            for (int iv = 0;  iv < test_data[itrain + idata].sequence.size(); iv+=2)
-            //for (int iv = 0;  iv < 2; iv+=2)
-            {
-                std::pair<int,int> input_sequence(test_data[itrain + idata].sequence[iv], test_data[itrain + idata].sequence[iv + 1]);
-
-                OFCM Haralick(108,144);
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
-
-                //for(int ir = 0; ir < res.size(); ir++)
-                //{
-                //    personActionfeatures[ifile].push_back(res[ir]);
-                //}
-            }
+            labels.push_back(label0);
         }
-        /*
-        std::vector<std::vector<float>> toKmeans;
-
-        int ikm = 0;
-
-        bool ALL = true;
-        while (true)
+        for (int i = 0; i < result.size(); i++)
         {
-            ALL = true;
-            
-            for (int ifile = 0; ifile < filenames.size(); ifile++)
+            std::cout << "data " << i << "\t, (class "<< cuboidLabels[0][i] << ")\n"<< std::endl;
+            std::cout << "\n\t";
+            for (int ih = 0; ih < result[i].size(); ih++)
             {
-                toKmeans.clear();
-                if (ikm >= personActionfeatures[ifile].size())
-                {
-                    ALL *= true;
-                    continue;
-                }
-                ALL *= false;
-
-                int itf_limit = (ikm + 35 < personActionfeatures[ifile].size()) ? ikm + 35: personActionfeatures[ifile].size(); 
-                for(int itf = ikm; itf < itf_limit; itf++)
-                {
-                    toKmeans.push_back(personActionfeatures[ifile][itf]);
-                }
-                std::vector<int> result; 
-
-                BOW.setFeatures(toKmeans);
-                BOW.getHistogram(result);  
-                std::cout<<"Class>> "<<ifile<<std::endl;
-                std::cout<<"#Features>> "<<result.size()<<std::endl;
-                for(int ires = 0; ires < result.size(); ires++)
-                    std::cout << result[ires] << " ";
-                
-
-                fhandlerML.AppendLine(result, ifile);  
-                fhandlerML.Release(); 
+                std::cout << result[i][ih] << " ";
             }
-
-            if (ALL == true)
-                break;
-
-            //std::cout << "\nClass = "<< itos[ifile] << " => ";
-            //fhandler.AppendLine(result, ifile);
-            
-            ikm += 35;
+            std::cout << std::endl;
         }
-        */
-    } 
-    
-    return 0;
+    }
+    return cuboidsCenters;
 }
