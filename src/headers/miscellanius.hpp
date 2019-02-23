@@ -232,9 +232,42 @@ class SingleFileHandler{
         // Writing in files
         fhanler.write(line.c_str(), line.size()*sizeof(char));
     }
+    void AppendTextLine(std::string newline){
+        if(!this->fhanler.is_open())
+            this->fhanler.open(this->filename, std::ios_base::app);
+        std::string line = newline + "\n";
+        this->fhanler.write(line.c_str(), line.size() * sizeof(char));
+    }
     void SetFilename(std::string newfn){
         this->filename = newfn;
     }
     
 };
+template <class T>
+void SaveCentroidsInFile(std::string filename, std::vector<std::vector<std::vector<T>>> cuboidCenters){
+    std::cout<<"\n==============================================\n";
+    std::cout<<"Saving File of Computed Centroids...\n"<<std::endl;
+    SingleFileHandler<T> fhandler(filename);
+    for (int icuboid = 0; icuboid < cuboidCenters.size(); icuboid++)
+    { 
+        std::string nameinit = "cuboid > " + std::to_string(icuboid+1);
+        fhandler.AppendTextLine(nameinit);
+        for(int icluster = 0; icluster < cuboidCenters[0].size(); icluster++){
+            fhandler.AppendLine(cuboidCenters[icuboid][icluster]);
+        }
+    }
+    fhandler.Release();
+    std::cout<<"Saved Centroids."<<std::endl;
+    std::cout<<"\n==============================================\n";
+}
+template <class T>
+void LoadCentroidsFromFile(std::string fname, std::vector<std::vector<std::vector<T>>> & centers){
+    std::cout<<"\n==============================================\n";
+    std::cout<<"Loading precomputed Centroids...\n"<<std::endl;
+    SingleFileHandler<T> fhandler(fname);
+    std::string line;
+    while(std::getline(this->fhanler, line)){
+            std::vector<T> ans = this->ParseLine(line);
+    }
+}
 # endif
