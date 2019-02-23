@@ -14,7 +14,7 @@
 // 4: Prediction on-line
 
 int main(int argc, char** argv){
-    int K_CLASSES = 5;
+    int K_CLASSES = 20;
 
 
     int mode = std::stoi(argv[1]);

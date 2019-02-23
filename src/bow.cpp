@@ -69,15 +69,16 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
     int cuboidSize;
     std::string PATH_DATA               = "../data/";
 
-    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     
-    //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-    std::vector<std::vector<std::vector<float>>> cuboidsCenters;
-    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_person\rperson17.txt";
-    LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
+    
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
+    //std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
+    //std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+    //std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_person\rperson17.txt";
+    //LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
     std::cout << "data size : " << database.size() << std::endl;
 
-    for (int itrain = 7*24; itrain < database.size(); itrain+=24)
+    for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
         for (int i = 0; i < personActionfeatures.size(); i++)
         {
@@ -142,7 +143,7 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
                 std::cout<< "\tpersonActionfeatures[class = "<< ir <<"].size() = " << personActionfeaturesSize[ir] << std::endl;
             }
         }
-        std::string CENTROIDS_FILE          = "../models/centroids/centroids_person" + database[itrain].person+".txt";
+        std::string CENTROIDS_FILE          = "../models/centroids/centroids_" + database[itrain].person+".txt";
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
         SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidsCenters);
     }
