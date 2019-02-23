@@ -6,6 +6,7 @@
 #include "headers/kmeans.hpp"
 #include "headers/plot.hpp"
 #include "headers/recurrentNetwork.hpp"
+#include "headers/ofcm.hpp"
 // Mode
 // 0: Train K-Means Centers
 // 1: Generate data of training
@@ -15,7 +16,7 @@
 
 int main(int argc, char** argv){
     int K_CLASSES = 20;
-
+    int CUBOID_SIZE = 36;
 
     int mode = std::stoi(argv[1]);
 
@@ -29,7 +30,7 @@ int main(int argc, char** argv){
     std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
     std::string TESTDATA_FILE           = "../models/test/testdata.txt";
     std::string TESTLABEL_FILE          = "../models/test/testlabel.txt";
-
+    std::string PATH_DATA               = "../data/";
     getOptions(train_data, valid_data, test_data, OPTION_FILE);
 
     switch (mode)
@@ -59,7 +60,7 @@ int main(int argc, char** argv){
 
             for(int i = 0; i < histograms.size(); i++)
                 fhandlerML.AppendRow(histograms[i], labels[i]);
-            
+
             fhandlerML.Release();
 
             break;
@@ -92,23 +93,26 @@ int main(int argc, char** argv){
             break;
         }
         case 4: {
+            std::string videoFile;
             // Starting real time aplication
-
-            // Loading Centers
+            std::cout << "Real Time Aplication" << std::endl;
+            std::cout << "####################" << std::endl;
+            std::cout << "input video file name: " << std::endl;
+            std::cin >> videoFile;
+            cv::VideoCapture cap;
+            cap.open(PATH_DATA + videoFile);
+            if (!cap.isOpened())
+            {
+                std::cout << "Failed to open video." << std::endl;
+            }
+            OFCM Haralick(108,144);
+            std::cout<<"Getting Haralick features ...\n";
+            std::vector<std::vector<std::vector<float>>> featuresHaralick = Haralick.get_features(cap,CUBOID_SIZE);
+            std::cout<<"Getting Centroids ...\n";
+            std::vector<std::vector<std::vector<float>>> cuboidCenters(35);
+            getCentroid(featuresHaralick, cuboidCenters, 6, K_CLASSES, 0);
             std::cout<<"Real time predictions"<<std::endl<<std::endl;
-            std::cout<<"Loading Center K - means"<<std::endl;
-            std::string modelcenters_file = "../models/centroids/centroids_it_168.txt";
-            SingleFileHandler <float> fhandler(modelcenters_file);
-            //fhandler.LoadFromFile(centers);
-            std::cout<<"Model loaded ... > "<<1<<std::endl;
-            // Loading SVM model
-            std::cout<<"Loading SVM model"<<std::endl;
-            //SVMhandler <int> svmhandler;
-            //svmhandler.LoadModelFromFile("../models/svm/svm_model");
-
-            // Initialize K - means model
-            //kmeans bwords(centers, K_CLASSES);
-            //bwords.setFeatures()
+            /**here clasicador **/
             break;
         }
         default:

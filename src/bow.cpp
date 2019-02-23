@@ -50,6 +50,7 @@ void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatur
         BOW.setFeatures(features);
         if (setRandomCenter == 0)
             BOW.startingCenters();
+
         BOW.runKmeans();
 
         cuboidsCenters[icuboid] = BOW.getCentroids();
@@ -57,9 +58,9 @@ void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatur
 
 }
 
-std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database, 
+std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database,
                                                     int mClusters)
-{   
+{
 
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<float>>> personActionfeatures;
@@ -69,8 +70,8 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
     int cuboidSize;
     std::string PATH_DATA               = "../data/";
 
-    
-    
+
+
     //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters;
@@ -120,14 +121,14 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
                 //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
                 OFCM Haralick(108,144);
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);                
+                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
 
                 for(int ir = 0; ir < res.size(); ir++)
                 {
                     personActionfeatures.push_back(res[ir]);
-                    
+
                 }
                 personActionfeaturesSize[ifile]+=res.size();
                 //personActionfeaturesSize.push_back()
@@ -155,16 +156,16 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
         personActionfeatures[i].clear();
     }
     personActionfeatures.clear();
-    
+
     return cuboidsCenters;
 }
 
-void getHistograms( std::vector<option> database, 
+void getHistograms( std::vector<option> database,
                     int mClusters,
                     std::vector<std::vector<std::vector<float>>> cuboidsCenters,
                     std::vector<std::vector<float>>& histograms,
                     std::vector<int>& labels)
-{   
+{
 
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
@@ -178,12 +179,12 @@ void getHistograms( std::vector<option> database,
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
-        
+
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
-        }        
-        
+        }
+
 
         for (int idata = 0; idata < 24; idata++)
         {
@@ -208,7 +209,7 @@ void getHistograms( std::vector<option> database,
 
             if (!cap.isOpened())
             {
-                std::cout << "Failed to open camera." << std::endl;
+                std::cout << "Failed to open video." << std::endl;
             }
 
             float centroid_class;
@@ -217,7 +218,7 @@ void getHistograms( std::vector<option> database,
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
                 OFCM Haralick(108,144);
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);                
+                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
                 for(int ires = 0; ires < res.size(); ires++)
