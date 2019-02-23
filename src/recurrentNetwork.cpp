@@ -1,6 +1,7 @@
 #include "headers/recurrentNetwork.hpp"
 #define     e      (2.71828)
 
+Connection::Connection(){}
 Connection::Connection(double weightValue){
     this->weightValue = weightValue;
 }
@@ -9,6 +10,7 @@ double Connection::updateWeightValue(double learningRatio, double resultActivati
     return this->weightValue;
 }
 
+ActivationFunction::ActivationFunction(){}
 ActivationFunction::ActivationFunction(double MU,int typeFunction){
     this->MU = MU;
     this->typeFunction = typeFunction;
@@ -36,6 +38,7 @@ double ActivationFunction::derivateFunction(){
     }
 }
 
+Neuron::Neuron(){}
 Neuron::Neuron(double MU,int layer,int typeFunction){
     this->MU = MU;
     this->layer = layer;
