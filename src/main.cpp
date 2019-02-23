@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     std::vector<option>  test_data;
 
     std::string OPTION_FILE             = "../options/kth.txt";
-    std::string CENTROIDS_FILE          = "../models/centroids/centroids.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/centroids_personperson11.txt";
     std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
     std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
     std::string TESTDATA_FILE           = "../models/test/testdata.txt";
@@ -54,21 +54,30 @@ int main(int argc, char** argv){
             std::vector<std::vector<float>> histograms;
             std::vector<int> labels;
             getHistograms(train_data,K_CLASSES,cuboidCenters,histograms,labels);
+
+            FileHandlerML <float, float> fhandlerML(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+
+            for(int i = 0; i < histograms.size(); i++)
+                fhandlerML.AppendRow(histograms[i], labels[i]);
+            
+            fhandlerML.Release();
+
             break;
         }
         // 2: Training SVM classifier
         case 2: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Training the SVM classifier"<<std::endl;
-            std::vector<std::vector<int>> data;
-            std::vector<int> y;
+            std::vector<std::vector<float>> data;
+            std::vector<float> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
-            //fhandler.LoadFromFile(data, y);
+            FileHandlerML <float, float> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            fhandler.LoadFromFile(data, y);
 
-            SVMhandler <int>svmhandler;
+            //SVMhandler <float> svmhandler;
 
-            svmhandler.fit(y, lbls, data);
-            std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
+            //svmhandler.fit(y, lbls, data);
+            //std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
             //int val = svmhandler.SaveModel("../models/svm/svm_model");
             //if(val == 0)
             //    std::cout<<"Model SVM Saved"<<std::endl;
@@ -94,8 +103,8 @@ int main(int argc, char** argv){
             std::cout<<"Model loaded ... > "<<1<<std::endl;
             // Loading SVM model
             std::cout<<"Loading SVM model"<<std::endl;
-            SVMhandler <int> svmhandler;
-            svmhandler.LoadModelFromFile("../models/svm/svm_model");
+            //SVMhandler <int> svmhandler;
+            //svmhandler.LoadModelFromFile("../models/svm/svm_model");
 
             // Initialize K - means model
             //kmeans bwords(centers, K_CLASSES);

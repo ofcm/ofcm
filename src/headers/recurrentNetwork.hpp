@@ -5,11 +5,11 @@
 class Connection{
 public:
     Connection();
-    Connection(int,double);
+    Connection(double);
     double weightValue;
     double totalError;
 
-    double updateWeightValue(double reasonlearning,double resultActivation,double error);
+    double updateWeightValue(double,double,double);
 };
 #endif
 
@@ -36,13 +36,13 @@ public:
     double MU;
     int layer;
     int typeFunction;
-    double resultActivationFuncion;
+    double resultActivationFunction;
     double resultDerivateActivationFunction;
     double bias;
     bool isInput;
 
     double updateBias(double,double);
-    double startActivateFunction();
-    double startDerivateActivationFunction();
+    double startActivationFunction();
+    double derivateActivationFunction();
 };
 #endif

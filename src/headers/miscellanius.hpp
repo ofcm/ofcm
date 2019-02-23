@@ -6,6 +6,8 @@
 # include "utils.hpp"
 # include <fstream>
 # include <typeinfo>
+template <class T>
+class SingleFileHandler;
 
 template <class T>
 void printMatInConsole(const cv::Mat & matrix){
@@ -26,15 +28,54 @@ void print2DstdVector(const std::vector<std::vector<T>> matrix){
     }
 }
 
-template <class T>
+template <class T, class L>
 class FileHandlerML{
 
     private:
-    std::fstream ftrain;
-    std::fstream flabel;
-    std::string trainfile;
-    std::string labelfile;
+    SingleFileHandler<T> * fdatahandler;
+    SingleFileHandler<L> * flabelhandler;
 
+    public:
+    FileHandlerML(std::string tr, std::string lbl){
+        fdatahandler = new SingleFileHandler<T>(tr);
+        flabelhandler = new SingleFileHandler<L>(lbl);
+        //trainfile(tr), labelfile(lbl){};
+    }
+    void AppendRow(std::vector<T> data, L label){
+        fdatahandler->AppendLine(data);
+        std::vector<L> lab{label};
+        flabelhandler->AppendLine(lab);
+    }
+    void Release(){
+        fdatahandler->Release();
+        flabelhandler->Release();
+    }
+    ~FileHandlerML(){
+        delete fdatahandler;
+        delete flabelhandler;
+    }
+    bool LoadFromFile(std::vector<std::vector<T>> & data, std::vector<L> & y){
+        //if(data.size() == 0){
+        //    std::cout<<"Non data in vector!"<<std::endl;
+        //    return false;
+        //}
+        this->fdatahandler->LoadFromFile(data);
+        std::cout<<"Loaded Data size:> "<<data.size()<<std::endl;
+        std::vector<std::vector<L>> lbls;
+        this->flabelhandler->LoadFromFile(lbls);
+
+        for(int i = 0; i < lbls.size(); i++)
+            y.push_back(lbls[i][0]);
+        std::cout<<"Loaded Labels size:> "<<y.size()<<std::endl;
+        return true;
+    }
+
+    //std::fstream ftrain;
+    //std::fstream flabel;
+    //std::string trainfile;
+    //std::string labelfile;
+/*
+    template <class P>
     std::vector<int> ParseLine(std::string line){
         std::vector<int> answer;
         std::string numberst = "";
@@ -70,11 +111,9 @@ class FileHandlerML{
             }
         }
         return answer;
-    }
-    public:
-    FileHandlerML(std::string tr, std::string lbl):trainfile(tr), labelfile(lbl){};
+    }*/
 
-    void AppendLine(std::vector<T> data, int label){
+    /*void AppendLine(std::vector<T> data, int label){
         if(data.size() == 0){
             std::cout<<"Non data in vector!"<<std::endl;
             return;
@@ -104,8 +143,8 @@ class FileHandlerML{
         // Writing in files
         ftrain.write(line.c_str(), line.size()*sizeof(char));
         flabel.write(linelbl.c_str(), linelbl.size() * sizeof(char));
-    }
-    bool LoadFromFile(std::vector<std::vector<T>> & data, std::vector<int> & y){
+    }*/
+    /*bool LoadFromFile(std::vector<std::vector<T>> & data, std::vector<int> & y){
         this->Release();
         this->ftrain.open(trainfile, std::fstream::in);
         this->flabel.open(labelfile, std::fstream::in);
@@ -129,13 +168,13 @@ class FileHandlerML{
             }
         }
         //std::cout<<y.size()<<std::endl;
-    }
-    void Release(){
+    }*/
+    /*void Release(){
         if(this->ftrain.is_open())
             this->ftrain.close();
         if(this->flabel.is_open())
             this->flabel.close();
-    }
+    }*/
 };
 
 template <class T>
@@ -204,6 +243,7 @@ class SingleFileHandler{
             data.push_back(ans);
             //std::cout<<ans.size()<<std::endl;
         }
+        this->Release();
         return true;
     }
     void Release(){
