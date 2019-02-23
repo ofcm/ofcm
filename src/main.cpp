@@ -107,10 +107,10 @@ int main(int argc, char** argv){
             }
             OFCM Haralick(108,144);
             std::cout<<"Getting Haralick features ...\n";
-            std::vector<std::vector<std::vector<float>>> featuresHaralick = Haralick.get_features(cap,CUBOID_SIZE);
+
+            Haralick.get_features_realTime(cap,CUBOID_SIZE);
             std::cout<<"Getting Centroids ...\n";
-            std::vector<std::vector<std::vector<float>>> cuboidCenters(35);
-            getCentroid(featuresHaralick, cuboidCenters, 6, K_CLASSES, 0);
+
             std::cout<<"Real time predictions"<<std::endl<<std::endl;
             /**here clasicador **/
             break;

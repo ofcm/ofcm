@@ -4,6 +4,8 @@
 #include "headers/kmeans.hpp"
 #include "headers/coocurrence.hpp"
 #include "headers/ofcm.hpp"
+#include "headers/plot.hpp"
+#include "headers/miscellanius.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
@@ -147,7 +149,7 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
     //video.release();
     return global_framesFeatures;
 }
-std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture capTemp, int& cuboidsize)
+void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
 {
     cv::VideoWriter video("../data/outcpp.avi",CV_FOURCC('M','J','P','G'),30, cv::Size(tWidth*6, tHeight*2));
 
@@ -161,14 +163,16 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
     std::vector<std::vector<cv::Mat>>                       coMM(4);
     std::vector<std::vector<cv::Mat>>                       coMO(4);
 
-    std::vector<std::vector<std::vector<float>>>            global_framesFeatures;
-
     cv::Size imageSize;
     cv::Mat frame;
 
     char k;
 
     int proc = 0;
+    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_5clusters.txt";
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+    LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
+
     for (;;)
     {
 
@@ -223,7 +227,14 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
             std::vector<std::vector<float>> framesFeatures;
 
             getHaralickFeatures(coMM, coMO, cuboidsSize, framesFeatures, T-1);
-            global_framesFeatures.push_back(framesFeatures);
+            std::vector<int> goodClusters;
+
+            for(int i = 0; i < framesFeatures.size();i++){
+                kmeans km(cuboidsCenters[i],5);
+                goodClusters.push_back(km.getGoodCluster(framesFeatures[i]));
+            }
+
+            plotGhrap_one(goodClusters,5);
 
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
@@ -263,6 +274,5 @@ std::vector<std::vector<std::vector<float>>> OFCM::get_features(cv::VideoCapture
 
     cuboids.clear();
 
-    //video.release();
-    return global_framesFeatures;
+
 }

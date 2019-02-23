@@ -18,7 +18,7 @@ class OFCM
 
         OFCM(int re_rows,int re_cols);
         std::vector<std::vector<std::vector<float>>> get_features(cv::VideoCapture capTemp, std::pair<int,int> sequence, int& cuboidsize);
-        std::vector<std::vector<std::vector<float>>> get_features(cv::VideoCapture capTemp, int& cuboidsize);
+        void get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize);
     private:
         int windSize = 31;
         int Levels   = 3;
