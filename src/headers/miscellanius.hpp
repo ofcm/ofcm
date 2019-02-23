@@ -55,15 +55,18 @@ class FileHandlerML{
         delete flabelhandler;
     }
     bool LoadFromFile(std::vector<std::vector<T>> & data, std::vector<L> & y){
-        if(data.size() == 0){
-            std::cout<<"Non data in vector!"<<std::endl;
-            return false;
-        }
+        //if(data.size() == 0){
+        //    std::cout<<"Non data in vector!"<<std::endl;
+        //    return false;
+        //}
         this->fdatahandler->LoadFromFile(data);
+        std::cout<<"Loaded Data size:> "<<data.size()<<std::endl;
         std::vector<std::vector<L>> lbls;
         this->flabelhandler->LoadFromFile(lbls);
+
         for(int i = 0; i < lbls.size(); i++)
-            y.push_back(lbls[0]);
+            y.push_back(lbls[i][0]);
+        std::cout<<"Loaded Labels size:> "<<y.size()<<std::endl;
         return true;
     }
 

@@ -423,7 +423,7 @@ person17_running_d2    		frames	1-60, 115-165, 260-312, 370-430
 person17_running_d3    		frames	1-35, 115-150, 235-270, 360-400
 person17_running_d4		frames	1-55, 70-130, 140-195, 215-270
 person17_walking_d1		frames	1-115, 160-270, 350-460, 570-666
-person17_walking_d2		frames	1-160, 340-496, 588-750, 898-1065
+person17_walking_d2		frames	1-160, 340-496, 588-750, 588-750
 person17_walking_d3		frames	1-105, 202-305, 455-545, 640-725
 person17_walking_d4		frames	1-112, 140-255, 300-420, 445-560
 

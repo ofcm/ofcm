@@ -69,14 +69,23 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
     int cuboidSize;
     std::string PATH_DATA               = "../data/";
 
-    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     
-    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-
+    
+    //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
+    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson11.txt";
+    LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
     std::cout << "data size : " << database.size() << std::endl;
 
-    for (int itrain = 0; itrain < database.size(); itrain+=24)
+    for (int itrain = 24; itrain < database.size(); itrain+=24)
     {
+        for (int i = 0; i < personActionfeatures.size(); i++)
+        {
+            for (int j = 0; j < personActionfeatures[i].size(); j++)
+                personActionfeatures[i][j].clear();
+            personActionfeatures[i].clear();
+        }
         personActionfeatures.clear();
 
         for (int idata = 0; idata < 24; idata++)
@@ -134,10 +143,19 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
                 std::cout<< "\tpersonActionfeatures[class = "<< ir <<"].size() = " << personActionfeaturesSize[ir] << std::endl;
             }
         }
-        std::string CENTROIDS_FILE          = "../models/centroids/centroids_person" + database[itrain].person+".txt";
+        std::string CENTROIDS_FILE          = "../models/centroids/centroids_" + database[itrain].person+".txt";
         getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
         SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidsCenters);
     }
+
+    for (int i = 0; i < personActionfeatures.size(); i++)
+    {
+        for (int j = 0; j < personActionfeatures.size(); j++)
+            personActionfeatures[i][j].clear();
+        personActionfeatures[i].clear();
+    }
+    personActionfeatures.clear();
+    
     return cuboidsCenters;
 }
 
@@ -145,7 +163,7 @@ void getHistograms( std::vector<option> database,
                     int mClusters,
                     std::vector<std::vector<std::vector<float>>> cuboidsCenters,
                     std::vector<std::vector<float>>& histograms,
-                    std::vector<float>& labels)
+                    std::vector<int>& labels)
 {   
 
     std::vector<std::string> filenames(6);
@@ -156,9 +174,6 @@ void getHistograms( std::vector<option> database,
     std::string PATH_DATA               = "../data/";
 
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
-    
-    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-
     std::cout << "data size : " << database.size() << std::endl;
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)

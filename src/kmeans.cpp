@@ -110,7 +110,7 @@ void kmeans::runKmeans(){
 
         itr++;
 
-        if (itr > 50)
+        if (itr > 99)
             break;
 
         oldCenters = centers;
