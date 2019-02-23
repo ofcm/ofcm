@@ -4,7 +4,7 @@
 #include "headers/SVMHandler.hpp"
 #include "getoptions.cpp"
 #include "headers/kmeans.hpp"
-
+#include "headers/plot.hpp"
 // Mode
 // 0: Train K-Means Centers
 // 1: Generate data of training
@@ -12,10 +12,10 @@
 // 3: Prediction off-line
 // 4: Prediction on-line
 
-int main(int argc, char** argv){   
+int main(int argc, char** argv){
     int K_CLASSES = 5;
-    
-    
+
+
     int mode = std::stoi(argv[1]);
 
     std::vector<option> train_data;
@@ -35,7 +35,7 @@ int main(int argc, char** argv){
             for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
             {
                 cuboidsCenters[icuboid] 5x864
-            }    
+            }
             */
             break;
         }
@@ -59,7 +59,7 @@ int main(int argc, char** argv){
             std::vector<int> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
             fhandler.LoadFromFile(data, y);
-            
+
             SVMhandler <int>svmhandler;
 
             svmhandler.fit(y, lbls, data);
@@ -74,7 +74,7 @@ int main(int argc, char** argv){
         }
         // 3: Prediction off-line
         case 3: {
-            
+
             break;
         }
         case 4: {
@@ -104,7 +104,7 @@ int main(int argc, char** argv){
     // Uncomment to generate centers
     //int res1 = getCentroids(centers, K_CLASSES);
 
-    
+
     /*
     SingleFileHandler <float> fhandler(std::string("centers_model.txt"));
     for(int i = 0; i < centers.size(); i++){
@@ -112,15 +112,15 @@ int main(int argc, char** argv){
     }
     fhandler.Release();
     */
-   
+
     //Uncomment to Generate Training data"
-    
+
     //SingleFileHandler <float> fhandler("../models/centroids/centers_model.txt");
     //fhandler.LoadFromFile(centers);
     //int res2 = getHistograms(centers, K_CLASSES);
-   
+
     // Uncomment to train the data
-    
+
     //std::string trainingfile = "../models/training/trainingdata.txt";
     //std::string labelsfile   = "../models/training/labeldata.txt";
     //FileHandlerML <int> fhandler(trainingfile, labelsfile);
@@ -135,6 +135,6 @@ int main(int argc, char** argv){
     //svmhandler.fit(y, lbls, data);
 
     //std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
-    
+
     return 0;
 }
