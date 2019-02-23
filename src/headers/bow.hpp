@@ -19,4 +19,6 @@ void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatur
                  int mclusters,
                  int setRandomCenter);
 
+void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std::vector<float>>> meanCuboidsCenters);
+
 #endif

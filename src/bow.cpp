@@ -75,11 +75,11 @@ std::vector<std::vector<std::vector<float>>> runBOW(std::vector<option> database
     //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters;
-    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson11.txt";
+    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson17.txt";
     LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
     std::cout << "data size : " << database.size() << std::endl;
 
-    for (int itrain = 24; itrain < database.size(); itrain+=24)
+    for (int itrain = 24*7; itrain < database.size(); itrain+=24)
     {
         for (int i = 0; i < personActionfeatures.size(); i++)
         {
@@ -238,4 +238,28 @@ void getHistograms( std::vector<option> database,
             }
         }
     }
+}
+
+void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std::vector<float>>> meanCuboidsCenters)
+{
+    for (int icub = 0; icub < meanCuboidsCenters.size(); icub++)
+    {
+        for (int iperson = 0; iperson < database.size()-24; iperson+=24)
+        {
+            std::string person = database[iperson].person;
+            std::string CENTROIDS_FILE          = "../models/centroids/clusters_5/centroids_" + person.substr(1)+".txt";
+            std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+            LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
+
+            for (int icluster = 0; icluster < meanCuboidsCenters[icub].size(); icluster++)
+            {
+                for (int ifeature = 0; ifeature < meanCuboidsCenters[icub][icluster].size(); ifeature++)
+                {
+                    meanCuboidsCenters[icub][icluster][ifeature]+= (cuboidsCenters[icub][icluster][ifeature]/7.0);
+                }
+            }
+        }
+    }
+    std::string CENTROIDS_FILE = "../models/centroids/meanCentroids.txt";
+    SaveCentroidsInFile<float>(CENTROIDS_FILE, meanCuboidsCenters);
 }
