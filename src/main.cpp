@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     std::vector<option>  test_data;
 
     std::string OPTION_FILE             = "../options/kth.txt";
-    std::string CENTROIDS_FILE          = "../models/centroids/centroids_personperson11.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_20clusters.txt";
     std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
     std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
     std::string TESTDATA_FILE           = "../models/test/testdata.txt";
@@ -59,7 +59,6 @@ int main(int argc, char** argv){
 
             for(int i = 0; i < histograms.size(); i++)
                 fhandlerML.AppendRow(histograms[i], labels[i]);
-            
             fhandlerML.Release();
 
             break;
@@ -110,6 +109,12 @@ int main(int argc, char** argv){
             //kmeans bwords(centers, K_CLASSES);
             //bwords.setFeatures()
             break;
+        }
+
+        case 5:
+        {
+            std::vector<std::vector<std::vector<float>>> cuboidCenters(35, std::vector<std::vector<float>>(5, std::vector<float>(864,0.0)));
+            saveMeanCentroid(train_data, cuboidCenters);
         }
         default:
 

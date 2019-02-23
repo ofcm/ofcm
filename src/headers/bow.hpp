@@ -14,4 +14,6 @@ void getHistograms( std::vector<option> database,
                     std::vector<std::vector<float>>& histograms,
                     std::vector<int>& labels);
 
+void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std::vector<float>>> meanCuboidsCenters);
+
 #endif
