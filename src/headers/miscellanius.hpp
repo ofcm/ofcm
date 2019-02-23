@@ -143,6 +143,8 @@ class SingleFileHandler{
     private:
     std::fstream fhanler;
     std::string filename;
+
+    public:
     std::vector<T> ParseLine(std::string line){
         std::vector<T> answer;
         std::string numberst = "";
@@ -190,7 +192,6 @@ class SingleFileHandler{
         return answer;
     }
 
-    public:
     SingleFileHandler(std::string fln):filename(fln){};
 
     bool LoadFromFile(std::vector<std::vector<T>> & data){
@@ -241,6 +242,18 @@ class SingleFileHandler{
     void SetFilename(std::string newfn){
         this->filename = newfn;
     }
+    void OpenReadingfile(){
+        this->Release();
+        this->fhanler.open(this->filename, std::fstream::in);
+    }
+    bool Getline(std::string & line){
+        bool val = false;
+        if(this->fhanler.is_open()){
+            if(std::getline(this->fhanler, line))
+                val = true;
+        }
+        return val;
+    }
     
 };
 template <class T>
@@ -265,9 +278,43 @@ void LoadCentroidsFromFile(std::string fname, std::vector<std::vector<std::vecto
     std::cout<<"\n==============================================\n";
     std::cout<<"Loading precomputed Centroids...\n"<<std::endl;
     SingleFileHandler<T> fhandler(fname);
+    fhandler.OpenReadingfile();
     std::string line;
-    while(std::getline(this->fhanler, line)){
-            std::vector<T> ans = this->ParseLine(line);
+    bool newcuboid = false;
+    int icuboid = 0;
+    int icluster = 0;
+    std::vector<std::vector<T>> temp;
+    while(fhandler.Getline(line)){
+        //std::cout<<line<<std::endl;
+        if(line.size() > 0){
+            if(line[0] != 'c'){
+                std::vector<T> ans = fhandler.ParseLine(line);
+                temp.push_back(ans);
+                newcuboid = false;
+            }
+            else{
+                if(temp.size() > 0){
+                    centers.push_back(temp);
+                    temp.clear();
+                }
+                newcuboid = true;
+                icuboid++;
+                icluster = 0;
+            }
+        }
     }
+    if(temp.size() > 0)
+        centers.push_back(temp);
+    
+    fhandler.Release();
+    std::cout<<"["<<centers.size()<<"]";
+    if(centers.size() > 0){
+        std::cout<<"["<<centers[0].size()<<"]";
+        if(centers[0].size() > 0){
+           std::cout<<"["<<centers[0][0].size()<<"]"; 
+        }
+    }
+    std::cout<<"\nCenters Loaded!";
+    std::cout<<"\n==============================================\n";
 }
 # endif
