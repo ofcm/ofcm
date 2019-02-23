@@ -5,6 +5,7 @@
 #include "getoptions.cpp"
 #include "headers/kmeans.hpp"
 #include "headers/plot.hpp"
+#include "headers/recurrentNetwork.hpp"
 // Mode
 // 0: Train K-Means Centers
 // 1: Generate data of training
