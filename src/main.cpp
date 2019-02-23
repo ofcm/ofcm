@@ -5,6 +5,7 @@
 #include "getoptions.cpp"
 #include "headers/kmeans.hpp"
 #include "headers/plot.hpp"
+#include "headers/recurrentNetwork.hpp"
 // Mode
 // 0: Train K-Means Centers
 // 1: Generate data of training
@@ -34,23 +35,23 @@ int main(int argc, char** argv){
             std::cout<<"\n==============================================\n";
             std::cout<<"Getting Centroids ...\n";
             std::vector<std::vector<std::vector<float>>> cuboidCenters = getCentroids(train_data, K_CLASSES);
-<<<<<<< HEAD
+
             SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
-=======
+
             /*
             for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
             {
                 cuboidsCenters[icuboid] 5x864
             }
             */
->>>>>>> 53bf6def8a6019de420384f2cf0380ab2404eb93
+
             break;
         }
         // 1: Generate data of training
         case 1: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Generating training data"<<std::endl;
-            
+
             SingleFileHandler <float> fhandler(CENTROIDS_FILE);
             std::vector<std::vector<std::vector<float>>> cuboidCenters;
             std::cout<<"Centroids loaded!"<<std::endl;

@@ -25,7 +25,7 @@ std::string END    = "_uncomp.avi";
 void addString(std::string& src, std::string s, int maxSize)
 {
     for (int i = s.size()-maxSize; i < s.size(); i++)
-        src += s[i]; 
+        src += s[i];
 }
 
 void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
@@ -34,7 +34,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
                  int mclusters,
                  int setRandomCenter)
 {
-    
+
     std::cout << "\nKmeans running ...\n\n\tCuboids size = " << cuboidsCenters.size() << std::endl;
     for (int icuboid = 0; icuboid < cuboidsCenters.size(); icuboid++)
     {
@@ -50,7 +50,7 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
         while (true)
         {
             ALL = true;
-            
+
             for (int iclass = 0; iclass < classes; iclass++)
             {
                 if (ikm >= personActionfeatures[iclass].size())
@@ -64,16 +64,16 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
             }
 
             if (ALL == true)
-                break;               
+                break;
             ikm++;
         }
 
 
         BOW.setFeatures(features);
         if (setRandomCenter == 0)
-            BOW.startingCenters(); 
-        BOW.runKmeans();       
-        
+            BOW.startingCenters();
+        BOW.runKmeans();
+
         cuboidsCenters[icuboid] = BOW.getCentroids();
 
         /*
@@ -88,13 +88,13 @@ void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> perso
                     std::cout << std::endl;
             }
             std::cout << std::endl;
-        }     
+        }
         */
         cuboidsCenters[icuboid] = BOW.getCentroids();
     }
 
 }
-std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> database, int mClusters){   
+std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> database, int mClusters){
     std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures(6);
     cv::VideoCapture cap;
@@ -104,17 +104,17 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
 
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-    
+
     std::cout << "data size : " << database.size() << std::endl;
 
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
-        
+
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
-        }        
-        
+        }
+
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -148,7 +148,7 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
                 //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], 20);
                 OFCM Haralick(108,144);
                 std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
-                
+
                 std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
                 for(int ir = 0; ir < res.size(); ir++)
@@ -174,7 +174,7 @@ std::vector<std::vector<std::vector<float>>> getCentroids(std::vector<option> da
 }
 
 
-int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){   
+int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
 
     //std::vector<int> trainingPerson    = {11, 12, 13, 14, 15, 16, 17, 18};
     std::vector<std::string> filenames(6);
@@ -189,7 +189,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
     std::vector<option> valid_data;
     std::vector<option>  test_data;
 
-    
+
     std::string FILENAME = "../data/kth.txt";
     std::string MODEL_TRAINING_PATH = "../models/test/";
 
@@ -207,7 +207,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
         for (int ipaf = 0; ipaf < personActionfeatures.size(); ipaf++)
         {
             personActionfeatures[ipaf].clear();
-        }        
+        }
         for (int idata = 0; idata < 24; idata++)
         {
             int ifile = idata/4;
@@ -263,7 +263,7 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
         while (true)
         {
             ALL = true;
-            
+
             for (int ifile = 0; ifile < filenames.size(); ifile++)
             {
                 toKmeans.clear();
@@ -274,23 +274,23 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
                 }
                 ALL *= false;
 
-                int itf_limit = (ikm + 35 < personActionfeatures[ifile].size()) ? ikm + 35: personActionfeatures[ifile].size(); 
+                int itf_limit = (ikm + 35 < personActionfeatures[ifile].size()) ? ikm + 35: personActionfeatures[ifile].size();
                 for(int itf = ikm; itf < itf_limit; itf++)
                 {
                     toKmeans.push_back(personActionfeatures[ifile][itf]);
                 }
-                std::vector<int> result; 
+                std::vector<int> result;
 
                 BOW.setFeatures(toKmeans);
-                BOW.getHistogram(result);  
+                BOW.getHistogram(result);
                 std::cout<<"Class>> "<<ifile<<std::endl;
                 std::cout<<"#Features>> "<<result.size()<<std::endl;
                 for(int ires = 0; ires < result.size(); ires++)
                     std::cout << result[ires] << " ";
-                
 
-                fhandlerML.AppendLine(result, ifile);  
-                fhandlerML.Release(); 
+
+                fhandlerML.AppendLine(result, ifile);
+                fhandlerML.Release();
             }
 
             if (ALL == true)
@@ -298,11 +298,11 @@ int getHistograms(std::vector<std::vector<float>> centers, int K_CLASES){
 
             //std::cout << "\nClass = "<< itos[ifile] << " => ";
             //fhandler.AppendLine(result, ifile);
-            
+
             ikm += 35;
         }
         */
-    } 
-    
+    }
+
     return 0;
 }
