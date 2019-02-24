@@ -81,7 +81,7 @@ int main(int argc, char** argv){
             
             FILE * fp;
             fp = fopen(SVM_MODEL_FILE.c_str(), "w");
-            svmhandler.fit_cross_validation(y, lbls, data, fp);
+            //svmhandler.fit_cross_validation(y, lbls, data, fp);
             //svmhandler.fit(y, lbls, data);
             //std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
             //int val = svmhandler.SaveModel("../models/svm/svm_model");
@@ -111,6 +111,11 @@ int main(int argc, char** argv){
             std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
 
             //svmhandler.split_randomly_data(data, y, data_, y_);
+            int val = svmhandler.SaveModel(SVM_MODEL_FILE);
+            if(val == 0)
+                std::cout<<"Model SVM Saved"<<std::endl;
+            else
+                std::cout<<"Problem saving the SVM model"<<std::endl;
             break;
         }
         case 4: {
