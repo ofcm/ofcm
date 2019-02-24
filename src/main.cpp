@@ -54,7 +54,7 @@ int main(int argc, char** argv){
 
             std::vector<std::vector<float>> cuboidsClusters;
             std::vector<int> labels;
-            clustering(test_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
+            clustering(train_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
             /*
             FileHandlerML <float, float> fhandlerML(TRAININGDATA_FILE, TRAININGLABEL_FILE);
 

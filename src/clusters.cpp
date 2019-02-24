@@ -30,7 +30,6 @@ void addString(std::string& src, std::string s, int maxSize)
 
 void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
                  std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
-                 int classes,
                  int mclusters,
                  int setRandomCenter)
 {
@@ -64,7 +63,6 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
                                                     int mClusters)
 {
 
-    std::vector<std::string> filenames(6);
     std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures;
     std::vector<int> personActionfeaturesSize(6,0);
     cv::VideoCapture cap;
@@ -117,8 +115,8 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
                 std::cout << "Failed to open camera." << std::endl;
             }
 
-            for (int iv = 0;  iv < database[itrain + idata].sequence.size(); iv+=2)
-            //for (int iv = 0;  iv < 2; iv+=2)
+            //for (int iv = 0;  iv < database[itrain + idata].sequence.size(); iv+=2)
+            for (int iv = 0;  iv < 4; iv+=2)
             {
                 std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv + 1]);
                 //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
@@ -148,16 +146,10 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
             }
         }
         std::string CENTROIDS_FILE          = "../models/centroids/centroids_" + database[itrain].person+".txt";
-        getCentroid(personActionfeatures, cuboidsCenters, 6, mClusters, itrain);
+        getCentroid(personActionfeatures, cuboidsCenters, mClusters, itrain);
         SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidsCenters);
     }
 
-    for (int i = 0; i < personActionfeatures.size(); i++)
-    {
-        for (int j = 0; j < personActionfeatures.size(); j++)
-            personActionfeatures[i][j].clear();
-        personActionfeatures[i].clear();
-    }
     personActionfeatures.clear();
 
     return cuboidsCenters;
@@ -250,8 +242,8 @@ void clustering( std::vector<option> database,
                 
             }
         }
-        std::string DATA_FILE       = "../models/test/testdata_until_"+std::to_string(itrain)+".txt";
-        std::string LABEL_FILE      = "../models/test/testlabel_until_"+std::to_string(itrain)+".txt";
+        std::string DATA_FILE       = "../models/training/traindata_until_"+std::to_string(itrain)+".txt";
+        std::string LABEL_FILE      = "../models/training/trainlabel_until_"+std::to_string(itrain)+".txt";
         FileHandlerML <float, float> fhandlerML(DATA_FILE, LABEL_FILE);
 
         for(int i = 0; i < cuboidsClusters.size(); i++)
@@ -265,10 +257,11 @@ void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std:
 {
     for (int icub = 0; icub < meanCuboidsCenters.size(); icub++)
     {
-        for (int iperson = 0; iperson < database.size()-24; iperson+=24)
+        for (int iperson = 0; iperson < database.size(); iperson+=24)
         {
             std::string person = database[iperson].person;
-            std::string CENTROIDS_FILE          = "../models/centroids/clusters_5/centroids_" + person.substr(1)+".txt";
+            std::string CENTROIDS_FILE          = "../models/centroids/hist5c/centroids_\r" + person.substr(1)+".txt";
+            std::cout << CENTROIDS_FILE << std::endl;
             std::vector<std::vector<std::vector<float>>> cuboidsCenters;
             LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
 
@@ -276,11 +269,11 @@ void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std:
             {
                 for (int ifeature = 0; ifeature < meanCuboidsCenters[icub][icluster].size(); ifeature++)
                 {
-                    meanCuboidsCenters[icub][icluster][ifeature]+= (cuboidsCenters[icub][icluster][ifeature]/7.0);
+                    meanCuboidsCenters[icub][icluster][ifeature]+= (cuboidsCenters[icub][icluster][ifeature]/8.0);
                 }
             }
         }
     }
-    std::string CENTROIDS_FILE = "../models/centroids/meanCentroids.txt";
+    std::string CENTROIDS_FILE = "../models/centroids/avrCentroids.txt";
     SaveCentroidsInFile<float>(CENTROIDS_FILE, meanCuboidsCenters);
 }
