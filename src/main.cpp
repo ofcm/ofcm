@@ -25,7 +25,7 @@ int main(int argc, char** argv){
     std::vector<option>  test_data;
 
     std::string OPTION_FILE             = "../options/kth.txt";
-    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_20clusters.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_5clusters.txt";
     std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
     std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
     std::string TESTDATA_FILE           = "../models/test/testdata.txt";
