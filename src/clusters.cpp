@@ -230,6 +230,7 @@ void clustering( std::vector<option> database,
                     cuboidsClusters.push_back(clusters);
                     labels.push_back(ifile);
                 }
+                /*
                 for (int i = 0; i < res.size(); i++)
                 {
                     for (int j = 0; j < res[i].size(); j++)
@@ -239,7 +240,7 @@ void clustering( std::vector<option> database,
                     res[i].clear();
                 }        
                 res.clear();
-                
+                */
             }
         }
         std::string DATA_FILE       = "../models/training/traindata_until_"+std::to_string(itrain)+".txt";

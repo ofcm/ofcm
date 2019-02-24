@@ -113,15 +113,20 @@ void getOptions(std::vector<option>& trainingOption,
                             }
                             if(countNumber == 3){
                                 countNumber = 0;
-                                for(int k=1;k<15;k++){
+                                for(int k=1;k<9;k++){
                                     if(line[l+k] != '-')
                                         textNumber += line[l+k];
+                                    /*
                                     else if(line[l+k] != '\0'){
                                         //std::cout << "here 3 " << atoi(textNumber.c_str()) << std::endl;
                                         number.push_back(atoi(textNumber.c_str()));
                                         textNumber = "";
                                     }
-                                        
+                                    */
+                                    else {
+                                        number.push_back(atoi(textNumber.c_str()));
+                                        textNumber = "";                                       
+                                    } 
                                 }
                                 number.push_back(atoi(textNumber.c_str()));
                                 
