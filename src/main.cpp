@@ -71,15 +71,22 @@ int main(int argc, char** argv){
             std::cout<<"\n==============================================\n";
             std::cout<<"Training the SVM classifier"<<std::endl;
             std::vector<std::vector<float>> data;
-            std::vector<float> y;
+            std::vector<int> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
-            FileHandlerML <float, float> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
             fhandler.LoadFromFile(data, y);
 
-            //SVMhandler <float> svmhandler;
+            SVMhandler <float> svmhandler;
 
-            //svmhandler.fit(y, lbls, data);
-            //std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
+            svmhandler.fit(y, lbls, data);
+            std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
+
+            FileHandlerML <float, int> fhandlertest(TESTDATA_FILE, TESTLABEL_FILE);
+            std::vector<std::vector<float>> data_test;
+            std::vector<int> y_test;
+            fhandlertest.LoadFromFile(data_test, y_test);
+
+            std::cout<<"Accuracy>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
             //int val = svmhandler.SaveModel("../models/svm/svm_model");
             //if(val == 0)
             //    std::cout<<"Model SVM Saved"<<std::endl;
@@ -90,7 +97,17 @@ int main(int argc, char** argv){
         }
         // 3: Prediction off-line
         case 3: {
-
+            // Make cross validation
+            std::cout<<"\n==============================================\n";
+            std::cout<<"Training the SVM classifier"<<std::endl;
+            std::vector<std::vector<float>> data;
+            std::vector<int> y;
+            std::vector<int> lbls {0, 1, 2, 3, 4, 5};
+            //FileHandlerML <float, int> fhandler("../models/training/clusters_5/traindata.txt", "../models/training/clusters_5/trainlabel.txt");
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            fhandler.LoadFromFile(data, y);
+            SVMhandler <float> svmhandler;
+            svmhandler.fit_cross_validation(y, lbls, data);
             break;
         }
         case 4: {

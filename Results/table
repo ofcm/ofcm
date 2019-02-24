@@ -1,0 +1,57 @@
+======================================================================
+# Training data 20 clusters
+
+Training Size 68054
+
+Tool: Sci-kit learn, 
+
+Classifier: SVM - Kernell RBF
+C =  10.0 , gamma =  0.01
+
+Cross validation: 0.1 Random Seed
+
+Data division: (61248, 35) (6806, 35) (61248,) (6806,)
+
+Training Accuracty: 0.8976
+Test Accuracy:      0.5903
+
+Execution time <training> 26min
+
+========================================================================
+# Training data 20 clusters
+
+Training Size 68054
+
+Tool: Thunder-SVM C++
+
+Classifier: SVM - Kernel RBF
+C =  10.0 , gamma =  0.1
+
+K - Fold Validation: 6
+
+# Features: 35
+
+# Accuracy > 0.322
+
+Execution time <training> ~ 18min.
+
+
+========================================================================
+# Training data 20 clusters
+
+Training Size 68054
+
+Tool: Thunder-SVM C++
+
+Classifier: SVM - Kernel RBF
+C =  1 , gamma =  0.0285
+
+# Features: 35
+
+# Test Accuracy > 0.424
+
+Execution time <training> ~ 13min.
+
+
+
+

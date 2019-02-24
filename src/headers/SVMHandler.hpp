@@ -15,13 +15,13 @@ template <class T>
 class SVMhandler{
     public:
     SVMhandler(){
-        this->parameters.C = 1.0;
+        this->parameters.C = 10.0;
         this->parameters.kernel_type = RBF;
         this->parameters.svm_type = C_SVC;
         this->parameters.cache_size = 10;
         this->parameters.eps = 0.001;
         this->parameters.nr_weight = 0;
-        this->parameters.gamma = 2;
+        this->parameters.gamma = 0.01;
         this->parameters.coef0 = 0;
         this->parameters.degree = 0;
         this->parameters.shrinking = 0;
@@ -95,6 +95,56 @@ class SVMhandler{
         return true;
     }
 
+    bool fit_cross_validation(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data, svm_parameter * p = nullptr){
+        if(p != nullptr)
+            this->parameters = *p;
+         
+        svm_problem * problem = CreateProblem(predicted, labels, data);
+        const char * logError = svm_check_parameter(problem, &this->parameters);
+        if(logError != nullptr){
+            std::cout<<"Error in paramerters"<<std::endl;
+            return -1;
+        }
+
+        int i;
+        int total_correct = 0;
+        double total_error = 0;
+        double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
+        double * target = new double[problem->l];
+        //double * target = Malloc(double,prob.l);
+
+        svm_cross_validation(problem,&this->parameters,10,target);
+        if(this->parameters.svm_type == EPSILON_SVR ||
+        this->parameters.svm_type == NU_SVR)
+        {
+            for(i=0;i<problem->l;i++)
+            {
+                double y = problem->y[i];
+                double v = target[i];
+                total_error += (v-y)*(v-y);
+                sumv += v;
+                sumy += y;
+                sumvv += v*v;
+                sumyy += y*y;
+                sumvy += v*y;
+            }
+            printf("Cross Validation Mean squared error = %g\n",total_error/problem->l);
+            printf("Cross Validation Squared correlation coefficient = %g\n",
+                ((problem->l*sumvy-sumv*sumy)*(problem->l*sumvy-sumv*sumy))/
+                ((problem->l*sumvv-sumv*sumv)*(problem->l*sumyy-sumy*sumy))
+                );
+        }
+        else
+        {
+            for(i=0;i<problem->l;i++)
+                if(target[i] == problem->y[i])
+                    ++total_correct;
+            printf("Cross Validation Accuracy = %g%%\n",100.0*total_correct/problem->l);
+        }
+
+        delete [] target;
+
+    }
     std::vector<int> predict(std::vector<std::vector<T>> data){
         int n = data.size();
         std::vector<int> predicted(n);
