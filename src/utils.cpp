@@ -170,3 +170,45 @@ void PrintLabelInImage(cv::Mat & src, std::map<int, std::string> labels, int pre
     std::string action = labels[predicted];
     cv::putText(src, action, cv::Point(10, src.rows - 10), 1, 1.8, cv::Scalar(120, 5, 150), 2, 4);
 }
+
+
+void get_vectorofHF(    std::vector<std::vector<cv::Mat>>   AAM1, 
+                        std::vector<std::vector<cv::Mat>>   AAM2, 
+                        cv::Size                            cuboidsSize, 
+                        std::vector<std::vector<std::vector<float>>>&    res, 
+                        int T)
+{
+    int W = cuboidsSize.width;
+    int H = cuboidsSize.height;
+    
+    int ncuboids = W * H;
+    
+    std::vector<std::vector<float>> cuboidFeature;
+
+    for (int icub = 0; icub < ncuboids; icub++)
+    { 
+        std::vector<std::vector<float>> fvectors;
+        for (int iangle = 0; iangle < AAM1.size(); iangle++)
+        {
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM1[iangle][icub*T+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+                
+                fvectors.push_back(ftmp);
+            }
+
+            for (int ti = 0; ti < T; ti++)
+            {
+                cv::Mat Mco             = AAM2[iangle][icub*T+ti];
+                std::vector<float> ftmp = haralick(Mco, 12);
+
+                fvectors.push_back(ftmp);
+            }
+        }
+        
+        res.push_back(fvectors);
+    }
+
+    // res = 35x72x12
+}

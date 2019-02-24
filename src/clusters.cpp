@@ -28,7 +28,7 @@ void addString(std::string& src, std::string s, int maxSize)
         src += s[i];
 }
 
-void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatures,
+void getCentroid(std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures,
                  std::vector<std::vector<std::vector<float>>>& cuboidsCenters,
                  int classes,
                  int mclusters,
@@ -44,7 +44,8 @@ void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatur
         std::vector<std::vector<float>> features;
         for (int ikm = 0; ikm < personActionfeatures.size(); ikm++)
         {
-            features.push_back(personActionfeatures[ikm][icuboid]);
+            for (int ifet = 0; ifet < personActionfeatures[ikm][icuboid].size(); ifet++)
+                features.push_back(personActionfeatures[ikm][icuboid][ifet]);
         }
 
         BOW.setFeatures(features);
@@ -64,7 +65,7 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
 {
 
     std::vector<std::string> filenames(6);
-    std::vector<std::vector<std::vector<float>>> personActionfeatures;
+    std::vector<std::vector<std::vector<std::vector<float>>>> personActionfeatures;
     std::vector<int> personActionfeaturesSize(6,0);
     cv::VideoCapture cap;
 
@@ -73,14 +74,14 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
 
 
 
-    //std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
-    std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
-    std::vector<std::vector<std::vector<float>>> cuboidsCenters;
-    std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson17.txt";
-    LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
+    std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
+    //std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
+    //std::vector<std::vector<std::vector<float>>> cuboidsCenters;
+    //std::string CENTROIDS_FILE_TEMP = "../models/centroids/centroids_\rperson17.txt";
+    //LoadCentroidsFromFile(CENTROIDS_FILE_TEMP, cuboidsCenters);
     std::cout << "data size : " << database.size() << std::endl;
 
-    for (int itrain = 24*7; itrain < database.size(); itrain+=24)
+    for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
         for (int i = 0; i < personActionfeatures.size(); i++)
         {
@@ -123,7 +124,7 @@ std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<opti
                 //std::pair<int,int> input_sequence(database[itrain + idata].sequence[iv], database[itrain + idata].sequence[iv] + 15);
                 OFCM Haralick(108,144);
                 std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]";
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
+                std::vector<std::vector<std::vector<std::vector<float>>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
                 std::cout <<"\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
 
@@ -213,7 +214,7 @@ void clustering( std::vector<option> database,
                 OFCM Haralick(108,144);
 
                 std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]";
-                std::vector<std::vector<std::vector<float>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);                
+                std::vector<std::vector<std::vector<std::vector<float>>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);                
                 std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
                 for(int ires = 0; ires < res.size(); ires++)
@@ -222,9 +223,16 @@ void clustering( std::vector<option> database,
                     for(int icuboid = 0; icuboid < res[ires].size(); icuboid++)
                     {
                         kmeans BOW(cuboidsCenters[icuboid], mClusters);
-                        std::vector<float> single_feature = res[ires][icuboid];
-                        centroid_class = (float)BOW.getGoodCluster(single_feature);
-                        clusters.push_back(centroid_class);
+                        std::vector<std::vector<float>> setof_feature = res[ires][icuboid];
+                        BOW.setFeatures(setof_feature);
+
+                        std::vector<int> histogram;
+                        BOW.getHistogram(histogram);
+
+                        for (int hi = 0; hi < histogram.size(); hi++)
+                            clusters.push_back((float)histogram[hi]);
+                        //centroid_class = (float)BOW.getGoodCluster(single_feature);
+                        //clusters.push_back(centroid_class);
                     }
 
                     cuboidsClusters.push_back(clusters);

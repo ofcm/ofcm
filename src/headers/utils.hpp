@@ -53,4 +53,12 @@ void plotMO(cv::Mat& src1,
             int cuboidDim);
 
 void PrintLabelInImage(cv::Mat & src, std::map<int, std::string> labels, int predicted);
+
+
+void get_vectorofHF(    std::vector<std::vector<cv::Mat>>   AAM1, 
+                        std::vector<std::vector<cv::Mat>>   AAM2, 
+                        cv::Size                            cuboidsSize, 
+                        std::vector<std::vector<std::vector<float>>>&    res, 
+                        int T);
+
 #endif

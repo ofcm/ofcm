@@ -15,7 +15,7 @@
 // 4: Prediction on-line
 
 int main(int argc, char** argv){
-    int K_CLASSES = 20;
+    int K_CLASSES = 5;
     int CUBOID_SIZE = 36;
 
     int mode = std::stoi(argv[1]);
@@ -119,7 +119,7 @@ int main(int argc, char** argv){
 
         case 5:
         {
-            std::vector<std::vector<std::vector<float>>> cuboidCenters(35, std::vector<std::vector<float>>(5, std::vector<float>(864,0.0)));
+            std::vector<std::vector<std::vector<float>>> cuboidCenters(35, std::vector<std::vector<float>>(K_CLASSES, std::vector<float>(12,0.0)));
             saveMeanCentroid(train_data, cuboidCenters);
         }
         default:
