@@ -34,5 +34,5 @@ target_link_libraries(out PRIVATE base ${OpenCV_LIBS})
 install(TARGETS out DESTINATION /usr/lib)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-O3")
+  set(CMAKE_CXX_FLAGS "-O3 -fopenmp")
 endif()

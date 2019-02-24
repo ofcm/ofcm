@@ -5,6 +5,9 @@
 # include <vector>
 # include <iostream>
 # include <stdio.h>
+# include <algorithm>
+# include <time.h>
+# include <stdlib.h>
 /*
  *  @Brief
  *  predicted:  The predicted value of labels
@@ -15,13 +18,13 @@ template <class T>
 class SVMhandler{
     public:
     SVMhandler(){
-        this->parameters.C = 10.0;
+        this->parameters.C = 3.0;
         this->parameters.kernel_type = RBF;
         this->parameters.svm_type = C_SVC;
         this->parameters.cache_size = 10;
         this->parameters.eps = 0.001;
         this->parameters.nr_weight = 0;
-        this->parameters.gamma = 0.01;
+        this->parameters.gamma = 0.001;
         this->parameters.coef0 = 0;
         this->parameters.degree = 0;
         this->parameters.shrinking = 0;
@@ -95,56 +98,6 @@ class SVMhandler{
         return true;
     }
 
-    bool fit_cross_validation(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data, svm_parameter * p = nullptr){
-        if(p != nullptr)
-            this->parameters = *p;
-         
-        svm_problem * problem = CreateProblem(predicted, labels, data);
-        const char * logError = svm_check_parameter(problem, &this->parameters);
-        if(logError != nullptr){
-            std::cout<<"Error in paramerters"<<std::endl;
-            return -1;
-        }
-
-        int i;
-        int total_correct = 0;
-        double total_error = 0;
-        double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
-        double * target = new double[problem->l];
-        //double * target = Malloc(double,prob.l);
-
-        svm_cross_validation(problem,&this->parameters,10,target);
-        if(this->parameters.svm_type == EPSILON_SVR ||
-        this->parameters.svm_type == NU_SVR)
-        {
-            for(i=0;i<problem->l;i++)
-            {
-                double y = problem->y[i];
-                double v = target[i];
-                total_error += (v-y)*(v-y);
-                sumv += v;
-                sumy += y;
-                sumvv += v*v;
-                sumyy += y*y;
-                sumvy += v*y;
-            }
-            printf("Cross Validation Mean squared error = %g\n",total_error/problem->l);
-            printf("Cross Validation Squared correlation coefficient = %g\n",
-                ((problem->l*sumvy-sumv*sumy)*(problem->l*sumvy-sumv*sumy))/
-                ((problem->l*sumvv-sumv*sumv)*(problem->l*sumyy-sumy*sumy))
-                );
-        }
-        else
-        {
-            for(i=0;i<problem->l;i++)
-                if(target[i] == problem->y[i])
-                    ++total_correct;
-            printf("Cross Validation Accuracy = %g%%\n",100.0*total_correct/problem->l);
-        }
-
-        delete [] target;
-
-    }
     std::vector<int> predict(std::vector<std::vector<T>> data){
         int n = data.size();
         std::vector<int> predicted(n);
@@ -211,6 +164,119 @@ class SVMhandler{
         return 0;
     }
 
+    bool fit_cross_validation(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data, FILE * fp, svm_parameter * p = nullptr){
+        if(p != nullptr)
+            this->parameters = *p;
+         
+        svm_problem * problem = CreateProblem(predicted, labels, data);
+        const char * logError = svm_check_parameter(problem, &this->parameters);
+        if(logError != nullptr){
+            std::cout<<"Error in paramerters"<<std::endl;
+            return -1;
+        }
+
+        int i;
+        int total_correct = 0;
+        double total_error = 0;
+        double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
+        double * target = new double[problem->l];
+        //double * target = Malloc(double,prob.l);
+
+        svm_cross_validation(problem,&this->parameters,10,target);
+        if(this->parameters.svm_type == EPSILON_SVR ||
+        this->parameters.svm_type == NU_SVR)
+        {
+            for(i=0;i<problem->l;i++)
+            {
+                double y = problem->y[i];
+                double v = target[i];
+                total_error += (v-y)*(v-y);
+                sumv += v;
+                sumy += y;
+                sumvv += v*v;
+                sumyy += y*y;
+                sumvy += v*y;
+            }
+            printf("Cross Validation Mean squared error = %g\n",total_error/problem->l);
+            printf("Cross Validation Squared correlation coefficient = %g\n",
+                ((problem->l*sumvy-sumv*sumy)*(problem->l*sumvy-sumv*sumy))/
+                ((problem->l*sumvv-sumv*sumv)*(problem->l*sumyy-sumy*sumy))
+                );
+        }
+        else
+        {
+            for(i=0;i<problem->l;i++)
+                if(target[i] == problem->y[i])
+                    ++total_correct;
+            printf("Cross Validation Accuracy = %g%%\n",100.0*total_correct/problem->l);
+        }
+
+        delete [] target;
+
+    }
+
+    bool shuffle_randomly_data(const std::vector<std::vector<T>> data, const std::vector<int> y, std::vector<std::vector<T>> & data_shuff, std::vector<int> & y_shuff){
+        std::srand ( unsigned ( time(0) ) );
+        std::vector<unsigned long> indexes(data.size());
+        for(unsigned long i = 0; i < indexes.size(); i++){
+            indexes[i] = i;
+        }
+        unsigned long inisum = 0;
+        for(unsigned long i = 0; i < indexes.size(); i++){
+            inisum += indexes[i];
+        }
+        //std::cout<<inisum<<std::endl;
+        std::random_shuffle ( indexes.begin(), indexes.end() );
+        
+        data_shuff = data;
+        y_shuff = y;
+        for(int i = 0; i < indexes.size(); i++){
+            data_shuff[i] = data[indexes[i]];
+            y_shuff[i] = y[indexes[i]];
+        }
+
+        //unsigned long sum = 0;
+        //for (std::vector<int>::iterator it=indexes.begin(); it!=indexes.end(); ++it){
+        //    sum += *it;
+            //std::cout  << *it<<std::endl;
+        //}
+        //for (unsigned long i = 0; i < indexes.size(); i++){
+        //    sum += indexes[i];
+            //std::cout  << indexes[i]<<std::endl;
+        //}
+        
+        //std::cout<<"sum> "<<sum<<std::endl;
+        //std::cout<<"Size> "<<indexes.size()<<std::endl;
+        return true;
+    }
+
+    bool split_data_train(const std::vector<std::vector<T>> data, const std::vector<int> y, std::vector<std::vector<T>> & data_train, std::vector<int> & y_train, std::vector<std::vector<T>> & data_test, std::vector<int> & y_test, float test_percent = 0.3){
+        std::vector<std::vector<T>> data_shuff;
+        std::vector<int> y_shuff;
+        shuffle_randomly_data(data, y, data_shuff, y_shuff);
+        unsigned long n_size = data.size();
+        unsigned long n_train_size = n_size -  test_percent * n_size;
+        
+        int nFeatures = data[0].size();
+        //std::vector<std::vector<T>> data_train;
+        for(unsigned long i = 0; i < n_size; i++){
+            if(i < n_train_size){
+                data_train.push_back(data_shuff[i]);
+                y_train.push_back(y_shuff[i]);
+            }
+            else
+            {
+                data_test.push_back(data_shuff[i]);
+                y_test.push_back(y_shuff[i]);
+            }
+        }
+        std::cout<<"SIZE data train> \t["<<data_train.size()<<", "<<data_train[0].size()<<"]"<<std::endl;
+        std::cout<<"SIZE y_train> \t\t["<<y_train.size()<<"]"<<std::endl;
+
+        std::cout<<"SIZE data test> \t["<<data_test.size()<<", "<<data_test[0].size()<<"]"<<std::endl;
+        std::cout<<"SIZE y_test> \t\t["<<y_test.size()<<"]"<<std::endl;
+        
+    }
 
 };
 # endif
