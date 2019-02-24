@@ -168,14 +168,14 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
     char k;
 
     int proc = 0;
-    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_5clusters.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_20clusters.txt";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters;
     LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
 
     for (;;)
     {
 
-        cv::Mat Template = cv::Mat(tHeight*2, tWidth*6, CV_8UC3, cv::Scalar(45));
+        cv::Mat Template = cv::Mat(tHeight*4, tWidth*6, CV_8UC3, cv::Scalar(45));
         capTemp >> frame;
         if(frame.empty())
             break;
@@ -229,11 +229,16 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
             std::vector<int> goodClusters;
 
             for(int i = 0; i < framesFeatures.size();i++){
-                kmeans km(cuboidsCenters[i],5);
+                kmeans km(cuboidsCenters[i],20);
                 goodClusters.push_back(km.getGoodCluster(framesFeatures[i]));
             }
-
-            plotGhrap_one(goodClusters,5);
+            
+            std::string title = "Good Clusters! ";
+            int blockSize = 40;
+            int cols = blockSize*7;
+            int row = blockSize*5;
+            cv::Mat image(row,cols,CV_8UC3,cv::Scalar::all(0));
+            drawMatrix(goodClusters,image,blockSize,row,cols,20);
 
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
@@ -247,6 +252,7 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
             Mat2Mat(frame           , Template, 0, 0);
             Mat2Mat(MagnitudImg     , Template, 0, tWidth*2);
             Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
+            Mat2Mat(image  , Template, (tHeight*2) + 15, 15);
 
             cv::imshow("Template",Template);
 

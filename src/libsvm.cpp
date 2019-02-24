@@ -42,9 +42,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 #include <algorithm>
 #include "headers/libsvm.hpp"
 
-#ifndef __linux__
-#define strdup _strdup
-#endif
+//#ifndef __linux__
+//#define strdup _strdup
+//#endif
 
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
