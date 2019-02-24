@@ -35,14 +35,14 @@ print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 
 from sklearn import svm
 
-C_ = 10.0
+C_ = 3.0
 gamma_ = 0.01
 print("C = ", C_, ", gamma = ", gamma_)
 
 import time
 
 s = time.time()
-clf = svm.SVC(kernel='rbf', C=C_, gamma=gamma_).fit(X_train, y_train)
+clf = svm.SVC(kernel='rbf', C=C_, gamma=gamma_,max_iter=10000).fit(X_train, y_train)
 
 # gama: alto: elementos cercanos tendran influencia en la recta de deciciona(justa mas la curva)
 # gama: bajo: elementos lejanos tendran influencia en la recta de decicion
