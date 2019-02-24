@@ -44,6 +44,7 @@ std::vector<std::vector<std::vector<std::vector<float>>>> OFCM::get_features(cv:
     //std::cout << "-->" << std::endl;
 
     int proc = 0;
+
     for (;;)
     {
         //std::cout << "-->" << FRAMECOUNT << std::endl;
@@ -171,10 +172,17 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
     char k;
 
     int proc = 0;
-    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_20clusters.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/avrCentroids.txt";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters;
     LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
 
+    std::vector<cv::Scalar> colores;
+    for(int k = 0;k < 35;k++){
+        int valor1 = rand() % 255;
+        int valor2 = rand() % 255;
+        int valor3 = rand() % 255;
+        colores.push_back(cv::Scalar(valor1, valor2, valor3));
+    }
     for (;;)
     {
 
@@ -226,22 +234,20 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
             int H = cuboidsSize.height;
 
             cuboidsize = W*H;
-            std::vector<std::vector<float>> framesFeatures;
 
-            getHaralickFeatures(coMM, coMO, cuboidsSize, framesFeatures, T-1);
-            std::vector<int> goodClusters;
-
-            for(int i = 0; i < framesFeatures.size();i++){
-                kmeans km(cuboidsCenters[i],20);
-                goodClusters.push_back(km.getGoodCluster(framesFeatures[i]));
+            std::vector<std::vector<std::vector<float>>> framesFeatures;
+            get_vectorofHF(coMM, coMO, cuboidsSize, framesFeatures, T-1);
+            std::vector<int> vectorHistogram;
+            cv::Mat3b imageHis;
+            for(int i  = 0; i < framesFeatures.size();i++){
+                std::vector<int> histogram;
+                kmeans km(cuboidsCenters[i],5);
+                km.setFeatures(framesFeatures[i]);
+                km.getHistogram(histogram);
+                for (auto h : histogram)
+                    vectorHistogram.push_back(h);
             }
-            
-            std::string title = "Good Clusters! ";
-            int blockSize = 40;
-            int cols = blockSize*7;
-            int row = blockSize*5;
-            cv::Mat image(row,cols,CV_8UC3,cv::Scalar::all(0));
-            drawMatrix(goodClusters,image,blockSize,row,cols,20);
+            drawHistrogram(vectorHistogram,imageHis,5,colores);
 
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
@@ -251,14 +257,14 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
             cv::resize(frame,frame, cv::Size(tWidth*2, tHeight*2));
             cv::resize(MagnitudImg,MagnitudImg, cv::Size(tWidth*2, tHeight*2));
             cv::resize(OrientationImg,OrientationImg, cv::Size(tWidth*2, tHeight*2));
+            cv::resize(imageHis,imageHis, cv::Size(tWidth*4, tHeight*2));
 
             Mat2Mat(frame           , Template, 0, 0);
             Mat2Mat(MagnitudImg     , Template, 0, tWidth*2);
             Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
-            Mat2Mat(image  , Template, (tHeight*2) + 15, 15);
-
+            Mat2Mat(imageHis  , Template, (tHeight*2), 0);
+            cv::imshow("s",imageHis);
             cv::imshow("Template",Template);
-
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
