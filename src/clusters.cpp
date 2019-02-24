@@ -242,6 +242,14 @@ void clustering( std::vector<option> database,
                 
             }
         }
+        std::string DATA_FILE       = "../models/test/testdata_until_"+std::to_string(itrain)+".txt";
+        std::string LABEL_FILE      = "../models/test/testlabel_until_"+std::to_string(itrain)+".txt";
+        FileHandlerML <float, float> fhandlerML(DATA_FILE, LABEL_FILE);
+
+        for(int i = 0; i < cuboidsClusters.size(); i++)
+            fhandlerML.AppendRow(cuboidsClusters[i], labels[i]);
+
+        fhandlerML.Release();
     }
 }
 

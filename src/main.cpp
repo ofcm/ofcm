@@ -55,7 +55,7 @@ int main(int argc, char** argv){
             std::vector<std::vector<float>> cuboidsClusters;
             std::vector<int> labels;
             clustering(test_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
-
+            /*
             FileHandlerML <float, float> fhandlerML(TRAININGDATA_FILE, TRAININGLABEL_FILE);
 
 
@@ -63,7 +63,7 @@ int main(int argc, char** argv){
                 fhandlerML.AppendRow(cuboidsClusters[i], labels[i]);
 
             fhandlerML.Release();
-
+            */
             break;
         }
         // 2: Training SVM classifier
