@@ -61,4 +61,6 @@ void get_vectorofHF(    std::vector<std::vector<cv::Mat>>   AAM1,
                         std::vector<std::vector<std::vector<float>>>&    res, 
                         int T);
 
+void PrintConfussionMatrix(std::vector<int> y, std::vector<int> y_hat, int nclass);
+
 #endif

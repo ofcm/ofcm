@@ -212,3 +212,17 @@ void get_vectorofHF(    std::vector<std::vector<cv::Mat>>   AAM1,
 
     // res = 35x72x12
 }
+
+void PrintConfussionMatrix(std::vector<int> y, std::vector<int> y_hat, int nclass){
+    std::vector<std::vector<int>> conffusionmatrix(nclass, std::vector<int>(nclass, 0));
+    std::cout<<"Confussion Matrix Size> \t["<<conffusionmatrix.size()<<", "<<conffusionmatrix[0].size()<<"]"<<std::endl;
+    for(int i = 0; i < y.size(); i++){
+        conffusionmatrix[y[i]][y_hat[i]]++;
+    }
+    for(int i = 0; i < nclass; i++){
+        for(int j = 0; j < nclass; j++){
+            std::cout<<conffusionmatrix[i][j]<<"\t";
+        }
+        std::cout<<std::endl;
+    }
+}
