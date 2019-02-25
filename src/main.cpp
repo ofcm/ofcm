@@ -60,7 +60,7 @@ int main(int argc, char** argv){
 
             std::vector<std::vector<float>> cuboidsClusters;
             std::vector<int> labels;
-            clustering(train_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
+            clustering(test_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
             /*
             FileHandlerML <float, float> fhandlerML(TRAININGDATA_FILE, TRAININGLABEL_FILE);
 
@@ -77,21 +77,21 @@ int main(int argc, char** argv){
             std::cout<<"\n==============================================\n";
             std::cout<<"Training the SVM classifier"<<std::endl;
             std::vector<std::vector<float>> data;
-            std::vector<float> y;
+            std::vector<int> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
-            FileHandlerML <float, float> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
             fhandler.LoadFromFile(data, y);
 
-            //SVMhandler <float> svmhandler;
+            SVMhandler <float> svmhandler;
 
-            //svmhandler.fit(y, lbls, data);
-            //std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
-            //int val = svmhandler.SaveModel("../models/svm/svm_model");
-            //if(val == 0)
-            //    std::cout<<"Model SVM Saved"<<std::endl;
-            //else
-            //    std::cout<<"Problem saving the SVM model"<<std::endl;
+            svmhandler.fit(y, lbls, data);
 
+            int val = svmhandler.SaveModel("../models/svm_model/model_alldata.txt");
+            if(val == 0)
+                std::cout<<"Model SVM Saved"<<std::endl;
+            else
+                std::cout<<"Problem saving the SVM model"<<std::endl;
+            std::cout<<"Accuracy>> "<<svmhandler.validate(data, y)<<std::endl;
             break;
         }
         // 3: train model with Train data

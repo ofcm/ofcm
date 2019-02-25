@@ -108,7 +108,7 @@ std::vector<std::vector<std::vector<std::vector<float>>>> OFCM::get_features(cv:
             //std::cout<< "\t==> framesFeatures size : " << framesFeatures.size() << " x "<<  framesFeatures[0].size() << std::endl;
             global_framesFeatures.push_back(framesFeatures2);
             //std::cout<< "\t==> global_framesFeatures size : " << global_framesFeatures.size() << " x "<<  global_framesFeatures[0].size() << std::endl;
-
+            /*
 
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
@@ -124,7 +124,7 @@ std::vector<std::vector<std::vector<std::vector<float>>>> OFCM::get_features(cv:
             Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
 
             cv::imshow("Template",Template);
-
+            */
             cuboids.clear();
             orientationMatrices.clear();
             magnitudeMatrices.clear();
