@@ -1,0 +1,52 @@
+# --------------Training with SVM ----------------
+Data was used in accordance to KTH author, 8-8-9
+Train data: all 8 subjects
+Test data: all 9 subjects
+
+------------------------------------
+
+Loaded Data size:> 68054
+Loaded Labels size:> 68054
+Loaded Data size:> 70922
+Loaded Labels size:> 70922
+Training SVM ...
+Training multiclass
+Class 1
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Making Predictions ...
+Accuracy TRAIN>> 0.978664
+Accuracy TEST>> 0.191957
+Model SVM Saved
+
+============================================================
+Using all data Training and Testing
+Randomly Sort the data
+Split data 0.7, 0.3:
+
+Loaded Data size:> 68054
+Loaded Labels size:> 68054
+Loaded Data size:> 70922
+Loaded Labels size:> 70922
+Shape data merged> 	[138976, 175]
+Labels shape> 		[138976]
+SIZE data train> 	[97283, 175]
+SIZE y_train> 		[97283]
+SIZE data test> 	[41693, 175]
+SIZE y_test> 		[41693]
+Training SVM ...
+Training multiclass
+Class 1
+Class 2
+Class 3
+Class 4
+Class 5
+Class 6
+Making Predictions ...
+Accuracy TRAIN>> 0.969995
+Accuracy TEST>> 0.950519
+Model SVM Saved
+
