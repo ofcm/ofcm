@@ -10,7 +10,7 @@
  *  predicted:  The predicted value of labels
  *  labels:     The Set of labels
  *  features:   Features of problem
- */ 
+ */
 template <class T>
 class SVMhandler{
     public:
@@ -33,12 +33,12 @@ class SVMhandler{
     svm_model * sModel = nullptr;
 
     svm_problem * CreateProblem(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data){
-    
+
         if(predicted.size() != data.size()){
             std::cout<<"# predicted  != # data\n";
             return nullptr;
         }
-            
+
         // Number of Samples to train
         int n = predicted.size();
         // Init the svm problem
@@ -84,7 +84,7 @@ class SVMhandler{
     bool fit(std::vector<int> predicted, std::vector<int> labels, std::vector<std::vector<T>> data, svm_parameter * p = nullptr){
         if(p != nullptr)
             this->parameters = *p;
-         
+
         svm_problem * problem = CreateProblem(predicted, labels, data);
         const char * logError = svm_check_parameter(problem, &this->parameters);
         if(logError != nullptr){
@@ -109,9 +109,9 @@ class SVMhandler{
         for(int i = 0; i < n; i++){
             int lbl = svm_predict(this->sModel, d[i]);
             predicted[i] = lbl;
-            std::cout << " label model " << lbl << std::endl;
+            //std::cout << " label model " << lbl << std::endl;
         }
-        
+
         return predicted;
     }
 
@@ -180,7 +180,7 @@ class SVMhandler{
         }
         //std::cout<<inisum<<std::endl;
         std::random_shuffle ( indexes.begin(), indexes.end() );
-        
+
         data_shuff = data;
         y_shuff = y;
         for(int i = 0; i < indexes.size(); i++){
@@ -197,7 +197,7 @@ class SVMhandler{
         //    sum += indexes[i];
             //std::cout  << indexes[i]<<std::endl;
         //}
-        
+
         //std::cout<<"sum> "<<sum<<std::endl;
         //std::cout<<"Size> "<<indexes.size()<<std::endl;
         return true;
@@ -209,7 +209,7 @@ class SVMhandler{
         shuffle_randomly_data(data, y, data_shuff, y_shuff);
         unsigned long n_size = data.size();
         unsigned long n_train_size = n_size -  test_percent * n_size;
-        
+
         int nFeatures = data[0].size();
         //std::vector<std::vector<T>> data_train;
         for(unsigned long i = 0; i < n_size; i++){
@@ -228,7 +228,7 @@ class SVMhandler{
 
         std::cout<<"SIZE data test> \t["<<data_test.size()<<", "<<data_test[0].size()<<"]"<<std::endl;
         std::cout<<"SIZE y_test> \t\t["<<y_test.size()<<"]"<<std::endl;
-        
+
     }
 
 

@@ -231,7 +231,7 @@ int main(int argc, char** argv){
 
             std::vector<std::vector<float>> cuboidsClusters;
             std::vector<int> labels;
-            realTime(train_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
+            realTime(test_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
         }
         default:
 

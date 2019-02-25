@@ -290,13 +290,13 @@ void realTime( std::vector<option> database,
     int cuboidSize;
     std::string PATH_DATA               = "../data/";
 
-    std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
-    std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
+    std::string TRAININGDATA_FILE       = "../models/test/testdata_until_0.txt";
+    std::string TRAININGLABEL_FILE      = "../models/test/testlabel_until_0.txt";
 
     std::string MODEL_CENTROIDS_PATH = "../models/centroids/";
     std::cout << "data size : " << database.size() << std::endl;
 
-    std::string SVM_MODEL_FILE          = "../models/svm_models/model_alltraindata.txt";
+    std::string SVM_MODEL_FILE          = "../models/svm_models/model_mergin_test_and_train_split30percent.txt";
     std::cout<<"Using model to predict\n";
     SVMhandler <float> svmhandler;
     if(svmhandler.LoadModelFromFile(SVM_MODEL_FILE)){
@@ -313,6 +313,8 @@ void realTime( std::vector<option> database,
 
     std::vector<int> predictions = svmhandler.predict(data_train);
     int it_pred = 0;
+
+    int COUNTER = 0;
     for (int itrain = 0; itrain < database.size(); itrain+=24)
     {
 
@@ -350,14 +352,15 @@ void realTime( std::vector<option> database,
                 OFCM Haralick(108,144);
 
                 std::cout << "\tseq["<<database[itrain + idata].sequence[iv]<<"-"<<database[itrain + idata].sequence[iv + 1]<<"]";
-                std::vector<std::vector<std::vector<std::vector<float>>>> res = Haralick.get_features(cap, input_sequence, cuboidSize);
-                std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
+                Haralick.set_labels_realTime(cap, predictions, COUNTER);
+                //std::cout << "\tres.size() = " << res.size() << " x " << res[0].size() << " x " << res[0][0].size()<< ", cuboidSize = "<< cuboidSize << std::endl;
 
-                for(int ires = 0; ires < res.size(); ires++)
-                {
+
+                //for(int ires = 0; ires < res.size(); ires++)
+                //{
                     //std::vector<float> clusters;
-                    for(int icuboid = 0; icuboid < res[ires].size(); icuboid++)
-                    {
+                //    for(int icuboid = 0; icuboid < res[ires].size(); icuboid++)
+                //    {
                         //kmeans BOW(cuboidsCenters[icuboid], mClusters);
                         //std::vector<std::vector<float>> setof_feature = res[ires][icuboid];
                         //BOW.setFeatures(setof_feature);
@@ -371,14 +374,13 @@ void realTime( std::vector<option> database,
                         //clusters.push_back(centroid_class);
 
 
-                    }
-                    std::cout << "prediction : " << predictions[it_pred] << ", label = "<< ifile << std::endl;
-                    it_pred++;
+                //    }
                     //cuboidsClusters.push_back(clusters);
                     //labels.push_back(ifile);
 
 
-                }
+                //}
+
                 //std::cout << "Acc = " << svmhandler.validate(cuboidsClusters,labels) << std::endl;;
             }
         }
