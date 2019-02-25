@@ -100,7 +100,11 @@ int main(int argc, char** argv){
             fhandler.LoadFromFile(data, y);
             std::vector<std::vector<float>> data_train, data_test;
             std::vector<int> y_train, y_test;
-            svmhandler.split_data_train(data, y, data_train, y_train, data_test, y_test, 0.3);
+            FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
+            fhandlerTest.LoadFromFile(data_test, y_test);
+            
+            svmhandler.shuffle_randomly_data(data, y, data_train, y_train);
+            //svmhandler.split_data_train(data, y, data_train, y_train, data_test, y_test, 0.3);
             std::cout<<"Training SVM ..."<<std::endl;
             svmhandler.fit(y_train, lbls, data_train);
             std::cout<<"Making Predictions ..."<<std::endl;
