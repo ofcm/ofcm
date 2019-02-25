@@ -40,6 +40,7 @@ extern "C" {
 #endif
 
 # include <stdio.h>
+#include "omp.h"
 extern int libsvm_version;
 
 struct svm_node

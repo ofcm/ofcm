@@ -25,12 +25,13 @@ int main(int argc, char** argv){
     std::vector<option>  test_data;
 
     std::string OPTION_FILE             = "../options/kth.txt";
-    std::string CENTROIDS_FILE          = "../models/centroids/meanCentroids_5clusters.txt";
+    std::string CENTROIDS_FILE          = "../models/centroids/avrCentroids.txt";
     std::string TRAININGDATA_FILE       = "../models/training/traindata.txt";
     std::string TRAININGLABEL_FILE      = "../models/training/trainlabel.txt";
     std::string TESTDATA_FILE           = "../models/test/testdata.txt";
     std::string TESTLABEL_FILE          = "../models/test/testlabel.txt";
     std::string PATH_DATA               = "../data/";
+    std::string SVM_MODEL_FILE          = "../models/svm_models/model.txt";
     getOptions(train_data, valid_data, test_data, OPTION_FILE);
 
     switch (mode)
@@ -90,6 +91,29 @@ int main(int argc, char** argv){
         }
         // 3: Prediction off-line
         case 3: {
+            std::cout<<"Split data randomly:"<<std::endl;
+            SVMhandler <float> svmhandler;
+            std::vector<std::vector<float>> data;
+            std::vector<int> y;
+            std::vector<int> lbls {0, 1, 2, 3, 4, 5};
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            fhandler.LoadFromFile(data, y);
+            std::vector<std::vector<float>> data_train, data_test;
+            std::vector<int> y_train, y_test;
+            svmhandler.split_data_train(data, y, data_train, y_train, data_test, y_test, 0.3);
+            std::cout<<"Training SVM ..."<<std::endl;
+            svmhandler.fit(y_train, lbls, data_train);
+            std::cout<<"Making Predictions ..."<<std::endl;
+            std::cout<<"Accuracy TRAIN>> "<<svmhandler.validate(data_train, y_train)<<std::endl;
+            std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
+
+            //svmhandler.split_randomly_data(data, y, data_, y_);
+
+            int val = svmhandler.SaveModel(SVM_MODEL_FILE);
+            if(val == 0)
+                std::cout<<"Model SVM Saved"<<std::endl;
+            else
+                std::cout<<"Problem saving the SVM model"<<std::endl;
 
             break;
         }

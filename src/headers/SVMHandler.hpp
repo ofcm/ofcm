@@ -15,13 +15,13 @@ template <class T>
 class SVMhandler{
     public:
     SVMhandler(){
-        this->parameters.C = 1.0;
+        this->parameters.C = 3.0;
         this->parameters.kernel_type = RBF;
         this->parameters.svm_type = C_SVC;
-        this->parameters.cache_size = 10;
-        this->parameters.eps = 0.001;
+        this->parameters.cache_size = 2000;
+        this->parameters.eps = 0.1;
         this->parameters.nr_weight = 0;
-        this->parameters.gamma = 2;
+        this->parameters.gamma = 0.001;
         this->parameters.coef0 = 0;
         this->parameters.degree = 0;
         this->parameters.shrinking = 0;
@@ -92,6 +92,8 @@ class SVMhandler{
             return -1;
         }
         this->sModel = svm_train(problem, &this->parameters);
+        
+        delete problem;
         return true;
     }
 
@@ -159,6 +161,69 @@ class SVMhandler{
         fclose(pFile);
 
         return 0;
+    }
+
+        bool shuffle_randomly_data(const std::vector<std::vector<T>> data, const std::vector<int> y, std::vector<std::vector<T>> & data_shuff, std::vector<int> & y_shuff){
+        std::srand ( unsigned ( time(0) ) );
+        std::vector<unsigned long> indexes(data.size());
+        for(unsigned long i = 0; i < indexes.size(); i++){
+            indexes[i] = i;
+        }
+        unsigned long inisum = 0;
+        for(unsigned long i = 0; i < indexes.size(); i++){
+            inisum += indexes[i];
+        }
+        //std::cout<<inisum<<std::endl;
+        std::random_shuffle ( indexes.begin(), indexes.end() );
+        
+        data_shuff = data;
+        y_shuff = y;
+        for(int i = 0; i < indexes.size(); i++){
+            data_shuff[i] = data[indexes[i]];
+            y_shuff[i] = y[indexes[i]];
+        }
+
+        //unsigned long sum = 0;
+        //for (std::vector<int>::iterator it=indexes.begin(); it!=indexes.end(); ++it){
+        //    sum += *it;
+            //std::cout  << *it<<std::endl;
+        //}
+        //for (unsigned long i = 0; i < indexes.size(); i++){
+        //    sum += indexes[i];
+            //std::cout  << indexes[i]<<std::endl;
+        //}
+        
+        //std::cout<<"sum> "<<sum<<std::endl;
+        //std::cout<<"Size> "<<indexes.size()<<std::endl;
+        return true;
+    }
+
+    bool split_data_train(const std::vector<std::vector<T>> data, const std::vector<int> y, std::vector<std::vector<T>> & data_train, std::vector<int> & y_train, std::vector<std::vector<T>> & data_test, std::vector<int> & y_test, float test_percent = 0.3){
+        std::vector<std::vector<T>> data_shuff;
+        std::vector<int> y_shuff;
+        shuffle_randomly_data(data, y, data_shuff, y_shuff);
+        unsigned long n_size = data.size();
+        unsigned long n_train_size = n_size -  test_percent * n_size;
+        
+        int nFeatures = data[0].size();
+        //std::vector<std::vector<T>> data_train;
+        for(unsigned long i = 0; i < n_size; i++){
+            if(i < n_train_size){
+                data_train.push_back(data_shuff[i]);
+                y_train.push_back(y_shuff[i]);
+            }
+            else
+            {
+                data_test.push_back(data_shuff[i]);
+                y_test.push_back(y_shuff[i]);
+            }
+        }
+        std::cout<<"SIZE data train> \t["<<data_train.size()<<", "<<data_train[0].size()<<"]"<<std::endl;
+        std::cout<<"SIZE y_train> \t\t["<<y_train.size()<<"]"<<std::endl;
+
+        std::cout<<"SIZE data test> \t["<<data_test.size()<<", "<<data_test[0].size()<<"]"<<std::endl;
+        std::cout<<"SIZE y_test> \t\t["<<y_test.size()<<"]"<<std::endl;
+        
     }
 
 

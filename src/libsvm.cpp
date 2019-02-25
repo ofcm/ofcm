@@ -47,7 +47,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*/
 //#endif
 
 int libsvm_version = LIBSVM_VERSION;
-typedef float Qfloat;
+typedef double Qfloat;
 typedef signed char schar;
 #ifndef min
 template <class T>
@@ -1188,6 +1188,7 @@ public:
     Qfloat* data;
     int start, j;
     if ((start = cache->get_data(i, &data, len)) < len) {
+      # pragma omp parallel for private(j) schedule(guided)
       for (j = start; j < len; j++)
         data[j] = (Qfloat)(y[i] * y[j] * (this ->* kernel_function)(i, j));
     }
@@ -2016,9 +2017,9 @@ svm_model* svm_train(const svm_problem* prob, const svm_parameter* param) {
       probA = Malloc(double,nr_class*(nr_class-1)/2);
       probB = Malloc(double,nr_class*(nr_class-1)/2);
     }
-
+    printf("Training multiclass\n");
     int p = 0;
-    for (i = 0; i < nr_class; i++)
+    for (i = 0; i < nr_class; i++){
       for (int j = i + 1; j < nr_class; j++) {
         svm_problem sub_prob;
         int si = start[i], sj = start[j];
@@ -2050,6 +2051,9 @@ svm_model* svm_train(const svm_problem* prob, const svm_parameter* param) {
         free(sub_prob.y);
         ++p;
       }
+      printf("Class %d\n", i+1);
+    }
+      
 
     // build output
 
@@ -2241,6 +2245,7 @@ void svm_cross_validation(const svm_problem* prob, const svm_parameter* param, i
       ++k;
     }
     struct svm_model* submodel = svm_train(&subprob, param);
+    printf("Training cross validation\n");
     if (param->probability &&
       (param->svm_type == C_SVC || param->svm_type == NU_SVC)) {
       double* prob_estimates = Malloc(double,svm_get_nr_class(submodel));
@@ -2250,7 +2255,10 @@ void svm_cross_validation(const svm_problem* prob, const svm_parameter* param, i
     } else
       for (j = begin; j < end; j++)
         target[perm[j]] = svm_predict(submodel, prob->x[perm[j]]);
+
+    //svm_save_model(fp, submodel);
     svm_free_and_destroy_model(&submodel);
+
     free(subprob.x);
     free(subprob.y);
   }
@@ -2300,6 +2308,7 @@ double svm_predict_values(const svm_model* model, const svm_node* x, double* dec
     model->param.svm_type == NU_SVR) {
     double* sv_coef = model->sv_coef[0];
     double sum = 0;
+    #pragma omp parallel for private(i) reduction(+:sum) schedule(guided)
     for (i = 0; i < model->l; i++)
       sum += sv_coef[i] * Kernel::k_function(x, model->SV[i], model->param);
     sum -= model->rho[0];
@@ -2314,6 +2323,7 @@ double svm_predict_values(const svm_model* model, const svm_node* x, double* dec
     int l = model->l;
 
     double* kvalue = Malloc(double,l);
+    #pragma omp parallel for private(i) schedule(guided)
     for (i = 0; i < l; i++)
       kvalue[i] = Kernel::k_function(x, model->SV[i], model->param);
 
@@ -2897,4 +2907,3 @@ void svm_set_print_string_function(void (*print_func)(const char*)) {
   else
     svm_print_string = print_func;
 }
-
