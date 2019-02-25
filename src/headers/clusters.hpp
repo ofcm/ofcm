@@ -6,9 +6,11 @@
 
 void addString(std::string& src, std::string s, int maxSize);
 
-std::vector<std::vector<std::vector<float>>> getCuboidCentroids(std::vector<option> database, 
-                                                    int mClusters);
-void clustering( std::vector<option> database, 
+void  getCuboidCentroids(std::vector<option> database,
+                         std::vector<std::vector<std::vector<float>>>& cuboidCenters,
+                         int mClusters,
+                         int& FLAG_INIT);
+void clustering( std::vector<option> database,
 
                     int mClusters,
                     std::vector<std::vector<std::vector<float>>> cuboidsCenters,
@@ -22,4 +24,9 @@ void getCentroid(std::vector<std::vector<std::vector<float>>> personActionfeatur
 
 void saveMeanCentroid(std::vector<option> database, std::vector<std::vector<std::vector<float>>> meanCuboidsCenters);
 
+void realTime( std::vector<option> database,
+                    int mClusters,
+                    std::vector<std::vector<std::vector<float>>> cuboidsCenters,
+                    std::vector<std::vector<float>>& cuboidsClusters,
+                    std::vector<int>& labels);
 #endif

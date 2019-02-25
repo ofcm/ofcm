@@ -55,7 +55,7 @@ void getOptions(std::vector<option>& trainingOption,
                 }
             }
             else if(countLine > 3){
-                
+
                 if(line.size() > 0){
                     bool firstPart=true;
                     number.push_back(1);
@@ -65,14 +65,14 @@ void getOptions(std::vector<option>& trainingOption,
                     for(int l = 0;l < line.size();l++){
                         if(firstPart == true){
                             if(line[l] != '_'){
-                                text += line[l]; 
+                                text += line[l];
                             }
                             else{
                                 texts.push_back(text);
                                 //std::cout <<  text << std::endl;
                                 text = "";
                                 countBar += 1;
-                                
+
                             }
                             if(countBar == 2 )
                             {
@@ -84,25 +84,25 @@ void getOptions(std::vector<option>& trainingOption,
 
                                 //l = line.size();
                             }
-                            
+
                         }
                         else{
                             texts.push_back(text);
                             text = "";
-                            
+
                             if(line[l] != '-' && line[l] != ','){
                                 textNumber += line[l];
                                 //std::cout << "number " << textNumber << std::endl;
                             }
-                            if (line[l] == '-'){  
+                            if (line[l] == '-'){
 
                                     number.push_back(atoi(textNumber.c_str()));
                                     //std::cout << "here 1 " << atoi(textNumber.c_str()) << std::endl;
                                     textNumber = "";
-                                
-                                
+
+
                             }
-                                
+
                             if (line[l] == ','){
                                 //std::cout << "here 2 " << atoi(textNumber.c_str()) << std::endl;
                                 //line += 2;
@@ -113,36 +113,40 @@ void getOptions(std::vector<option>& trainingOption,
                             }
                             if(countNumber == 3){
                                 countNumber = 0;
-                                for(int k=1;k<9;k++){
+                                for(int k=1;k<15;k++){
                                     if(line[l+k] != '-')
                                         textNumber += line[l+k];
-                                    /*
+
                                     else if(line[l+k] != '\0'){
                                         //std::cout << "here 3 " << atoi(textNumber.c_str()) << std::endl;
                                         number.push_back(atoi(textNumber.c_str()));
                                         textNumber = "";
                                     }
-                                    */
+
+                                    else if(line[l+k] == '\0')
+                                        break;
+                                    /*
                                     else {
                                         number.push_back(atoi(textNumber.c_str()));
-                                        textNumber = "";                                       
-                                    } 
+                                        textNumber = "";
+                                    }
+                                    */
                                 }
                                 number.push_back(atoi(textNumber.c_str()));
-                                
+
                                 textNumber = "";
                                 l = line.size();
-                                
+
                             }
-                            
+
                         }
-                            
+
                     }
-                    //std::cout << " person " << linePerson / 24 << std::endl; 
+                    //std::cout << " person " << linePerson / 24 << std::endl;
                     if(number.size() > 7)
                         number.erase (number.begin()+1);
 
-                    
+
                     //std::cout << number.size() << std::endl;
                     option opt(texts[0],texts[1],texts[2],number);
                     std::string txtNumber = "";
@@ -152,7 +156,7 @@ void getOptions(std::vector<option>& trainingOption,
                         }
                     }
                     int numberIndex = atoi(textNumber.c_str());
-                    //std::cout << " numero index " << numberIndex << std::endl; 
+                    //std::cout << " numero index " << numberIndex << std::endl;
                     /*
                     if(numberIndex == 18){
                         for(auto n : number){
@@ -168,7 +172,7 @@ void getOptions(std::vector<option>& trainingOption,
                             break;
                         }
                     }
-                    
+
                     for(auto indexv : validationIndex){
                         if(indexv == numberIndex){
                             //std::cout << " person " << indexv << "val " << std::endl;
@@ -183,22 +187,22 @@ void getOptions(std::vector<option>& trainingOption,
                             break;
                         }
                     }
-                    
+
                     number.clear();
                     texts.clear();
                     countaux++;
-                }   
+                }
 
                 linePerson++;
             }
-            
+
             countLine ++;
 
         }
         //std::cout << " training " << trainingOption[trainingOption.size()-1].d << " final number " << trainingOption[trainingOption.size()-1].sequence[2] << std::endl;
-        //std::cout << "number r " << countaux<<std::endl; 
+        //std::cout << "number r " << countaux<<std::endl;
         myfile.close();
         //std::cout << "size training " << trainingOption.size() << std::endl;
     }
-    else std::cout << "Unable to open file" << std::endl; 
+    else std::cout << "Unable to open file" << std::endl;
 }

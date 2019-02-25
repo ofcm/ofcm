@@ -40,7 +40,12 @@ int main(int argc, char** argv){
         case 0: {
             std::cout<<"\n==============================================\n";
             std::cout<<"Getting Centroids ...\n";
-            std::vector<std::vector<std::vector<float>>> cuboidCenters = getCuboidCentroids(train_data, K_CLASSES);
+
+            int FLAG_INIT = 0;
+            std::vector<std::vector<std::vector<float>>> cuboidsCenters(35);
+            getCuboidCentroids(train_data, cuboidsCenters, K_CLASSES, FLAG_INIT);
+            getCuboidCentroids(valid_data, cuboidsCenters, K_CLASSES, FLAG_INIT);
+            getCuboidCentroids(test_data, cuboidsCenters, K_CLASSES, FLAG_INIT);
             //SaveCentroidsInFile<float>(CENTROIDS_FILE, cuboidCenters);
             break;
         }
@@ -104,7 +109,7 @@ int main(int argc, char** argv){
             FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
             fhandler.LoadFromFile(data, y);
             fhandlerTest.LoadFromFile(data_test, y_test);
-            
+
             svmhandler.shuffle_randomly_data(data, y, data_train, y_train);
             //svmhandler.split_data_train(data, y, data_train, y_train, data_test, y_test, 0.3);
             std::cout<<"Training SVM ..."<<std::endl;
@@ -159,10 +164,10 @@ int main(int argc, char** argv){
             if(svmhandler.LoadModelFromFile(SVM_MODEL_FILE)){
                 std::cout<<"Model Loaded!"<<std::endl;
             }
-        
+
             std::vector<std::vector<float>> data_test;
             std::vector<int> y_test;
-            
+
             FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
             fhandlerTest.LoadFromFile(data_test, y_test);
             std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
@@ -191,7 +196,7 @@ int main(int argc, char** argv){
             }
             std::cout<<"Shape data merged> \t["<<data.size()<<", "<<data[0].size()<<"]"<<std::endl;
             std::cout<<"Labels shape> \t\t["<<y.size()<<"]"<<std::endl;
-            
+
             data_test.clear();
             y_test.clear();
             //svmhandler.shuffle_randomly_data(data, y, data_train, y_train);
@@ -211,6 +216,19 @@ int main(int argc, char** argv){
                 std::cout<<"Problem saving the SVM model"<<std::endl;
 
             break;
+        }
+        case 8:
+        {
+            std::cout<<"\n==============================================\n";
+            std::cout<<"Generating testing data"<<std::endl;
+            std::vector<std::vector<std::vector<float>>> cuboidCenters;
+            LoadCentroidsFromFile(CENTROIDS_FILE, cuboidCenters);
+            //fhandler.LoadFromFile(cuboidCenters);
+            //int res2 = getHistograms(cuboidCenters, K_CLASSES);
+
+            std::vector<std::vector<float>> cuboidsClusters;
+            std::vector<int> labels;
+            realTime(train_data,K_CLASSES,cuboidCenters,cuboidsClusters,labels);
         }
         default:
 
