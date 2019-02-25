@@ -6,6 +6,7 @@
 #include "headers/ofcm.hpp"
 #include "headers/plot.hpp"
 #include "headers/miscellanius.hpp"
+#include "headers/SVMHandler.hpp"
 
 cv::Mat                                                 frame;
 cv::Size                                                imageSize;
@@ -152,8 +153,14 @@ std::vector<std::vector<std::vector<std::vector<float>>>> OFCM::get_features(cv:
     //video.release();
     return global_framesFeatures;
 }
+
+
 void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
 {
+    SVMhandler<float> svm;
+    std::string fileSVMModel= "../models/svm_models/model_traindata_split30percent.txt";
+    svm.LoadModelFromFile(fileSVMModel);
+    
     cv::VideoWriter video("../data/outcpp.avi",CV_FOURCC('M','J','P','G'),30, cv::Size(tWidth*6, tHeight*2));
 
     std::vector<std::vector<std::vector<int>>>              oMTemp;
@@ -175,7 +182,6 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
     std::string CENTROIDS_FILE          = "../models/centroids/avrCentroids.txt";
     std::vector<std::vector<std::vector<float>>> cuboidsCenters;
     LoadCentroidsFromFile(CENTROIDS_FILE, cuboidsCenters);
-
     std::vector<cv::Scalar> colores;
     for(int k = 0;k < 35;k++){
         int valor1 = rand() % 255;
@@ -237,8 +243,22 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
 
             std::vector<std::vector<std::vector<float>>> framesFeatures;
             get_vectorofHF(coMM, coMO, cuboidsSize, framesFeatures, T-1);
-            std::vector<int> vectorHistogram;
-            cv::Mat3b imageHis;
+            
+
+            std::vector<float> vectorHistogram;
+            for(int i  = 0; i < framesFeatures.size();i++){
+                std::vector<int> histogram;
+                kmeans km(cuboidsCenters[i],5);
+                km.setFeatures(framesFeatures[i]);
+                //for(auto p : framesFeatures[i])
+                //    for(auto k : p)
+                //        std::cout << " ddd " << k << std::endl; 
+                km.getHistogram(histogram);
+                for (auto h : histogram)
+                    vectorHistogram.push_back((float)h);
+            }
+
+            /*cv::Mat3b imageHis;
             for(int i  = 0; i < framesFeatures.size();i++){
                 std::vector<int> histogram;
                 kmeans km(cuboidsCenters[i],5);
@@ -246,8 +266,38 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
                 km.getHistogram(histogram);
                 for (auto h : histogram)
                     vectorHistogram.push_back(h);
+            }*/
+            //drawHistrogram(vectorHistogram,imageHis,5,colores);
+            std::vector<std::vector<float>> data{vectorHistogram};
+            /*for(auto d : data)
+                for(auto p : d)
+                    std::cout << " data " << p << std::endl;*/
+            std::vector<int> result = svm.predict(data);
+            std::string classResult;
+            //std::cout << "result size " << vectorHistogram.size() << std::endl;
+            switch(result[0]){
+                case 0:
+                    classResult = "boxing";
+                    break;
+                case 1:
+                    classResult = "handclapping";
+                    break;
+                case 2:
+                    classResult = "handwaving";
+                    break;
+                case 3:
+                    classResult = "jogging";
+                    break;
+                case 4:
+                    classResult = "running";
+                    break;
+                case 5:
+                    classResult = "walking";
+                    break;
+                default:
+                    classResult = "not identify";
             }
-            drawHistrogram(vectorHistogram,imageHis,5,colores);
+            std::cout << " label ofcm " << result[0] << std::endl;
 
             cv::Mat MagnitudImg    = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
             cv::Mat OrientationImg = cv::Mat::zeros(cv::Size((cuboidsSize.width + 1)*cuboidDim/2, (cuboidsSize.height + 1)*cuboidDim/2), CV_8U);
@@ -257,13 +307,13 @@ void OFCM::get_features_realTime(cv::VideoCapture capTemp, int& cuboidsize)
             cv::resize(frame,frame, cv::Size(tWidth*2, tHeight*2));
             cv::resize(MagnitudImg,MagnitudImg, cv::Size(tWidth*2, tHeight*2));
             cv::resize(OrientationImg,OrientationImg, cv::Size(tWidth*2, tHeight*2));
-            cv::resize(imageHis,imageHis, cv::Size(tWidth*4, tHeight*2));
+            //cv::resize(imageHis,imageHis, cv::Size(tWidth*4, tHeight*2));
 
             Mat2Mat(frame           , Template, 0, 0);
             Mat2Mat(MagnitudImg     , Template, 0, tWidth*2);
             Mat2Mat(OrientationImg  , Template, 0, tWidth*4);
-            Mat2Mat(imageHis  , Template, (tHeight*2), 0);
-            cv::imshow("s",imageHis);
+            //Mat2Mat(imageHis  , Template, (tHeight*2), 0);
+            //cv::imshow("s",imageHis);
             cv::imshow("Template",Template);
             cuboids.clear();
             orientationMatrices.clear();

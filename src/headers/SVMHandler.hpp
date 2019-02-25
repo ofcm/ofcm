@@ -109,6 +109,7 @@ class SVMhandler{
         for(int i = 0; i < n; i++){
             int lbl = svm_predict(this->sModel, d[i]);
             predicted[i] = lbl;
+            std::cout << " label model " << lbl << std::endl;
         }
         
         return predicted;

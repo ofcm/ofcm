@@ -94,7 +94,8 @@ int main(int argc, char** argv){
 
             break;
         }
-        // 3: Prediction off-line
+        // 3: train model with Train data
+        //    Test with>  Test data
         case 3: {
             std::cout<<"Split data randomly:"<<std::endl;
             SVMhandler <float> svmhandler;
@@ -157,6 +158,7 @@ int main(int argc, char** argv){
             std::vector<std::vector<std::vector<float>>> cuboidCenters(35, std::vector<std::vector<float>>(K_CLASSES, std::vector<float>(12,0.0)));
             saveMeanCentroid(train_data, cuboidCenters);
         }
+        // Predict off line from TESTDATA_FILE
         case 6:
         {
             std::cout<<"Using model to predict\n";
@@ -173,7 +175,8 @@ int main(int argc, char** argv){
             std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
             break;
         }
-        // Predict with all the data
+        // Concatenate Test data and Train data
+        // Concatenate and Split 30% to test cross validation
         case 7:
         {
             std::cout<<"Split data randomly:"<<std::endl;

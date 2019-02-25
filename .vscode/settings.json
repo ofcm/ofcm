@@ -49,6 +49,9 @@
         "system_error": "cpp",
         "thread": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "__locale": "cpp",
+        "string": "cpp",
+        "__split_buffer": "cpp"
     }
 }
