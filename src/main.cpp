@@ -96,11 +96,13 @@ int main(int argc, char** argv){
             std::vector<std::vector<float>> data;
             std::vector<int> y;
             std::vector<int> lbls {0, 1, 2, 3, 4, 5};
-            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
-            fhandler.LoadFromFile(data, y);
+
             std::vector<std::vector<float>> data_train, data_test;
             std::vector<int> y_train, y_test;
+
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
             FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
+            fhandler.LoadFromFile(data, y);
             fhandlerTest.LoadFromFile(data_test, y_test);
             
             svmhandler.shuffle_randomly_data(data, y, data_train, y_train);
@@ -149,6 +151,66 @@ int main(int argc, char** argv){
         {
             std::vector<std::vector<std::vector<float>>> cuboidCenters(35, std::vector<std::vector<float>>(K_CLASSES, std::vector<float>(12,0.0)));
             saveMeanCentroid(train_data, cuboidCenters);
+        }
+        case 6:
+        {
+            std::cout<<"Using model to predict\n";
+            SVMhandler <float> svmhandler;
+            if(svmhandler.LoadModelFromFile(SVM_MODEL_FILE)){
+                std::cout<<"Model Loaded!"<<std::endl;
+            }
+        
+            std::vector<std::vector<float>> data_test;
+            std::vector<int> y_test;
+            
+            FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
+            fhandlerTest.LoadFromFile(data_test, y_test);
+            std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
+            break;
+        }
+        // Predict with all the data
+        case 7:
+        {
+            std::cout<<"Split data randomly:"<<std::endl;
+            SVMhandler <float> svmhandler;
+            std::vector<std::vector<float>> data;
+            std::vector<int> y;
+            std::vector<int> lbls {0, 1, 2, 3, 4, 5};
+
+            std::vector<std::vector<float>> data_train, data_test;
+            std::vector<int> y_train, y_test;
+
+            FileHandlerML <float, int> fhandler(TRAININGDATA_FILE, TRAININGLABEL_FILE);
+            FileHandlerML <float, int> fhandlerTest(TESTDATA_FILE, TESTLABEL_FILE);
+            fhandler.LoadFromFile(data, y);
+            fhandlerTest.LoadFromFile(data_test, y_test);
+
+            for(unsigned long k = 0; k < data_test.size(); k++){
+                data.push_back(data_test[k]);
+                y.push_back(y_test[k]);
+            }
+            std::cout<<"Shape data merged> \t["<<data.size()<<", "<<data[0].size()<<"]"<<std::endl;
+            std::cout<<"Labels shape> \t\t["<<y.size()<<"]"<<std::endl;
+            
+            data_test.clear();
+            y_test.clear();
+            //svmhandler.shuffle_randomly_data(data, y, data_train, y_train);
+            svmhandler.split_data_train(data, y, data_train, y_train, data_test, y_test, 0.3);
+            std::cout<<"Training SVM ..."<<std::endl;
+            svmhandler.fit(y_train, lbls, data_train);
+            std::cout<<"Making Predictions ..."<<std::endl;
+            std::cout<<"Accuracy TRAIN>> "<<svmhandler.validate(data_train, y_train)<<std::endl;
+            std::cout<<"Accuracy TEST>> "<<svmhandler.validate(data_test, y_test)<<std::endl;
+
+            //svmhandler.split_randomly_data(data, y, data_, y_);
+
+            int val = svmhandler.SaveModel(SVM_MODEL_FILE);
+            if(val == 0)
+                std::cout<<"Model SVM Saved"<<std::endl;
+            else
+                std::cout<<"Problem saving the SVM model"<<std::endl;
+
+            break;
         }
         default:
 

@@ -92,7 +92,7 @@ class SVMhandler{
             return -1;
         }
         this->sModel = svm_train(problem, &this->parameters);
-        
+
         delete problem;
         return true;
     }
@@ -110,6 +110,7 @@ class SVMhandler{
             int lbl = svm_predict(this->sModel, d[i]);
             predicted[i] = lbl;
         }
+        
         return predicted;
     }
 
@@ -160,7 +161,10 @@ class SVMhandler{
         this->sModel = svm_load_model(pFile);
         fclose(pFile);
 
-        return 0;
+        if(this->sModel != nullptr)
+            return true;
+        else
+            return false;
     }
 
         bool shuffle_randomly_data(const std::vector<std::vector<T>> data, const std::vector<int> y, std::vector<std::vector<T>> & data_shuff, std::vector<int> & y_shuff){
